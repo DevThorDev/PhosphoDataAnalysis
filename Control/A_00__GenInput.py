@@ -5,7 +5,7 @@
 import Core.C_00__GenConstants as GC
 
 # --- Input: Flow control -----------------------------------------------------
-calcCorrMetPho = False   # correlations between MetData and PhoData
+calcCorrMetPho = True   # correlations between MetData and PhoData
 calcCorrWithin = False  # correlations within MetData, PhoData and CombData (!)
 calcKMeansClBasicDt = True      # K-Means cluster of basic data (MetData,...)
 calcCorrClDt = True             # correl. btw. clusters of Met/Pho/CombData
@@ -24,8 +24,8 @@ nmXFtG = GC.NM_XFEAT_G
 nmTpXS = GC.NM_TYPEX_S
 nmTpXF = GC.NM_TYPEX_F
 
-dInvXFtTpX = {nmXFtC: [nmTpXS]}
-# dInvXFtTpX = {nmXFtC: [nmTpXS, nmTpXF]}
+# dInvXFtTpX = {nmXFtC: [nmTpXS]}
+dInvXFtTpX = {nmXFtC: [nmTpXS, nmTpXF]}
 # dInvXFtTpX = {nmXFtG: [nmTpXS, nmTpXF]}
 # dInvXFtTpX = {nmXFtC: [nmTpXS], nmXFtG: [nmTpXS]}
 # dInvXFtTpX = {nmXFtC: [nmTpXS, nmTpXF], nmXFtG: [nmTpXS, nmTpXF]}

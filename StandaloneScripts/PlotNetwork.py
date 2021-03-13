@@ -158,7 +158,7 @@ lTaskGE9 = lTaskGE9GT0 + lTaskGE9GT1 + lTaskGE9GT5
 
 # names and paths -------------------------------------------------------------
 pRelDatF_G = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
-                          '21_R_81_BinaryOps')
+                          '11_ResultCSV_GT015', '21_R_81_BinaryOps')
 pRelDatF_92 = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
                            '92_Networkx', '01_Data')
 pRelPltF = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
@@ -289,7 +289,7 @@ dThrN_IPDC = {sNumAttr1: ('>=', thrN1)}
 dFilt_MBC2IPDC = {S_SEL: dFilt_BC2,
                   S_THR: dThrN_IPDC,
                   selOp: (sNumAttr1, (sColAttr1, sColAttr2))}
- 
+
 # attributes ------------------------------------------------------------------
 # attrMet, attrPho, multSzAttr = 2, 1, 6
 
