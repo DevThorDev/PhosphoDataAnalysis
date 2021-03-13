@@ -5,7 +5,7 @@
 import Core.C_00__GenConstants as GC
 
 # --- Input: Flow control -----------------------------------------------------
-calcCorrMetPho = True   # correlations between MetData and PhoData
+calcCorrMetPho = False   # correlations between MetData and PhoData
 calcCorrWithin = False  # correlations within MetData, PhoData and CombData (!)
 calcKMeansClBasicDt = True      # K-Means cluster of basic data (MetData,...)
 calcCorrClDt = True             # correl. btw. clusters of Met/Pho/CombData
@@ -24,8 +24,8 @@ nmXFtG = GC.NM_XFEAT_G
 nmTpXS = GC.NM_TYPEX_S
 nmTpXF = GC.NM_TYPEX_F
 
-# dInvXFtTpX = {nmXFtC: [nmTpXS]}
-dInvXFtTpX = {nmXFtC: [nmTpXS, nmTpXF]}
+dInvXFtTpX = {nmXFtC: [nmTpXS]}
+# dInvXFtTpX = {nmXFtC: [nmTpXS, nmTpXF]}
 # dInvXFtTpX = {nmXFtG: [nmTpXS, nmTpXF]}
 # dInvXFtTpX = {nmXFtC: [nmTpXS], nmXFtG: [nmTpXS]}
 # dInvXFtTpX = {nmXFtC: [nmTpXS, nmTpXF], nmXFtG: [nmTpXS, nmTpXF]}
@@ -73,9 +73,7 @@ dQryNmFE = {11: ('', ''),   # 11: ('Name_Analyte == "Sucrose__D-_(8TMS)"', 'Sucr
             21: ('', ''),
             22: ('', '')}
 dNmPltClCent = {11: [],     # 11: ['Sucrose__D-_(8TMS)'],
-                12: [],
                 21: [],
-                22: [],
                 31: [],
                 41: []}
 
@@ -162,7 +160,7 @@ nmPreDv = GC.NM_PRE_DEV
 
 nmExtCSV = GC.NM_EXT_CSV
 nmExtPY = GC.NM_EXT_PY
-nmExtPDF = GC.NM_EXT_PDF 
+nmExtPDF = GC.NM_EXT_PDF
 
 # --- Input: Other strings ----------------------------------------------------
 sProt = GC.S_PROT
@@ -231,7 +229,7 @@ dGTFtC = {idGT: [nmFt + '_' + nmGT for nmFt in lNmFt] for (idGT, nmGT) in
           dIDGT.items()}
 
 # names of attributes DataFrame
-lNmAtDfr = [idOAtDfr, idGTAtDfr, nmGTAtDfr, idFtAtDfr, nmFtAtDfr, nmWtAtDfr]  
+lNmAtDfr = [idOAtDfr, idGTAtDfr, nmGTAtDfr, idFtAtDfr, nmFtAtDfr, nmWtAtDfr]
 
 # --- create input dictionary -------------------------------------------------
 dictInpG = {# --- Input: Flow control

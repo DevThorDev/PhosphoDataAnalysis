@@ -64,13 +64,14 @@ clr8 = '#888'
 
 # === INPUT ===================================================================
 # data file type and separators -----------------------------------------------
-sSelBC2 = 'SelBin2sF24'                 # 'SelBin2sA14'
+sSelBC2 = 'SelBin2sG27'                 # 'SelBin2sA14'
                                         # 'SelBin2sB22'
                                         # 'SelBin2sC21'
                                         # 'SelBin2sD22'
                                         # 'SelBin2sE23'
                                         # 'SelBin2sF24'
-sTask = 'IPDC_ge2_Avg_GT5'              # 'Idx_gr8_SD2_gr8_GT0'
+                                        # 'SelBin2sG27'
+sTask = 'IPDC_ge8_Avg_GT5'              # 'Idx_gr8_SD2_gr8_GT0'
                                         # 'Idx_gr8_SD2_gr8_GT1'
                                         # 'Idx_gr8_SD2_gr8_GT2'
                                         # 'Idx_gr8_SD2_gr8_GT3'
@@ -157,7 +158,7 @@ lTaskGE9 = lTaskGE9GT0 + lTaskGE9GT1 + lTaskGE9GT5
 
 # names and paths -------------------------------------------------------------
 pRelDatF_G = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
-                          '11_ResultCSV_GT015', '21_R_81_BinaryOps')
+                          '21_R_81_BinaryOps')
 pRelDatF_92 = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
                            '92_Networkx', '01_Data')
 pRelPltF = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
@@ -203,7 +204,7 @@ sColAttr2 = S_BIN_C_2    # attribute 2 is assigned to BinCode2
 
 sNumAttr1 = S_IDX_PDCSD
 
-thrN1 = THR_2
+thrN1 = THR_8
 selOp = S_AVG
 
 if sTask in ['Idx_gr8_SD2_gr8_GT0', 'Idx_gr8_SD2_gr8_GT1',
@@ -264,6 +265,11 @@ dFilt_BC2F = {S_BIN_C_2: ['1.1', '1.3', '2.2', '4.1', '5.3', '8.2', '10.5',
                           '12.1', '12.2', '20.1', '20.2', '29.2', '29.4',
                           '29.5', '30.1', '30.11', '30.2', '30.3', '31.1',
                           '33.99', '34.1', '34.19', '34.5', '34.7']}
+dFilt_BC2G = {S_BIN_C_2: ['1.1', '1.3', '2.2', '4.1', '5.3', '8.2', '10.5',
+                          '12.1', '12.2', '15.1', '20.1', '20.2', '29.2',
+                          '29.4', '29.5', '30.1', '30.11', '30.2', '30.3',
+                          '30.8', '31.1', '33.1', '33.99', '34.1', '34.19',
+                          '34.5', '34.7']}
 dFilt_BC2 = dFilt_BC2A
 if sSelBC2 == 'SelBin2sA14':
     dFilt_BC2 = dFilt_BC2A
@@ -277,6 +283,8 @@ elif sSelBC2 == 'SelBin2sE23':
     dFilt_BC2 = dFilt_BC2E
 elif sSelBC2 == 'SelBin2sF24':
     dFilt_BC2 = dFilt_BC2F
+elif sSelBC2 == 'SelBin2sG27':
+    dFilt_BC2 = dFilt_BC2G
 dThrN_IPDC = {sNumAttr1: ('>=', thrN1)}
 dFilt_MBC2IPDC = {S_SEL: dFilt_BC2,
                   S_THR: dThrN_IPDC,
