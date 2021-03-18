@@ -32,7 +32,7 @@ assert len(L_S_GT) == 3 and len(L_S_FT) == 4
 sGrpDat = S_MET_L       # S_MET_L / S_PHO_L
 cTrans = S_UN           # S_2L / S_UN
 lThrDef = [3., 3.5, 4., 4.5, 5., 6., 8.]
-sMode = S_MEDIAN        # S_MEDIAN / S_IQR
+sMode = S_IQR        # S_MEDIAN / S_IQR
 
 printOutl = False
 nDigRnd = 4
@@ -41,6 +41,7 @@ sFResultDfr = 'OutlierThresholds'
 sFNumOcc = 'NumOccOutlier'
 lSColSkip = ['MeanConc']
 
+# --- NUMBER OF MEASUREMENTS --------------------------------------------------
 dDDLMmI = {S_MET_L: {L_S_GT[0]: {L_S_FT[0]: list(range(1, 1 + 6)),
                                  L_S_FT[1]: list(range(1, 1 + 6)),
                                  L_S_FT[2]: list(range(1, 1 + 6)),
@@ -176,7 +177,8 @@ def calcMadIQR(pdSer, qtLB=0.25, qtUB=0.75):
 def getOutliersMAD(pdSer, dThr=dThrDef, sMd=S_MEDIAN, zFact=0.67449):
     cDiff = np.sqrt((pdSer - pdSer.median())**2)
     if sMd == S_MEDIAN:
-        medAbsDev = np.median(cDiff)
+        # medAbsDev = np.median(cDiff)
+        medAbsDev = cDiff.median()
     else:
         medAbsDev = calcMadIQR(pdSer)
     zScoreMod = zFact*cDiff/medAbsDev
@@ -186,7 +188,8 @@ def analyseDataFrame(pdDfr, dSAttr, sMd=S_MEDIAN):
     dResDat, dResThr, dNOcc = {}, {}, {}
     for sI in pdDfr.index:
         for sAttr, lAttr in dSAttr.items():
-            cSer = pdDfr.loc[sI, lAttr].dropna().convert_dtypes()
+            # cSer = pdDfr.loc[sI, lAttr].dropna().convert_dtypes()
+            cSer = pdDfr.loc[sI, lAttr].convert_dtypes()
             dResDat[(sI, sAttr)] = getOutliersMAD(cSer, sMd=sMd)
     for tK, cDOutl in dResDat.items():
         for k, tV in cDOutl.items():
@@ -233,8 +236,8 @@ def saveDataFrameThr(sPRes, dResThr, inpDfr, cGT, lSCSkip=None, cSp=cSep):
 
 def getFirstLine(dSAttr, dFt=dFt, cSp=cSep):
     sP = 'Threshold'
-    for sNmFt in dFt.values():
-        sP += cSp + sNmFt
+    for sFt in dFt:
+        sP += cSp + sFt
     for sFt in dFt:
         for sM in dSAttr[sFt]:
             sP += cSp + sM
@@ -249,8 +252,8 @@ def addToLineStr(cD, cS, nDef=0, cSp=cSep):
 
 def getDataLine(dNOccThr, dSAttr, k=0, dFt=dFt, dThr=dThrDef, cSp=cSep):
     sL = str(dThr[k])
-    for sNmFt in dFt.values():
-        sL += addToLineStr(dNOccThr, sNmFt, cSp=cSp)
+    for sFt in dFt:
+        sL += addToLineStr(dNOccThr, sFt, cSp=cSp)
     for sFt in dFt:
         for sM in dSAttr[sFt]:
             sL += addToLineStr(dNOccThr, sM, cSp=cSp)
