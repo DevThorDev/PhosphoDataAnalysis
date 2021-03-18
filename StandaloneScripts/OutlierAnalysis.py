@@ -32,7 +32,7 @@ assert len(L_S_GT) == 3 and len(L_S_FT) == 4
 sGrpDat = S_MET_L       # S_MET_L / S_PHO_L
 cTrans = S_UN           # S_2L / S_UN
 lThrDef = [3., 3.5, 4., 4.5, 5., 6., 8.]
-sMode = S_IQR        # S_MEDIAN / S_IQR
+sMode = S_MEDIAN        # S_MEDIAN / S_IQR
 
 printOutl = False
 nDigRnd = 4
