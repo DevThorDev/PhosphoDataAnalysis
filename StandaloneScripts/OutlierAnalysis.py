@@ -26,6 +26,10 @@ S_UN = 'unTr'
 N_CH_S = 3              # number of characters of short Met/Pho name
 S_MEDIAN = 'median'
 S_IQR = 'IQR'
+L_S_COL_SKIP_MET = ['MeanConc']
+L_S_COL_SKIP_PHO = ['Protein', 'BinCode', 'BinCode3', 'BinCode2', 'BinCode1',
+                    'MeanConc', 'Sequence_window', 'DESCRIPTION', 'suba3',
+                    'suba3_short', 'Mapman_new', 'bin1_new', 'Amino_acid']
 assert len(L_S_GT) == 3 and len(L_S_FT) == 4
 
 # --- INPUT -------------------------------------------------------------------
@@ -39,7 +43,6 @@ nDigRnd = 4
 sFResultFull = 'FullOutlierResult'
 sFResultDfr = 'OutlierThresholds'
 sFNumOcc = 'NumOccOutlier'
-lSColSkip = ['MeanConc']
 
 # --- NUMBER OF MEASUREMENTS --------------------------------------------------
 dDDLMmI = {S_MET_L: {L_S_GT[0]: {L_S_FT[0]: list(range(1, 1 + 6)),
@@ -77,6 +80,11 @@ sFResultFull += '_' + sGrpDat[:min(len(sGrpDat), N_CH_S)]
 sFResultDfr += '_' + sGrpDat[:min(len(sGrpDat), N_CH_S)]
 sFNumOcc += '_' + sGrpDat[:min(len(sGrpDat), N_CH_S)]
 dThrDef = {k: cThr for k, cThr in enumerate(lThrDef)}
+lSColSkip = []
+if sGrpDat == S_MET_L:
+    lSColSkip = L_S_COL_SKIP_MET
+elif sGrpDat == S_PHO_L:
+    lSColSkip = L_S_COL_SKIP_PHO
 
 # --- OS FUNCTIONS ------------------------------------------------------------
 def makeDirs(pDTarget):
@@ -166,23 +174,26 @@ def is_outlier(points, thresh=3.5):
 
     return modified_z_score > thresh
 
-def calcMadIQR(pdSer, qtLB=0.25, qtUB=0.75):
-    npArr = pdSer.to_numpy()
-    IQR = np.quantile(npArr, qtUB, axis=0) - np.quantile(npArr, qtLB, axis=0)
+def calcIQR(pdSer, qtLB=0.25, qtUB=0.75):
+    qtSerLB, qtSerUB = pdSer.quantile(qtLB), pdSer.quantile(qtUB)
+    IQR = qtSerUB - qtSerLB
     # as the IQR may be zero, using the variance avoids inf
     if IQR == 0:
-        IQR = np.var(npArr)
-    return np.median(np.abs(npArr)/IQR)
+        IQR = pdSer.var()
+    return qtSerLB, qtSerUB, IQR
 
 def getOutliersMAD(pdSer, dThr=dThrDef, sMd=S_MEDIAN, zFact=0.67449):
     cDiff = np.sqrt((pdSer - pdSer.median())**2)
     if sMd == S_MEDIAN:
-        # medAbsDev = np.median(cDiff)
         medAbsDev = cDiff.median()
+        zScoreMod = zFact*cDiff/medAbsDev
+        dO = {k: (cThr, pdSer[zScoreMod > cThr]) for k, cThr in dThr.items()}
     else:
-        medAbsDev = calcMadIQR(pdSer)
-    zScoreMod = zFact*cDiff/medAbsDev
-    return {k: (cThr, pdSer[zScoreMod > cThr]) for k, cThr in dThr.items()}
+        (QL, QU, IQR), dO = calcIQR(pdSer), {}
+        for k, cThr in dThr.items():
+            dO[k] = (cThr, pdSer[(pdSer < QL - IQR*cThr) |
+                                 (pdSer > QU + IQR*cThr)])
+    return dO
 
 def analyseDataFrame(pdDfr, dSAttr, sMd=S_MEDIAN):
     dResDat, dResThr, dNOcc = {}, {}, {}
@@ -268,8 +279,7 @@ def saveNumOcc(sPRes, dNOcc, dSAttr, cGT, dFt=dFt, dThr=dThrDef, cSp=cSep):
     fRes.close()
 
 # --- MAIN --------------------------------------------------------------------
-print('*'*16, 'START', cTrans, 'with mode', sMode, '*'*16)
-# for cGT in ['GT0']:
+print('*'*16, 'START', sGrpDat, '/', cTrans, 'with mode', sMode, '*'*16)
 for cGT in dGT:
     pFDat = getPFDat(sGrpDat, lSPR_Dat, dGT, sTr=cTrans, cGT=cGT, sFExt=sCSV)
     cDfr = pd.read_csv(pFDat, sep=cSep, index_col=0)
@@ -284,6 +294,6 @@ for cGT in dGT:
     pFRes = getPFRes(sFNumOcc, lSPR_Res, sTr=cTrans, sMd=sMode, sFExt=sCSV)
     saveNumOcc(pFRes, dNumOcc, dSAttr, cGT, dFt, dThr=dThrDef, cSp=cSep)
     print('Saved results for genotype', cGT + '.')
-print('*'*16, 'DONE', cTrans, 'with mode', sMode, '*'*16)
+print('*'*16, 'DONE', sGrpDat, '/', cTrans, 'with mode', sMode, '*'*16)
 
 # -----------------------------------------------------------------------------
