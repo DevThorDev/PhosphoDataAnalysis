@@ -20,7 +20,7 @@ iColNm = 0                  # index of (unique) name column
 iColVsS = 2                 # index of first column of data array
 lIColConv2Str = []          # list of indices of columns converted to string
 lHdrAIC = []                # column header list of classification info
-lHdrAIR = lHdrAIC + [GC.S_MN_CONC] # column header list of retained add. info 
+lHdrAIR = lHdrAIC + [GC.S_MN_CONC] # column header list of retained add. info
 tIMnMx = (-1, -1)           # index = -1 --> no restriction of start/end
 iFtrBase = 0                # index of feature acting as baseline for trans.
 transD = 'No'              # 'No' / 'Abs' / 'Rel' / '2LQ' (trans. shift type)
@@ -30,8 +30,9 @@ devTp = 'SD'                # 'SD' / 'SDP' (units deviation is measured in)
                             # 'SDP': used pooled deviation
 
 # --- filtering ---------------------------------------------------------------
-lSFiltOut = ['Allose_(1MEOX)_(5TMS)', 'Talose__D-_(1MEOX)_(5TMS)',
-             'Maltitol_(9TMS)', 'Maltose__D-_(1MEOX)_(8TMS)']
+# lSFiltOut = ['Allose_(1MEOX)_(5TMS)', 'Talose__D-_(1MEOX)_(5TMS)',
+#              'Maltitol_(9TMS)', 'Maltose__D-_(1MEOX)_(8TMS)']
+lSFiltOut = []
 
 # --- clustering --------------------------------------------------------------
 minNClusters, maxNClusters = (2, 10)                # no filter
@@ -47,12 +48,12 @@ distThrAgglo = None
 dISPr = {'No': {0: '', 4: '_', 6: '_'},
          'Tr': {0: '', 1: '_', 4: '_', 6: '_'},
          'Dv': {0: '', 1: '_', 4: '_', 6: '_'}}
-nmDFPre = 'Metabolite_unTransformed'
+nmDFPre = 'Metabolite_unTr_OutlMedian5p0'
 dIDDF = {idGT: nmDFPre + '_' + idGT + '_' + nmGT + '_ThS' for
          (idGT, nmGT) in dIDGT.items()}
 
 pRelDF = os.path.join('..', '..', '12_SysBio02_DataAnalysis',
-                      '02_ProcessedRawData', '01_CSV')
+                      '05_RevisedRawData', '01_CSV')
 
 # --- graphics parameters -----------------------------------------------------
 plotHist = True         # plot a histogram of the mean data?

@@ -20,7 +20,7 @@ iColNm = 0                  # index of (unique) name column
 iColVsS = 14                # index of first column of data array
 lIColConv2Str = [2, 3, 4, 5, 12] # list of indices of columns conv. to str
 lHdrAIC = [GC.S_PROT, GC.S_BIN_C_G, GC.S_BIN_C_3, GC.S_BIN_C_2, GC.S_BIN_C_1]
-lHdrAIR = lHdrAIC + [GC.S_MN_CONC] # column header list of retained add. info 
+lHdrAIR = lHdrAIC + [GC.S_MN_CONC] # column header list of retained add. info
 tIMnMx = (-1, -1)           # index = -1 --> no restriction of start/end
 iFtrBase = 0                # index of feature acting as baseline for trans.
 transD = 'No'              # 'No' / 'Abs' / 'Rel' / '2LQ' (trans. shift type)
@@ -46,12 +46,12 @@ distThrAgglo = None
 dISPr = {'No': {0: '', 4: '_', 6: '_'},
          'Tr': {0: '', 1: '_', 4: '_', 6: '_'},
          'Dv': {0: '', 1: '_', 4: '_', 6: '_'}}
-nmDFPre = 'Phosphopeptides_log2_lfq'
+nmDFPre = 'Phosphopeptide_log2_OutlMedian5p0'
 dIDDF = {idGT: nmDFPre + '_' + idGT + '_' + nmGT + '_ThS' for
          (idGT, nmGT) in dIDGT.items()}
 
 pRelDF = os.path.join('..', '..', '12_SysBio02_DataAnalysis',
-                      '02_ProcessedRawData', '01_CSV')
+                      '05_RevisedRawData', '01_CSV')
 
 # --- graphics parameters -----------------------------------------------------
 plotHist = True         # plot a histogram of the mean data?

@@ -46,12 +46,12 @@ distThrAgglo = None
 dISPr = {'No': {0: '', 4: '_', 6: '_'},
          'Tr': {0: '', 1: '_', 4: '_', 6: '_'},
          'Dv': {0: '', 1: '_', 4: '_', 6: '_'}}
-nmDFPre = 'ExpData_log2'
+nmDFPre = 'ExpData_log2_OutlMedian5p0'
 dIDDF = {idGT: nmDFPre + '_' + idGT + '_' + nmGT + '_ThS' for
          (idGT, nmGT) in dIDGT.items()}
 
 pRelDF = os.path.join('..', '..', '12_SysBio02_DataAnalysis',
-                      '02_ProcessedRawData', '01_CSV')
+                      '05_RevisedRawData', '01_CSV')
 
 # --- graphics parameters -----------------------------------------------------
 plotHist = True         # plot a histogram of the mean data?
