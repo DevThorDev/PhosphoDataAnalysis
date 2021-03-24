@@ -19,7 +19,7 @@ dSrtPD = {'Idx': {GC.S_MN_CONC: {'Asc': False}},
 lElCPD = [GC.S_BIN_C_2]
 
 # --- data specific ("BinOps" from basic data) --------------------------------
-nMinBO, nMaxBO = 1, round(58*3330/10)
+nMinBO, nMaxBO = 1, round(42*3330/10)
 # nMinBO, nMaxBO = 1, 1000
 dSrtBO = {'Idx': {GC.S_IPDC: {'Asc': False},
                   GC.S_SPDS: {'Asc': False},
