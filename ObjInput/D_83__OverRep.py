@@ -21,11 +21,12 @@ lElCPD = [GC.S_BIN_C_2]
 # --- data specific ("BinOps" from basic data) --------------------------------
 nMinBO, nMaxBO = 1, round(42*3330/10)
 # nMinBO, nMaxBO = 1, 1000
-dSrtBO = {'Idx': {GC.S_IPDC: {'Asc': False},
-                  GC.S_SPDS: {'Asc': False},
+dSrtBO = {'Idx': {GC.S_PNCI: {'Asc': False},
+                  GC.S_PCI: {'Asc': False},
+                  GC.S_SPEAR_V: {'Asc': False},
                   GC.S_CORR_V: {'Asc': False}},
           'Col': {'Srt': ('float', 0), 'Asc': True}}
-lElCBO = [GC.S_BIN_C_2]     # columns to evaluate
+lElCBO = [GC.S_MET_D]     # columns to evaluate
                             # None: eval. MetD and PhoD columns of BO file
                             # [GC.S_MET_D]: eval. MetD column of BO file
                             # [GC.S_PHO_D]: eval. PhoD column of BO file

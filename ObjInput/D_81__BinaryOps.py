@@ -13,8 +13,6 @@ sNeg = GC.S_NEG
 sPos = GC.S_POS
 sAv = GC.S_AV
 sTop = GC.S_TOP
-sSum = GC.S_SUM
-sIdx = GC.S_IDX
 sCorrS = GC.S_CORR_S
 sCorrL = GC.S_CORR_L
 sCorrV = GC.S_CORR_V
@@ -24,11 +22,13 @@ sCorrP = GC.S_CORR_P
 sSpearP = GC.S_SPEAR_P
 sKendP = GC.S_KEND_P
 sDvSc = GC.S_DV_SC
-sDvSD = GC.S_DV_CL_SD
-sOccSD = GC.S_OCC_CL_SD
+sCI = GC.S_CI
+sOccCI = GC.S_OCC_CI
 # sort dictionaries: keys: columns to sort, values: ascending? (then true)
-dSSumSc = {sSum + sNeg + sDvSc: True, sSum + sPos + sDvSc: False}
-dSIdxSD = {sIdx + sNeg + sDvSD: True, sIdx + sPos + sDvSD: False}
+dSDvSc = {sNeg + sDvSc: True, sPos + sDvSc: False}
+dSDvScX = {sNeg + sDvSc: True, sPos + sDvSc: False, sPos + sNeg + sDvSc: False}
+dSCI = {sNeg + sCI: True, sPos + sCI: False}
+dSCIX = {sNeg + sCI: True, sPos + sCI: False, sPos + sNeg + sCI: False}
 
 # --- correlation -------------------------------------------------------------
 dPltSCorr = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): True,    # plot strongest corr.
@@ -46,11 +46,11 @@ dSCorrBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (-0.94, 0.93),    # (lowB, upB)
              (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): (-0.9, 0.955)}
 
 # --- deviations between features ---------------------------------------------
-dPosDvClBnd = {'C1': (1., 0.25),    # positive deviation class bound (x SD)
-               'C2': (2., 1.),      # key: string of class
-               'C3': (3., 1.5),     # value: (bound, weight)
-               'C4': (5., 1.75),
-               'C5': (10., 2.)}
+dPosCIBnd = {'C1': (1., 0.25),    # positive concordance index bound (x SD)
+             'C2': (2., 1.),      # key: string of class
+             'C3': (3., 1.5),     # value: (bound, weight)
+             'C4': (5., 1.75),
+             'C5': (10., 2.)}
 dWtDv = {'Min': 100, 'Max': 1}
 
 # --- correlation and deviations between features -----------------------------
@@ -130,7 +130,7 @@ nmStrong = 'Strong'     # name prefix of strong correlation plot
 nDigRndBO = 4
 nDigRndDv = 1
 nDigRndDvSc = 2
-nDigRndDvSD = 4
+nDigRndCI = 4
 
 # --- graphics parameters -----------------------------------------------------
 nBins = 100             # number of bins
@@ -144,19 +144,19 @@ lSAvCorrV = [sAv + sNeg + sCorrV, sAv + sPos + sCorrV]
 lSAvSpearV = [sAv + sNeg + sSpearV, sAv + sPos + sSpearV]
 lSAvKendV = [sAv + sNeg + sKendV, sAv + sPos + sKendV]
 lSAvDvSc = [sAv + sNeg + sDvSc, sAv + sPos + sDvSc]
-lSAvDvSD = [sAv + sNeg + sDvSD, sAv + sPos + sDvSD]
+lSAvCI = [sAv + sNeg + sCI, sAv + sPos + sCI]
 lSTopCorrV = [sTop + sNeg + sCorrV, sTop + sPos + sCorrV]
 lSTopSpearV = [sTop + sNeg + sSpearV, sTop + sPos + sSpearV]
 lSTopKendV = [sTop + sNeg + sKendV, sTop + sPos + sKendV]
 lSTopDvSc = [sTop + sNeg + sDvSc, sTop + sPos + sDvSc]
-lSTopDvSD = [sTop + sNeg + sDvSD, sTop + sPos + sDvSD]
+lSTopCI = [sTop + sNeg + sCI, sTop + sPos + sCI]
 lSCorrVals = [sCorrV, sSpearV, sKendV]
 lSCorrVals2x = [sCorrV]*2 + [sSpearV]*2 + [sKendV]*2
 lSCorrAll = lSCorrVals + [sCorrP, sSpearP, sKendP]
 lSAvAll = lSAvCorrV + lSAvSpearV + lSAvKendV
 lSTopAll = lSTopCorrV + lSTopSpearV + lSTopKendV
-lPosDvClBnd = [t[0] for t in dPosDvClBnd.values()]
-lDvClIdxWts = [t[1] for t in dPosDvClBnd.values()]
+lPosCIBnd = [t[0] for t in dPosCIBnd.values()]
+lCIWts = [t[1] for t in dPosCIBnd.values()]
 
 # --- assertions --------------------------------------------------------------
 for tGT, tSCorrBnd in dSCorrBnd.items():
@@ -178,8 +178,6 @@ dIO = {# --- general and names
        'sPos': sPos,
        'sAv': sAv,
        'sTop': sTop,
-       'sSum': sSum,
-       'sIdx': sIdx,
        'sCorrS': sCorrS,
        'sCorrL': sCorrL,
        'sCorrV': sCorrV,
@@ -189,15 +187,17 @@ dIO = {# --- general and names
        'sSpearP': sSpearP,
        'sKendP': sKendP,
        'sDvSc': sDvSc,
-       'sDvSD': sDvSD,
-       'sOccSD': sOccSD,
-       'dSSumSc': dSSumSc,
-       'dSIdxSD': dSIdxSD,
+       'sCI': sCI,
+       'sOccCI': sOccCI,
+       'dSDvSc': dSDvSc,
+       'dSDvScX': dSDvScX,
+       'dSCI': dSCI,
+       'dSCIX': dSCIX,
        # --- correlation
        'dPltSCorr': dPltSCorr,
        'dSCorrBnd': dSCorrBnd,
        # --- deviations between features
-       'dPosDvClBnd': dPosDvClBnd,
+       'dPosCIBnd': dPosCIBnd,
        'dWtDv': dWtDv,
        # --- correlation and deviations between features
        'dNTopCrDv': dNTopCrDv,
@@ -218,7 +218,7 @@ dIO = {# --- general and names
        'nDigRndBO': nDigRndBO,
        'nDigRndDv': nDigRndDv,
        'nDigRndDvSc': nDigRndDvSc,
-       'nDigRndDvSD': nDigRndDvSD,
+       'nDigRndCI': nDigRndCI,
        # --- graphics parameters
        'nBins': nBins,
        'histAlpha': histAlpha,
@@ -230,18 +230,18 @@ dIO = {# --- general and names
        'lSAvSpearV': lSAvSpearV,
        'lSAvKendV': lSAvKendV,
        'lSAvDvSc': lSAvDvSc,
-       'lSAvDvSD': lSAvDvSD,
+       'lSAvCI': lSAvCI,
        'lSTopCorrV': lSTopCorrV,
        'lSTopSpearV': lSTopSpearV,
        'lSTopKendV': lSTopKendV,
        'lSTopDvSc': lSTopDvSc,
-       'lSTopDvSD': lSTopDvSD,
+       'lSTopCI': lSTopCI,
        'lSCorrVals': lSCorrVals,
        'lSCorrVals2x': lSCorrVals2x,
        'lSCorrAll': lSCorrAll,
        'lSAvAll': lSAvAll,
        'lSTopAll': lSTopAll,
-       'lPosDvClBnd': lPosDvClBnd,
-       'lDvClIdxWts': lDvClIdxWts}
+       'lPosCIBnd': lPosCIBnd,
+       'lCIWts': lCIWts}
 
 ###############################################################################

@@ -24,6 +24,11 @@ S_RGB = 'rgb'
 S_MET_D = 'MetD'
 S_PHO_D = 'PhoD'
 
+S_GT0 = 'GT0'
+S_GT1 = 'GT1'
+S_GT5 = 'GT5'
+L_S_GT = [S_GT0, S_GT1, S_GT5]
+
 S_PROT = 'Protein'
 S_BIN_C_G = 'BinCode'
 S_BIN_C_3 = 'BinCode3'
@@ -31,23 +36,32 @@ S_BIN_C_2 = 'BinCode2'
 S_BIN_C_1 = 'BinCode1'
 L_S_PHO_CL = [S_PROT, S_BIN_C_G, S_BIN_C_3, S_BIN_C_2, S_BIN_C_1]
 
-S_IDX_PDCSD = 'IdxPosDvClSD'
+S_PCI = 'PosCI'
 
 S_SRT_FLT = 'SortFilt'
+
+S_NETW_PLT = 'NetworkPlot'
 
 MAX_CLR_VAL = 255
 INDEX_DATA_EDGE_ATTR = 2
 ATTR_1 = 1
 ATTR_2 = 2
 
-THR_2 = 2
-THR_3 = 3
-THR_4 = 4
-THR_5 = 5
-THR_6 = 6
-THR_7 = 7
-THR_8 = 8
-THR_9 = 9
+D_CMP = {'<': 'l', '<=': 'le', '==': 'eq', '>=': 'ge', '>': 'g'}
+
+S_NM_F_INP_GT0 = 'Corr__BinOp_MetD_CI_GT0_AllD_PhoD_CI_GT0_AllD'
+S_NM_F_INP_GT1 = 'Corr__BinOp_MetD_CI_GT1_AllD_PhoD_CI_GT1_AllD'
+S_NM_F_INP_GT5 = 'Corr__BinOp_MetD_CI_GT5_AllD_PhoD_CI_GT5_AllD'
+
+D_S_NM_F_INP = {S_GT0: S_NM_F_INP_GT0,
+                S_GT1: S_NM_F_INP_GT1,
+                S_GT5: S_NM_F_INP_GT5}
+
+S_DOT = '.'
+S_USC = '_'
+S_2USC = S_USC*2
+S_WAVE = '~'
+S_P = 'p'
 
 N_DIG_RND_04 = 4
 
@@ -64,177 +78,60 @@ clr8 = '#888'
 
 # === INPUT ===================================================================
 # data file type and separators -----------------------------------------------
-sSelBC2 = 'SelBin2sG27'                 # 'SelBin2sA14'
+sSelBC2 = 'SelBin2sH21'                 # 'SelBin2sA14'
                                         # 'SelBin2sB22'
                                         # 'SelBin2sC21'
                                         # 'SelBin2sD22'
                                         # 'SelBin2sE23'
                                         # 'SelBin2sF24'
                                         # 'SelBin2sG27'
-sTask = 'IPDC_ge8_Avg_GT5'              # 'Idx_gr8_SD2_gr8_GT0'
-                                        # 'Idx_gr8_SD2_gr8_GT1'
-                                        # 'Idx_gr8_SD2_gr8_GT2'
-                                        # 'Idx_gr8_SD2_gr8_GT3'
-                                        # 'Idx_gr8_SD2_gr8_GT4'
-                                        # 'Idx_gr8_SD2_gr8_GT5'
-                                        # 'SRR_AllGT_Idx_gr8'
-                                        # 'IPDC_ge$X$_$YYY$_GT$Z$'
+                                        # 'SelBin2sH21'
+sTask = 'IPDC_ge8_Avg_GT5'              # 'IPDC_ge$X$_$YYY$_GT$Z$'
                                         # $X$ in [2, 3, 4, 5, 6, 7, 8, 9]
                                         # $YYY$ in [Avg, Max]
                                         # $Z$ in [0, 1, 5]
+sFilt = 'CI_PpN~>=~8.5'                 # '$X$~$Y$~$Z$'
+                                        # $X$: Column header
+                                        # $Y$: in [<, <=, ==, >=, >]
+                                        # $Z$: value
+sNmFPre = 'CI_PpN'                      # simplified col. header (for nmF)
+lProp = ['Avg', 'Max']                  # ['Avg'] / ['Max'] / ['Avg', 'Max']
+lSGT = L_S_GT                           # list of genotypes used
+
 cSep = ';'
 
-# derived values - tasks ------------------------------------------------------
-sSelNmF = sSelBC2 + '_' + sTask
-# GT0
-lTaskAvgGT0 = ['IPDC_ge2_Avg_GT0', 'IPDC_ge3_Avg_GT0',
-               'IPDC_ge4_Avg_GT0', 'IPDC_ge5_Avg_GT0',
-               'IPDC_ge6_Avg_GT0', 'IPDC_ge7_Avg_GT0',
-               'IPDC_ge8_Avg_GT0', 'IPDC_ge9_Avg_GT0']
-lTaskMaxGT0 = ['IPDC_ge2_Max_GT0', 'IPDC_ge3_Max_GT0',
-               'IPDC_ge4_Max_GT0', 'IPDC_ge5_Max_GT0',
-               'IPDC_ge6_Max_GT0', 'IPDC_ge7_Max_GT0',
-               'IPDC_ge8_Max_GT0', 'IPDC_ge9_Max_GT0']
-lTaskAvgMaxGT0 = lTaskAvgGT0 + lTaskMaxGT0
-lTaskGE2GT0 = ['IPDC_ge2_Avg_GT0', 'IPDC_ge2_Max_GT0']
-lTaskGE3GT0 = ['IPDC_ge3_Avg_GT0', 'IPDC_ge3_Max_GT0']
-lTaskGE4GT0 = ['IPDC_ge4_Avg_GT0', 'IPDC_ge4_Max_GT0']
-lTaskGE5GT0 = ['IPDC_ge5_Avg_GT0', 'IPDC_ge5_Max_GT0']
-lTaskGE6GT0 = ['IPDC_ge6_Avg_GT0', 'IPDC_ge6_Max_GT0']
-lTaskGE7GT0 = ['IPDC_ge7_Avg_GT0', 'IPDC_ge7_Max_GT0']
-lTaskGE8GT0 = ['IPDC_ge8_Avg_GT0', 'IPDC_ge8_Max_GT0']
-lTaskGE9GT0 = ['IPDC_ge9_Avg_GT0', 'IPDC_ge9_Max_GT0']
-
-# GT1
-lTaskAvgGT1 = ['IPDC_ge2_Avg_GT1', 'IPDC_ge3_Avg_GT1',
-               'IPDC_ge4_Avg_GT1', 'IPDC_ge5_Avg_GT1',
-               'IPDC_ge6_Avg_GT1', 'IPDC_ge7_Avg_GT1',
-               'IPDC_ge8_Avg_GT1', 'IPDC_ge9_Avg_GT1']
-lTaskMaxGT1 = ['IPDC_ge2_Max_GT1', 'IPDC_ge3_Max_GT1',
-               'IPDC_ge4_Max_GT1', 'IPDC_ge5_Max_GT1',
-               'IPDC_ge6_Max_GT1', 'IPDC_ge7_Max_GT1',
-               'IPDC_ge8_Max_GT1', 'IPDC_ge9_Max_GT1']
-lTaskAvgMaxGT1 = lTaskAvgGT1 + lTaskMaxGT1
-lTaskGE2GT1 = ['IPDC_ge2_Avg_GT1', 'IPDC_ge2_Max_GT1']
-lTaskGE3GT1 = ['IPDC_ge3_Avg_GT1', 'IPDC_ge3_Max_GT1']
-lTaskGE4GT1 = ['IPDC_ge4_Avg_GT1', 'IPDC_ge4_Max_GT1']
-lTaskGE5GT1 = ['IPDC_ge5_Avg_GT1', 'IPDC_ge5_Max_GT1']
-lTaskGE6GT1 = ['IPDC_ge6_Avg_GT1', 'IPDC_ge6_Max_GT1']
-lTaskGE7GT1 = ['IPDC_ge7_Avg_GT1', 'IPDC_ge7_Max_GT1']
-lTaskGE8GT1 = ['IPDC_ge8_Avg_GT1', 'IPDC_ge8_Max_GT1']
-lTaskGE9GT1 = ['IPDC_ge9_Avg_GT1', 'IPDC_ge9_Max_GT1']
-
-# GT5
-lTaskAvgGT5 = ['IPDC_ge2_Avg_GT5', 'IPDC_ge3_Avg_GT5',
-               'IPDC_ge4_Avg_GT5', 'IPDC_ge5_Avg_GT5',
-               'IPDC_ge6_Avg_GT5', 'IPDC_ge7_Avg_GT5',
-               'IPDC_ge8_Avg_GT5', 'IPDC_ge9_Avg_GT5']
-lTaskMaxGT5 = ['IPDC_ge2_Max_GT5', 'IPDC_ge3_Max_GT5',
-               'IPDC_ge4_Max_GT5', 'IPDC_ge5_Max_GT5',
-               'IPDC_ge6_Max_GT5', 'IPDC_ge7_Max_GT5',
-               'IPDC_ge8_Max_GT5', 'IPDC_ge9_Max_GT5']
-lTaskAvgMaxGT5 = lTaskAvgGT5 + lTaskMaxGT5
-lTaskGE2GT5 = ['IPDC_ge2_Avg_GT5', 'IPDC_ge2_Max_GT5']
-lTaskGE3GT5 = ['IPDC_ge3_Avg_GT5', 'IPDC_ge3_Max_GT5']
-lTaskGE4GT5 = ['IPDC_ge4_Avg_GT5', 'IPDC_ge4_Max_GT5']
-lTaskGE5GT5 = ['IPDC_ge5_Avg_GT5', 'IPDC_ge5_Max_GT5']
-lTaskGE6GT5 = ['IPDC_ge6_Avg_GT5', 'IPDC_ge6_Max_GT5']
-lTaskGE7GT5 = ['IPDC_ge7_Avg_GT5', 'IPDC_ge7_Max_GT5']
-lTaskGE8GT5 = ['IPDC_ge8_Avg_GT5', 'IPDC_ge8_Max_GT5']
-lTaskGE9GT5 = ['IPDC_ge9_Avg_GT5', 'IPDC_ge9_Max_GT5']
-
-# Bin2sA14 / All GT
-lTaskAvg = lTaskAvgGT0 + lTaskAvgGT1 + lTaskAvgGT5
-lTaskMax = lTaskMaxGT0 + lTaskMaxGT1 + lTaskMaxGT5
-lTaskAvgMax = lTaskAvgMaxGT0 + lTaskAvgMaxGT1 + lTaskAvgMaxGT5
-lTaskGE2 = lTaskGE2GT0 + lTaskGE2GT1 + lTaskGE2GT5
-lTaskGE3 = lTaskGE3GT0 + lTaskGE3GT1 + lTaskGE3GT5
-lTaskGE4 = lTaskGE4GT0 + lTaskGE4GT1 + lTaskGE4GT5
-lTaskGE5 = lTaskGE5GT0 + lTaskGE5GT1 + lTaskGE5GT5
-lTaskGE6 = lTaskGE6GT0 + lTaskGE6GT1 + lTaskGE6GT5
-lTaskGE7 = lTaskGE7GT0 + lTaskGE7GT1 + lTaskGE7GT5
-lTaskGE8 = lTaskGE8GT0 + lTaskGE8GT1 + lTaskGE8GT5
-lTaskGE9 = lTaskGE9GT0 + lTaskGE9GT1 + lTaskGE9GT5
-
-# names and paths -------------------------------------------------------------
-pRelDatF_G = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
-                          '11_ResultCSV_GT015', '21_R_81_BinaryOps')
-pRelDatF_92 = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
-                           '92_Networkx', '01_Data')
+# paths -----------------------------------------------------------------------
+pRelDatF = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
+                        '80_ResultsCSV_Proc', '81_BinaryOps')
+pRelOutF = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
+                        '92_Networkx', '01_Data')
 pRelPltF = os.path.join('..', '..', '..', '12_SysBio02_DataAnalysis',
                         '92_Networkx', '09_Plots')
-nmDatF = 'Corr__BinOp_MetD_GT0_AllD_PhoD_GT0_AllD__IdxPosDvClSD_gr8_SD2_gr8'
-nmPltF = 'NetworkPlot_Idx_gr8_SD2_gr8_GT0'
-pRelDatF = pRelDatF_G
-if sTask in ['Idx_gr8_SD2_gr8_GT0', 'Idx_gr8_SD2_gr8_GT1',
-             'Idx_gr8_SD2_gr8_GT2', 'Idx_gr8_SD2_gr8_GT3',
-             'Idx_gr8_SD2_gr8_GT4', 'Idx_gr8_SD2_gr8_GT5',
-             'SRR_AllGT_Idx_gr8']:
-    pRelDatF = pRelDatF_92
-    nmPltF = 'NetworkPlot' + '_' + sSelNmF
-    if sTask == 'Idx_gr8_SD2_gr8_GT0':
-        nmDatF = 'Corr__BinOp_MetD_GT0_AllD_PhoD_GT0_AllD__IdxPosDvClSD_gr8_SD2_gr8'
-    elif sTask == 'Idx_gr8_SD2_gr8_GT1':
-        nmDatF = 'Corr__BinOp_MetD_GT1_AllD_PhoD_GT1_AllD__IdxPosDvClSD_gr8_SD2_gr8'
-    elif sTask == 'Idx_gr8_SD2_gr8_GT2':
-        nmDatF = 'Corr__BinOp_MetD_GT2_AllD_PhoD_GT2_AllD__IdxPosDvClSD_gr8_SD2_gr8'
-    elif sTask == 'Idx_gr8_SD2_gr8_GT3':
-        nmDatF = 'Corr__BinOp_MetD_GT3_AllD_PhoD_GT3_AllD__IdxPosDvClSD_gr8_SD2_gr8'
-    elif sTask == 'Idx_gr8_SD2_gr8_GT4':
-        nmDatF = 'Corr__BinOp_MetD_GT4_AllD_PhoD_GT4_AllD__IdxPosDvClSD_gr8_SD2_gr8'
-    elif sTask == 'Idx_gr8_SD2_gr8_GT5':
-        nmDatF = 'Corr__BinOp_MetD_GT5_AllD_PhoD_GT5_AllD__IdxPosDvClSD_gr8_SD2_gr8'
-    elif sTask == 'SRR_AllGT_Idx_gr8':
-        nmDatF = 'StronglyReducedResults_CorrDevClust_AllGT_NoMalt__SortIdxPosDvClSD'
-        nmPltF = 'NetworkPlot_SRR_Top459_Idx_gr8_AllGT'
-elif sTask in lTaskAvgMax:
-    pRelDatF = pRelDatF_G
-    nmPltF = 'NetworkPlot' + '__' + sSelNmF
-    if sTask in lTaskAvgMaxGT0:
-        nmDatF = 'Corr__BinOp_MetD_DvSD_GT0_AllD_PhoD_DvSD_GT0_AllD'
-    elif sTask in lTaskAvgMaxGT1:
-        nmDatF = 'Corr__BinOp_MetD_DvSD_GT1_AllD_PhoD_DvSD_GT1_AllD'
-    elif sTask in lTaskAvgMaxGT5:
-        nmDatF = 'Corr__BinOp_MetD_DvSD_GT5_AllD_PhoD_DvSD_GT5_AllD'
+
+# string column attributes for sorting dict. ----------------------------------
+sColAttr1 = S_MET_D      # attribute 1 is assigned to the metabolites
+# sColAttr2 = S_PHO_D      # attribute 2 is assigned to the phosphopeptides
+sColAttr2 = S_BIN_C_2    # attribute 2 is assigned to BinCode2
+
+# derived values - filtering, sorting and file name ---------------------------
+sHdC, sCmp, sFiltVal = sFilt.split(S_WAVE)
+sSelNmF = sSelBC2 + S_2USC + sNmFPre + S_2USC + D_CMP[sCmp]
+sSelNmF += S_USC + sFiltVal.replace(S_DOT, S_P)
+sNmPltF = S_NETW_PLT + S_2USC + sSelNmF
+try:
+    filtVal = float(sFiltVal)
+except:
+    filtVal = 0
+
+# derived values - file names -------------------------------------------------
+# sNmDatF = D_S_NM_F_INP[sGT]
 
 # strings ---------------------------------------------------------------------
 sColAttr1 = S_MET_D      # attribute 1 is assigned to the metabolites
 # sColAttr2 = S_PHO_D      # attribute 2 is assigned to the phosphopeptides
 sColAttr2 = S_BIN_C_2    # attribute 2 is assigned to BinCode2
 
-sNumAttr1 = S_IDX_PDCSD
-
-thrN1 = THR_8
-selOp = S_AVG
-
-if sTask in ['Idx_gr8_SD2_gr8_GT0', 'Idx_gr8_SD2_gr8_GT1',
-             'Idx_gr8_SD2_gr8_GT2', 'Idx_gr8_SD2_gr8_GT3',
-             'Idx_gr8_SD2_gr8_GT4', 'Idx_gr8_SD2_gr8_GT5']:
-    sNumAttr1 = 'idxPosDvClSD'
-elif sTask in ['SRR_AllGT_Idx_gr8']:
-    sNumAttr1 = 'idxPosDvClSD_AllGT'
-elif sTask in lTaskAvgMax:
-    sNumAttr1 = S_IDX_PDCSD
-    if sTask in lTaskGE2:
-        thrN1 = THR_2
-    elif sTask in lTaskGE3:
-        thrN1 = THR_3
-    elif sTask in lTaskGE4:
-        thrN1 = THR_4
-    elif sTask in lTaskGE5:
-        thrN1 = THR_5
-    elif sTask in lTaskGE6:
-        thrN1 = THR_6
-    elif sTask in lTaskGE7:
-        thrN1 = THR_7
-    elif sTask in lTaskGE8:
-        thrN1 = THR_8
-    elif sTask in lTaskGE9:
-        thrN1 = THR_9
-    if sTask in lTaskAvg:
-        selOp = S_AVG
-    elif sTask in lTaskMax:
-        selOp = S_MAX
+sNumAttr1 = sHdC         # col. header of numerical attribute
 
 # sorting and filter dictionaries ---------------------------------------------
 dSort_G = None
@@ -270,6 +167,10 @@ dFilt_BC2G = {S_BIN_C_2: ['1.1', '1.3', '2.2', '4.1', '5.3', '8.2', '10.5',
                           '29.4', '29.5', '30.1', '30.11', '30.2', '30.3',
                           '30.8', '31.1', '33.1', '33.99', '34.1', '34.19',
                           '34.5', '34.7']}
+dFilt_BC2H = {S_BIN_C_2: ['1.1', '1.3', '2.2', '4.1', '8.2', '10.5', '12.1',
+                          '12.2', '17.3', '30.1', '30.11', '30.2', '30.3',
+                          '30.8', '31.1', '33.1', '34.1', '34.15', '34.19',
+                          '34.5', '34.7']}
 dFilt_BC2 = dFilt_BC2A
 if sSelBC2 == 'SelBin2sA14':
     dFilt_BC2 = dFilt_BC2A
@@ -285,6 +186,8 @@ elif sSelBC2 == 'SelBin2sF24':
     dFilt_BC2 = dFilt_BC2F
 elif sSelBC2 == 'SelBin2sG27':
     dFilt_BC2 = dFilt_BC2G
+elif sSelBC2 == 'SelBin2sH21':
+    dFilt_BC2 = dFilt_BC2H
 dThrN_IPDC = {sNumAttr1: ('>=', thrN1)}
 dFilt_MBC2IPDC = {S_SEL: dFilt_BC2,
                   S_THR: dThrN_IPDC,
@@ -420,8 +323,8 @@ xAxisAnnot = dict(showgrid = False, zeroline = False, showticklabels = False)
 yAxisAnnot = dict(showgrid = False, zeroline = False, showticklabels = False)
 
 # === INPUT PROCESSING ========================================================
-nmDatF += ('.' + S_EXT_CSV)
-nmPltF += ('.' + S_EXT_PDF)
+sNmDatF += ('.' + S_EXT_CSV)
+sNmPltF += ('.' + S_EXT_PDF)
 # lAttr = [ATTR_1, ATTR_2]
 lSCol = [sColAttr1, sColAttr2]
 lLwdNode = [lwdNodeAttr1, lwdNodeAttr2]
@@ -600,12 +503,12 @@ def getNodeTrace(G, dPos, lSAttr, szMk, lwdNd, hoverInfNd, sConNd, modeNd,
 
 # === MAIN ====================================================================
 print('Task:', sSelNmF)
-dfrSF = sortAndFilter(pd.read_csv(joinToPath(pRelDatF, nmDatF), sep = cSep),
+dfrSF = sortAndFilter(pd.read_csv(joinToPath(pRelDatF, sNmDatF), sep = cSep),
                       cOp = selOp,
                       dSrt = dSort_MB2ND,
                       dFlt = dFilt_MBC2IPDC,
                       lSCN = list(dThrN_IPDC))
-dfrSF.to_csv(joinToPath(pRelDatF_92, sSelNmF + '_' + nmDatF), sep = cSep)
+dfrSF.to_csv(joinToPath(pRelDatF_92, sSelNmF + '_' + sNmDatF), sep = cSep)
 sCA1, sCA2, sNumA, lNodeTrace = sColAttr1, sColAttr2, sNumAttr1, []
 G = nx.convert_matrix.from_pandas_edgelist(dfrSF, source = sCA1, target = sCA2,
                                            edge_attr = sNumA)
@@ -643,5 +546,5 @@ fig = go.Figure(data = lEdgeTrace + lNodeTrace,
                                    margin = dMarginTitle,
                                    annotations = lAnnot,
                                    xaxis = xAxisAnnot, yaxis = yAxisAnnot))
-fig.write_image(joinToPath(pRelPltF, nmPltF))
+fig.write_image(joinToPath(pRelPltF, sNmPltF))
 print('-'*37, 'DONE', '-'*37)

@@ -354,40 +354,40 @@ def getDevR(dITp, dINP, lCmpR, lXSDR, arrD1, arrD2, lnArr, lnBnd, k = 0):
                      dITp['nDigRndDvSc'])
     # fill lXSDR and calculate the indices dINP['iNeg'] and dINP['iPos']
     if cMin > 0:    # both arrD1[k] and arrD2[k] positive
-        if cMin <= dITp['lPosDvClBnd'][0]:
-            lXSDR[k] = round(cMin, dITp['nDigRndDvSD'])
+        if cMin <= dITp['lPosCIBnd'][0]:
+            lXSDR[k] = round(cMin, dITp['nDigRndCI'])
         else:       # both above lowest threshold
-            for j, cThr in enumerate(reversed(dITp['lPosDvClBnd'])):
+            for j, cThr in enumerate(reversed(dITp['lPosCIBnd'])):
                 if cMin > cThr:
                     lXSDR[k] = cThr
-                    dINP['iPos'] += dITp['lDvClIdxWts'][lnBnd - j - 1]
+                    dINP['iPos'] += dITp['lCIWts'][lnBnd - j - 1]
                     break
     elif cMax < 0:  # both arrD1[k] and arrD2[k] negative
-        if cMax >= dITp['lNegDvClBnd'][0]:
-            lXSDR[k] = round(-cMax, dITp['nDigRndDvSD'])
+        if cMax >= dITp['lNegCIBnd'][0]:
+            lXSDR[k] = round(-cMax, dITp['nDigRndCI'])
         else:       # both below highest neg. threshold
-            for j, cThr in enumerate(reversed(dITp['lNegDvClBnd'])):
+            for j, cThr in enumerate(reversed(dITp['lNegCIBnd'])):
                 if cMax < cThr:
                     lXSDR[k] = -cThr
-                    dINP['iPos'] += dITp['lDvClIdxWts'][lnBnd - j - 1]
+                    dINP['iPos'] += dITp['lCIWts'][lnBnd - j - 1]
                     break
     else:           # one of arrD1[k] and arrD2[k] is <=0, one is >= 0
-        if cMin >= dITp['lNegDvClBnd'][0] or cMax <= dITp['lPosDvClBnd'][0]:
+        if cMin >= dITp['lNegCIBnd'][0] or cMax <= dITp['lPosCIBnd'][0]:
             lXSDR[k] = round(-min(abs(cMin), abs(cMax)),
-                             dITp['nDigRndDvSD'])
+                             dITp['nDigRndCI'])
         else:       # both abs. values above lowest threshold
-            for j, cThr in enumerate(reversed(dITp['lPosDvClBnd'])):
+            for j, cThr in enumerate(reversed(dITp['lPosCIBnd'])):
                 if cMax > cThr and cMin < -cThr:
                     lXSDR[k] = -cThr
-                    dINP['iNeg'] -= dITp['lDvClIdxWts'][lnBnd - j - 1]
+                    dINP['iNeg'] -= dITp['lCIWts'][lnBnd - j - 1]
                     break
 
 def compDv(dITp, arrD1, arrD2):
-    assert len(arrD1) == len(arrD2) and len(dITp['lPosDvClBnd']) > 0
-    lenArr, lenBnd = len(arrD1), len(dITp['lPosDvClBnd'])
+    assert len(arrD1) == len(arrD2) and len(dITp['lPosCIBnd']) > 0
+    lenArr, lenBnd = len(arrD1), len(dITp['lPosCIBnd'])
     # calculate the basic score list - comparing single features: lCmpR
     # calculate which features have > x SD deviation for both data: lXSDR
-    dITp['lNegDvClBnd'] = [-x for x in dITp['lPosDvClBnd']]
+    dITp['lNegCIBnd'] = [-x for x in dITp['lPosCIBnd']]
     dINP, lCmpR, lXSDR = {'iNeg': 0., 'iPos': 0.}, ['']*lenArr, ['']*lenArr
     for k in range(lenArr):
         if arrD1[k] != '' and arrD2[k] != '':
@@ -395,13 +395,15 @@ def compDv(dITp, arrD1, arrD2):
     # calculate the sums of the neg. and pos. values of the basic score list
     lCmpRS = [sum(x for x in lCmpR if x != '' and x < 0),
               sum(x for x in lCmpR if x != '' and x > 0)]
+    lCmpRS.append(lCmpRS[0] + lCmpRS[1])    # sum of neg. and pos. DvSc
     # initialise lXSDRS with the indices dINP['iNeg'] and dINP['iPos']
-    lXSDRS = [dINP['iNeg'], dINP['iPos']]
+    # and the sum of these (neg. and pos. CI)
+    lXSDRS = [dINP['iNeg'], dINP['iPos'], dINP['iNeg'] + dINP['iPos']]
     # calculate the occurrences of neg. and pos. values of lXSDR
-    for cThr in list(reversed(dITp['lNegDvClBnd'])) + dITp['lPosDvClBnd']:
+    for cThr in list(reversed(dITp['lNegCIBnd'])) + dITp['lPosCIBnd']:
         lXSDRS += [sum(1 for x in lXSDR if x == cThr)]
     return (lCmpR + lXSDR + GF.roundList(lCmpRS, dITp['nDigRndDvSc']) +
-            GF.roundList(lXSDRS, dITp['nDigRndDvSD']))
+            GF.roundList(lXSDRS, dITp['nDigRndCI']))
 
 def fillDictRCrDv(dIG, dITp, dR, lDfr, lDfrDvT, lDfrAIC, sMn = ''):
     assert len(lDfrDvT) == len(lDfrAIC)
@@ -444,8 +446,8 @@ def iniDataTACD(dITp, tID, lNmI, sMn = '', sSep = '_'):
     lSAv = copy.deepcopy(dITp['lSAvAll'])
     lSTop = copy.deepcopy(dITp['lSTopAll'])
     if sMn == '':
-        lSAv += (dITp['lSAvDvSc'] + dITp['lSAvDvSD'])
-        lSTop += (dITp['lSTopDvSc'] + dITp['lSTopDvSD'])
+        lSAv += (dITp['lSAvDvSc'] + dITp['lSAvCI'])
+        lSTop += (dITp['lSTopDvSc'] + dITp['lSTopCI'])
     lNmCol = [s for s in lSAv]
     lNmCol += [s + sSep + str(n) for s in lSTop for n in lNTop]
     pdDfrR = pd.DataFrame(index = lNmI, columns = lNmCol)
@@ -494,7 +496,7 @@ def calcTopSc(dITp, pdDfr, lNTop, lCtHd, lNmI, i = 0, sC = '', doWt = False):
     arrTop = np.zeros((len(lNmI), len(lNTop)*len(lCtHd)))
     lSHd4Top = dITp['lSCorrVals'] + lCtHd[len(dITp['lSCorrVals2x']):]
     for iCt, sHd in enumerate(lSHd4Top):
-        bAsc = GF.getBoolLDict([dITp['dSSumSc'], dITp['dSIdxSD']], sHd)
+        bAsc = GF.getBoolLDict([dITp['dSDvSc'], dITp['dSCI']], sHd)
         dfrSrt = pdDfr.sort_values(sHd, ascending = bAsc)
         for j, nTop in enumerate(lNTop):
             nTop = min(nTop, dfrSrt.shape[0])
@@ -514,7 +516,7 @@ def calcTACD(dITp, dOIn, pdDfr, lNmI, i, sC = '', doWt = False, sMn = '',
     pdDfrR, lNTop = iniDataTACD(dITp, dOIn['tID'], lNmI, sMn, sSep)
     lH = copy.deepcopy(dITp['lSCorrVals2x'])
     if sMn == '':
-        lH += (list(dITp['dSSumSc']) + list(dITp['dSIdxSD']))
+        lH += (list(dITp['dSDvSc']) + list(dITp['dSCI']))
     pdDfrR.iloc[:, :len(lH)] = np.around(calcAvSc(dITp, pdDfr, lH, lNmI, i = i,
                                                   sC = sC), dITp['nDigRndBO'])
     pdDfrR.iloc[:, len(lH):] = calcTopSc(dITp, pdDfr, lNTop, lH, lNmI, i = i,

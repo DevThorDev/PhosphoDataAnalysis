@@ -22,15 +22,15 @@ NM_CT = 'Ct'
 
 S_NEG = 'Neg'
 S_POS = 'Pos'
-S_SUM = 'Sum'
-S_IDX = 'Idx'
 S_CORR_L = 'Correlation'
 S_DV_SC = 'DvSc'
-S_DV_CL_SD = 'DvClSD'
-S_SNDS = S_SUM + S_NEG + S_DV_SC
-S_SPDS = S_SUM + S_POS + S_DV_SC
-S_INDC = S_IDX + S_NEG + S_DV_CL_SD
-S_IPDC = S_IDX + S_POS + S_DV_CL_SD
+S_CI = 'CI'
+S_SNDS = S_NEG + S_DV_SC
+S_SPDS = S_POS + S_DV_SC
+S_SPNDS = S_POS + S_NEG + S_DV_SC
+S_NCI = S_NEG + S_CI
+S_PCI = S_POS + S_CI
+S_PNCI = S_POS + S_NEG + S_CI
 
 S_OVER_REP = 'OverRep'
 S_N_OCC_ABS = 'nOccurrAbs'
@@ -60,7 +60,7 @@ cGTAttr1 = NM_GT0       # NM_GT0 / NM_GT1 / NM_GT2 / NM_GT3 / NM_GT4 / NM_GT5
 cGTAttr2 = NM_GT0       # NM_GT0 / NM_GT1 / NM_GT2 / NM_GT3 / NM_GT4 / NM_GT5
 sNmDatF = 'Corr__BinOp_MetD_' + cGTAttr1 + '_AllD_PhoD_' + cGTAttr2 + '_AllD'
 nMin, nMax = 1, 100
-lSrt = [S_IPDC, S_SPDS, S_CORR_L]
+lSrt = [S_PNCI, S_PCI, S_CORR_L]
 lAsc = [False, False, False]
 sMCorr = S_M_CORR_BON    # None / S_M_CORR_BON
 

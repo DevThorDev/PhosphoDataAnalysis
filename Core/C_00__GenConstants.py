@@ -152,8 +152,6 @@ S_NEG = 'Neg'
 S_POS = 'Pos'
 S_AV = 'Av'
 S_TOP = 'Top'
-S_SUM = 'Sum'
-S_IDX = 'Idx'
 S_CORR_S = 'Corr'
 S_CORR_L = 'Correlation'
 S_CORR_V = 'CorrV'
@@ -163,8 +161,8 @@ S_SPEAR_P = 'SpearP'
 S_KEND_V = 'KendV'
 S_KEND_P = 'KendP'
 S_DV_SC = 'DvSc'
-S_DV_CL_SD = 'DvClSD'
-S_OCC_CL_SD = 'OccClSD'
+S_CI = 'CI'
+S_OCC_CI = 'OccCI'
 S_N_OCC_ABS = 'nOccurrAbs'
 S_P_VAL_OV = 'pValFOver'
 S_P_VAL_UN = 'pValFUnder'
@@ -197,9 +195,11 @@ L_S_BASIC_COMB_D_L = (L_S_BASIC_D_L_C + L_S_COMB_D_L_C +
                       L_S_BASIC_D_L_G + L_S_COMB_D_L_C)
 L_S_USED_COMB_D_L = (L_S_BASIC_D_L_C[1:] + L_S_COMB_D_L_C +
                      L_S_BASIC_D_L_G[1:] + L_S_COMB_D_L_G)
-S_SNDS = S_SUM + S_NEG + S_DV_SC
-S_SPDS = S_SUM + S_POS + S_DV_SC
-S_INDC = S_IDX + S_NEG + S_DV_CL_SD
-S_IPDC = S_IDX + S_POS + S_DV_CL_SD
+S_SNDS = S_NEG + S_DV_SC
+S_SPDS = S_POS + S_DV_SC
+S_SPNDS = S_POS + S_NEG + S_DV_SC
+S_NCI = S_NEG + S_CI
+S_PCI = S_POS + S_CI
+S_PNCI = S_POS + S_NEG + S_CI
 
 ###############################################################################

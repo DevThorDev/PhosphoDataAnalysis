@@ -50,12 +50,12 @@ class BinaryOps(DataBaseClass):
             self.dITp['lSHeadRes'] += OD.cDfrDvT.columns.to_list()
         lCmp = GF.cutNSplFromL(list(self.lOD[0].cDfrDvT.columns))
         self.dITp['lSHeadRes'] += [self.dITp['sDvSc'] + sSep + s for s in lCmp]
-        self.dITp['lSHeadRes'] += [self.dITp['sDvSD'] + sSep + s for s in lCmp]
-        self.dITp['lSHeadRes'] += list(self.dITp['dSSumSc'])
-        self.dITp['lSHeadRes'] += list(self.dITp['dSIdxSD'])
-        for cThr in (list(reversed([-x for x in self.dITp['lPosDvClBnd']])) +
-                     self.dITp['lPosDvClBnd']):
-            self.dITp['lSHeadRes'] += [self.dITp['sOccSD'] + sSep + str(cThr)]
+        self.dITp['lSHeadRes'] += [self.dITp['sCI'] + sSep + s for s in lCmp]
+        self.dITp['lSHeadRes'] += list(self.dITp['dSDvScX'])
+        self.dITp['lSHeadRes'] += list(self.dITp['dSCIX'])
+        for cThr in (list(reversed([-x for x in self.dITp['lPosCIBnd']])) +
+                     self.dITp['lPosCIBnd']):
+            self.dITp['lSHeadRes'] += [self.dITp['sOccCI'] + sSep + str(cThr)]
     
     def updateDITp(self, sSep = '_'):
         self.dITp['tCNmRes'] = (self.dITp['sCt'], self.tID[0], self.tID[1])
