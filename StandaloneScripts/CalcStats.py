@@ -13,6 +13,9 @@ S_USC = '_'
 S_DOT = '.'
 S_CSV = 'csv'
 
+S_ALL_TP = 'AllTp'
+S_TPM = 'Met'
+S_TPP = 'Pho'
 S_ALL_GT = 'AllGT'
 S_GT0 = 'GT0'
 S_GT1 = 'GT1'
@@ -52,10 +55,6 @@ S_V_WTH = 'Vwithin'
 S_V_RAT = 'Vbtw/Vwithin'
 S_KW = 'Kruskal-W.'
 
-L_S_C_TST = [S_MN_ALL, S_MN_FT1, S_MN_FT2, S_MN_FT3, S_MN_FT4, S_N_OBS_ALL,
-             S_N_OBS_FT1, S_N_OBS_FT2, S_N_OBS_FT3, S_N_OBS_FT4,
-             S_MAD, S_SD_ALL, S_SD_FT1, S_SD_FT2, S_SD_FT3, S_SD_FT4, S_SD_MNS,
-             S_SD_RAT, S_KW]
 L_S_C_RES = [S_N_OBS_ALL, S_N_OBS_FT1, S_N_OBS_FT2, S_N_OBS_FT3, S_N_OBS_FT4,
              S_MAD, S_SD_ALL, S_SD_FT1, S_SD_FT2, S_SD_FT3, S_SD_FT4, S_SD_MNS,
              S_SD_RAT, S_V_BTW, S_V_WTH, S_V_RAT, S_KW]
@@ -64,6 +63,9 @@ L_S_C_FULL = [S_MN_ALL, S_MN_FT1, S_MN_FT2, S_MN_FT3, S_MN_FT4] + L_S_C_RES
 R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
+cMode = 'Full'              # 'Test' / 'Full'
+lSCol = L_S_C_RES
+
 pCSV = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
                     '04_SysBio_DataAnalysis', '80_ResultsCSV')
 sSep = ';'
@@ -71,40 +73,44 @@ sRes = 'Res'
 sFEnd = 'SortConc'
 sFStMet = 'ST1A__Metabolite_log2'
 sFStPho = 'ST1B__Phosphopeptide_log2'
-dSTp = {'Met': sFStMet, 'Pho': sFStPho}
+
 dSGT = {S_GT0: 'WT', S_GT1: 'PGM', S_GT5: 'SWEET'}
 dSFt = {S_FT1: 'DR', S_FT2: 'DS', S_FT3: 'NR', S_FT4: 'NS'}
-dSF = {(sTp, sGT): (dSTp[sTp] + S_USC + sGT + S_USC + sFEnd + S_DOT + S_CSV)
-        for sTp in dSTp for sGT in dSGT}
-# dSF = {(sTp, sGT): (dSTp[sTp] + S_USC + sGT + S_USC + sFEnd + S_DOT + S_CSV)
-#        for sTp in ['Met'] for sGT in [S_GT0]}
-dKFt = {('Met', S_GT0, S_FT1): list(range(1, 7)),
-        ('Met', S_GT0, S_FT2): list(range(1, 7)),
-        ('Met', S_GT0, S_FT3): list(range(1, 7)),
-        ('Met', S_GT0, S_FT4): list(range(1, 7)),
-        ('Met', S_GT1, S_FT1): list(range(1, 7)),
-        ('Met', S_GT1, S_FT2): list(range(1, 7)),
-        ('Met', S_GT1, S_FT3): list(range(1, 6)),
-        ('Met', S_GT1, S_FT4): list(range(1, 6)),
-        ('Met', S_GT5, S_FT1): list(range(1, 7)),
-        ('Met', S_GT5, S_FT2): list(range(1, 7)),
-        ('Met', S_GT5, S_FT3): list(range(1, 7)),
-        ('Met', S_GT5, S_FT4): list(range(1, 7)),
-        ('Pho', S_GT0, S_FT1): list(range(1, 7)),
-        ('Pho', S_GT0, S_FT2): list(range(1, 7)),
-        ('Pho', S_GT0, S_FT3): list(range(1, 7)),
-        ('Pho', S_GT0, S_FT4): list(range(1, 7)),
-        ('Pho', S_GT1, S_FT1): list(range(1, 7)),
-        ('Pho', S_GT1, S_FT2): list(range(1, 7)),
-        ('Pho', S_GT1, S_FT3): [1, 2, 3, 5],
-        ('Pho', S_GT1, S_FT4): list(range(1, 6)),
-        ('Pho', S_GT5, S_FT1): list(range(1, 7)),
-        ('Pho', S_GT5, S_FT2): list(range(1, 7)),
-        ('Pho', S_GT5, S_FT3): list(range(1, 7)),
-        ('Pho', S_GT5, S_FT4): list(range(1, 7))}
+dKFt = {(S_TPM, S_GT0, S_FT1): list(range(1, 7)),
+        (S_TPM, S_GT0, S_FT2): list(range(1, 7)),
+        (S_TPM, S_GT0, S_FT3): list(range(1, 7)),
+        (S_TPM, S_GT0, S_FT4): list(range(1, 7)),
+        (S_TPM, S_GT1, S_FT1): list(range(1, 7)),
+        (S_TPM, S_GT1, S_FT2): list(range(1, 7)),
+        (S_TPM, S_GT1, S_FT3): list(range(1, 6)),
+        (S_TPM, S_GT1, S_FT4): list(range(1, 6)),
+        (S_TPM, S_GT5, S_FT1): list(range(1, 7)),
+        (S_TPM, S_GT5, S_FT2): list(range(1, 7)),
+        (S_TPM, S_GT5, S_FT3): list(range(1, 7)),
+        (S_TPM, S_GT5, S_FT4): list(range(1, 7)),
+        (S_TPP, S_GT0, S_FT1): list(range(1, 7)),
+        (S_TPP, S_GT0, S_FT2): list(range(1, 7)),
+        (S_TPP, S_GT0, S_FT3): list(range(1, 7)),
+        (S_TPP, S_GT0, S_FT4): list(range(1, 7)),
+        (S_TPP, S_GT1, S_FT1): list(range(1, 7)),
+        (S_TPP, S_GT1, S_FT2): list(range(1, 7)),
+        (S_TPP, S_GT1, S_FT3): [1, 2, 3, 5],
+        (S_TPP, S_GT1, S_FT4): list(range(1, 6)),
+        (S_TPP, S_GT5, S_FT1): list(range(1, 7)),
+        (S_TPP, S_GT5, S_FT2): list(range(1, 7)),
+        (S_TPP, S_GT5, S_FT3): list(range(1, 7)),
+        (S_TPP, S_GT5, S_FT4): list(range(1, 7))}
 dSCFt = {(sTp, sGT, sFt): [dSFt[sFt] + S_USC + dSGT[sGT] + S_USC + str(k)
                            for k in dKFt[(sTp, sGT, sFt)]]
          for (sTp, sGT, sFt) in dKFt}
+
+# --- DERIVED INPUT -----------------------------------------------------------
+dSTp = {S_TPM: sFStMet, S_TPP: sFStPho}
+dSF = {(sTp, sGT): (dSTp[sTp] + S_USC + sGT + S_USC + sFEnd + S_DOT + S_CSV)
+        for sTp in dSTp for sGT in dSGT}
+if cMode == 'Test':
+    dSF = {(sTp, sGT): (dSTp[sTp] + S_USC + sGT + S_USC + sFEnd + S_DOT + S_CSV)
+            for sTp in [S_TPM] for sGT in [S_GT0]}
 
 # --- FUNCTIONS ---------------------------------------------------------------
 def flattenIt(cIterable, retArr = False):
@@ -160,11 +166,17 @@ def calcSDVals(d, i, dSFt):
     xSDevs = [d[i][D_S_SD_FT[sFt]] for sFt in dSFt]
     d[i][S_SD_MNS], d[i][S_SD_RAT] = calcSDMnsRat(xMeans, xSDevs)
 
-def calcVarVals(d, i, dSFt):
-    x = 0.0
+def calcVarVals(d, i, dV1L, dSFt):
+    x, y = 0., 0.
     for sFt in dSFt:
         x += d[i][D_S_N_OBS_FT[sFt]]*(d[i][D_S_MN_FT[sFt]] - d[i][S_MN_ALL])**2
-    x /= (d[i][S_N_OBS_ALL] - 1)
+        for cV in dV1L[sFt]:
+            if cV != '':
+                if not np.isnan(cV):
+                    y += (cV - d[i][D_S_MN_FT[sFt]])**2
+    x /= (len(dSFt) - 1)
+    y /= (d[i][S_N_OBS_ALL] - len(dSFt))
+    d[i][S_V_BTW], d[i][S_V_WTH], d[i][S_V_RAT] = x, y, x/y
 
 def writeBackRes(pdDfr, d, i, lSC=L_S_C_RES):
     lVClc = []
@@ -178,13 +190,13 @@ def saveAsCSV(pdDfr, pFC, sRs, sSp, wrtNmF=True):
     if wrtNmF:
         print('Saved results to', pFN, '...')
 
-def calcValsCF(pDat, sF, sRs, dSCFt, dSFt, sTp, sGT, sSp, nanP='omit'):
+def calcValsCF(pDat, sF, sRs, dSCFt, dSFt, lSCol, sTp, sGT, sSp, nanP='omit'):
     print('_'*8, 'Starting with', (sTp, sGT), '_'*8)
     pF = os.path.join(pDat, sF)
     if os.path.exists(pF):
         cDfr, dClc = pd.read_csv(pF, sep=sSp), {}
         for iL in cDfr.index:
-            dClc[iL] = {s: np.nan for s in L_S_C_RES}
+            dClc[iL] = {s: np.nan for s in lSCol}
             dV1L, lVInp = getDVal1L(cDfr, dSCFt, dSFt, sTp, sGT, iL)
             # calculate simple stats for all features together
             nObsA, cMeanA, _, cSDA = calcSimpleStats(lVInp)
@@ -196,11 +208,11 @@ def calcValsCF(pDat, sF, sRs, dSCFt, dSFt, sTp, sGT, sSp, nanP='omit'):
             # calculate SD of mean and SD ratio
             calcSDVals(dClc, iL, dSFt)
             # calculate variance ratio
-            calcVarVals(dClc, iL, dSFt)
+            calcVarVals(dClc, iL, dV1L, dSFt)
             # calculate p-value of Kruskal-Wallis test
             dClc[iL][S_KW] = stats.kruskal(*dV1L.values(), nan_policy=nanP)[1]
             # write back calculated values to DataFrame
-            writeBackRes(cDfr, dClc, iL, lSC=L_S_C_TST)
+            writeBackRes(cDfr, dClc, iL, lSC=lSCol)
         saveAsCSV(cDfr, pF, sRs=sRs, sSp=sSp)
     else:
         print('Path', pF, 'corresponding to', (sTp, sGT), 'does not exist!')
@@ -214,12 +226,12 @@ def printElapsedTimeSim(stT, cT, sPre = 'Time'):
 
 # --- MAIN --------------------------------------------------------------------
 startTime = time.time()
-print('+'*50 + ' START', time.ctime(startTime), '+'*30)
+print('+'*25 + ' START', time.ctime(startTime), '+'*25)
 for ((sTp, sGT), sF) in dSF.items():
-    calcValsCF(pCSV, sF, sRes, dSCFt, dSFt, sTp, sGT, sSp=sSep)
+    calcValsCF(pCSV, sF, sRes, dSCFt, dSFt, lSCol, sTp, sGT, sSp=sSep)
 
 print('-'*80)
 printElapsedTimeSim(startTime, time.time(), 'Total time')
-print('+'*30, 'DONE.', '+'*30)
+print('+'*37, 'DONE.', '+'*36)
 
 ###############################################################################
