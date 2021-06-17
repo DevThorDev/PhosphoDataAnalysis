@@ -292,10 +292,15 @@ def pltClCent(dITp, dIPlt, cTrD, dClDfr, pF, lClr = None,
             plt.close()
 
 # --- Functions (O_83__OverRep) -----------------------------------------------
+def plotProfileClrSpec():
+    pass
+
 def plotProfile(dITp, cDfr, pF, k = 0, tpPr = 'PD'):
     i, j = 0, 0
     while j < len(cDfr.columns):
         d = cDfr.iloc[:, j:(j + dITp['jIncr'])]
+        # print(d.columns)
+        # assert False
         i += dITp['iIncr']
         j += dITp['jIncr']
         pFN = GF.adaptPF4Plot(pF, dITp['pRelPltF'],
@@ -303,7 +308,11 @@ def plotProfile(dITp, cDfr, pF, k = 0, tpPr = 'PD'):
         if not os.path.isfile(pFN):
             cFig, cAx = plt.subplots()
             for sC in d.columns:
-                cAx.plot(d.loc[:, sC], lw = 0.75, label = sC)
+                if tpPr == 'PD' and sC in dITp['dClrBinC']:
+                    cAx.plot(d.loc[:, sC], lw = 0.75, label = sC,
+                             color = dITp['dClrBinC'][sC])
+                else:
+                    cAx.plot(d.loc[:, sC], lw = 0.75, label = sC)
             cAx.set_xlabel(dITp['dTpX'][tpPr])
             cAx.set_ylabel(dITp['dTpY'][dITp['lTpY'][k]][0])
             l = cAx.legend(loc = 'center',
