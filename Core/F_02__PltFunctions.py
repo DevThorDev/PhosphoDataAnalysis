@@ -292,15 +292,10 @@ def pltClCent(dITp, dIPlt, cTrD, dClDfr, pF, lClr = None,
             plt.close()
 
 # --- Functions (O_83__OverRep) -----------------------------------------------
-def plotProfileClrSpec():
-    pass
-
 def plotProfile(dITp, cDfr, pF, k = 0, tpPr = 'PD'):
     i, j = 0, 0
     while j < len(cDfr.columns):
         d = cDfr.iloc[:, j:(j + dITp['jIncr'])]
-        # print(d.columns)
-        # assert False
         i += dITp['iIncr']
         j += dITp['jIncr']
         pFN = GF.adaptPF4Plot(pF, dITp['pRelPltF'],

@@ -13,7 +13,8 @@ sMCorrectL = GC.S_M_CORR_BON    # None / S_M_CORR_BON
 sMCorrectS = sMCorrectL[:3]
 
 # --- data specific (Pho data) ------------------------------------------------
-nMinPD, nMaxPD = 1, 832
+# nMinPD, nMaxPD = 1, 832
+nMinPD, nMaxPD = 2499, 3330
 dSrtPD = {'Idx': {GC.S_MN_CONC: {'Asc': False}},
           'Col': {'Srt': ('float', 0), 'Asc': True}}
 lElCPD = [GC.S_BIN_C_2]
@@ -41,7 +42,9 @@ lElCCR = None
 # --- dictionaries containing profile-type specific input ---------------------
 lTpX = [GC.S_PD, GC.S_BO]
 lTpY = [GC.S_N_OCC, GC.S_OVER_REP, GC.S_UNDER_REP]
-lSXAx = ['Top $\it{n}$ of the most frequent phosphopeptides',
+# lSXAx = ['Top $\it{n}$ of the most frequent phosphopeptides',
+#          'Top $\it{n}$ of the strongest interactions']
+lSXAx = ['Top $\it{n}$ of the least frequent phosphopeptides',
          'Top $\it{n}$ of the strongest interactions']
 lSYAx = [GC.S_Y_N_OCC, GC.S_Y_P_VAL, GC.S_Y_P_VAL]
 lNDigRndYAx = [0, 2, 2]
