@@ -744,7 +744,7 @@ def reIndexSpec(d, srtMd = 'str', srtDg = 0):
     return d
 
 def printElapsedTimeSim(stT, cT, sPre = 'Time'):
-    # calculate and display elapsed time 
+    # calculate and display elapsed time
     elT = round(cT - stT, GC.R04)
     print(sPre, 'elapsed:', elT, 'seconds, this is', round(elT/60, GC.R04),
           'minutes or', round(elT/3600, GC.R04), 'hours or',

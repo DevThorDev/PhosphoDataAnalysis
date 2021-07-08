@@ -57,54 +57,54 @@ dWtDv = {'Min': 100, 'Max': 1}
 dNTopCrDv = {('MetD', 'MetD'): [10, 100, 500],
              ('MetDC', 'MetDC'): [10, 100, 500],
              ('MetDG', 'MetDG'): [10, 100, 500],
-             
+
              ('MetD', 'PhoD'): [10, 100, 1000, 10000],
              ('MetDC', 'PhoDC'): [10, 100, 1000, 10000],
              ('MetDG', 'PhoDG'): [10, 100, 1000, 10000],
-             
+
              ('PhoD', 'PhoD'): [10, 100, 1000, 10000, 100000, 1000000],
              ('PhoDC', 'PhoDC'): [10, 100, 1000, 10000, 100000, 1000000],
              ('PhoDG', 'PhoDG'): [10, 100, 1000, 10000, 100000, 1000000],
-             
+
              ('CombDC', 'CombDC'): [10, 100, 1000, 10000, 100000, 1000000],
              ('CombDG', 'CombDG'): [10, 100, 1000, 10000, 100000, 1000000],
-             
+
              ('MetDCX', 'MetDCX'): [10, 100, 500],
              ('MetDGX', 'MetDGX'): [10, 100, 500],
-             
+
              ('MetDCX', 'PhoDCX'): [10, 100, 1000, 10000],
              ('MetDGX', 'PhoDGX'): [10, 100, 1000, 10000],
-             
+
              ('PhoDCX', 'PhoDCX'): [10, 100, 1000, 10000, 100000, 1000000],
              ('PhoDGX', 'PhoDGX'): [10, 100, 1000, 10000, 100000, 1000000],
-             
+
              ('CombDCX', 'CombDCX'): [10, 100, 1000, 10000, 100000, 1000000],
              ('CombDGX', 'CombDGX'): [10, 100, 1000, 10000, 100000, 1000000],
-             
+
              ('ClRMetD', 'ClRMetD'): [3, 5, 10, 20],
              ('ClRMetDC', 'ClRMetDC'): [3, 5, 10, 20],
              ('ClRMetDG', 'ClRMetDG'): [3, 5, 10, 20],
-             
+
              ('ClRMetD', 'ClRPhoD'): [3, 5, 10, 20],
              ('ClRMetDC', 'ClRPhoDC'): [3, 5, 10, 20],
              ('ClRMetDG', 'ClRPhoDG'): [3, 5, 10, 20],
-             
+
              ('ClRPhoD', 'ClRPhoD'): [3, 5, 10, 20],
              ('ClRPhoDC', 'ClRPhoDC'): [3, 5, 10, 20],
              ('ClRPhoDG', 'ClRPhoDG'): [3, 5, 10, 20],
-             
+
              ('ClRCombDC', 'ClRCombDC'): [3, 5, 10, 20],
              ('ClRCombDG', 'ClRCombDG'): [3, 5, 10, 20],
-             
+
              ('ClRMetDCX', 'ClRMetDCX'): [3, 5, 10, 20],
              ('ClRMetDGX', 'ClRMetDGX'): [3, 5, 10, 20],
-             
+
              ('ClRMetDCX', 'ClRPhoDCX'): [3, 5, 10, 20],
              ('ClRMetDGX', 'ClRPhoDGX'): [3, 5, 10, 20],
-             
+
              ('ClRPhoDCX', 'ClRPhoDCX'): [3, 5, 10, 20],
              ('ClRPhoDGX', 'ClRPhoDGX'): [3, 5, 10, 20],
-             
+
              ('ClRCombDCX', 'ClRCombDCX'): [3, 5, 10, 20],
              ('ClRCombDGX', 'ClRCombDGX'): [3, 5, 10, 20]}
 
@@ -113,8 +113,8 @@ lCalcTACD = [((GC.S_MET_D, GC.S_PHO_D), False),     # (columns to calc. TACD,
              ((GC.S_MET_D, GC.S_BIN_C_2), True)]    #  do weighting (bool))
 
 # --- data specific -----------------------------------------------------------
-dSrtF = {'Idx': {sAv + sPos + sCorrV: {'Asc': False}}}
-dSrtR = {'Idx': {sAv + sPos + sCorrV: {'Asc': False}}}
+dSrtF = {GC.S_IDX: {sAv + sPos + sCorrV: {'Asc': False}}}
+dSrtR = {GC.S_IDX: {sAv + sPos + sCorrV: {'Asc': False}}}
 
 # --- results -----------------------------------------------------------------
 cSep = ';'    # separator for results files
@@ -137,7 +137,7 @@ nBins = 100             # number of bins
 histAlpha = 0.4         # alpha for histogram
 histXLim = (-1, 1)      # x-limits for histogram
 corrLim = (-1, 1)       # lower and upper limit for correlation
-compToNormDist = True   # compare to normal distribution? 
+compToNormDist = True   # compare to normal distribution?
 
 # --- derived values ----------------------------------------------------------
 lSAvCorrV = [sAv + sNeg + sCorrV, sAv + sPos + sCorrV]

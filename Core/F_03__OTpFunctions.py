@@ -523,10 +523,10 @@ def calcTACD(dITp, dOIn, pdDfr, lNmI, i, sC = '', doWt = False, sMn = '',
                                          sC = sC, doWt = doWt)
     print('Calculated all scores.')
     dSrt = dITp['dSrtR']
-    if set(dITp['dSrtF']['Idx']).issubset(set(pdDfrR)):
+    if set(dITp['dSrtF'][GC.S_IDX]).issubset(set(pdDfrR)):
         dSrt = dITp['dSrtF']
-    lSrt = list(dSrt['Idx'])
-    lAsc = [dSrt['Idx'][cK]['Asc'] for cK in dSrt['Idx']]
+    lSrt = list(dSrt[GC.S_IDX])
+    lAsc = [dSrt[GC.S_IDX][cK]['Asc'] for cK in dSrt[GC.S_IDX]]
     return pdDfrR.sort_values(by = lSrt, ascending = lAsc)
 
 def writeCrDvDatToF(dITp, cD, pF, lSHdr = []):
@@ -576,8 +576,8 @@ def getParProf(dITp, iTpO, isClR, lElCtDef):
             sID = 'CR'
     cDSrt, lElCt = dITp['dSrt' + sID], dITp['lElC' + sID]
     nMn, nMx = dITp['nMin' + sID], dITp['nMax' + sID]
-    lSrt = list(cDSrt['Idx'])
-    lAsc = [cDSrt['Idx'][cK]['Asc'] for cK in cDSrt['Idx']]
+    lSrt = list(cDSrt[GC.S_IDX])
+    lAsc = [cDSrt[GC.S_IDX][cK]['Asc'] for cK in cDSrt[GC.S_IDX]]
     if lElCt is None:    # no category to evaluate defined
         lElCt = lElCtDef
     return cDSrt, lSrt, lAsc, lElCt, nMn, nMx
@@ -634,7 +634,7 @@ def saveDictAsPdDfr(dITp, lPF, dSrt, cD, nMin, nMax, k = 0):
     cDfr.columns = cDfr.columns.astype(str)
     if dITp['dTpY'][dITp['lTpY'][k]][2]:
         cDfr = -np.log10(cDfr)
-    srtMd, srtDg = dSrt['Col']['Srt']
+    srtMd, srtDg = dSrt[GC.S_COL]['Srt']
     cDfr = GF.reIndexSpec(cDfr, srtMd, srtDg)
     cDfr = cDfr.round(dITp['dTpY'][dITp['lTpY'][k]][1])
     cDfr.to_csv(lPF[k], sep = dITp['cSep'])
@@ -660,7 +660,7 @@ def selDataThr(dITp, cDfr, dSrt, k = 0):
         else:
             dfrSelD.loc[:, sC] = cSer
     dfrSelD = dfrSelD.dropna(axis = 1, how = 'all')
-    srtMd, srtDg = dSrt['Col']['Srt']
+    srtMd, srtDg = dSrt[GC.S_COL]['Srt']
     return GF.reIndexSpec(dfrSelD, srtMd, srtDg)
 
 ###############################################################################
