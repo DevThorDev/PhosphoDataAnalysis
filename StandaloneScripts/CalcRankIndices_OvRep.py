@@ -23,12 +23,15 @@ S_BIN_CODE_L = 'BinCode'
 S_BIN_CODE_S_2 = S_BIN_CODE_S + S_2
 S_BIN_CODE_L_2 = S_BIN_CODE_L + S_2
 
-S_GT0 = 'GT' + S_O
-S_GT1 = 'GT' + S_1
-S_GT5 = 'GT' + S_5
+S_GT = 'GT'
+S_GT0 = S_GT + S_O
+S_GT1 = S_GT + S_1
+S_GT5 = S_GT + S_5
+S_ALL_GT = 'All' + S_GT
 
 S_MC = 'MC'
 S_IC = 'IC'
+S_IDIST = 'IDist'
 
 S_MC0 = S_MC + S_O
 S_MC1 = S_MC + S_1
@@ -38,6 +41,10 @@ S_IC0 = S_IC + S_O
 S_IC1 = S_IC + S_1
 L_S_IC = [S_IC0, S_IC1]
 
+S_IDIST0 = S_IDIST + S_O
+S_IDIST1 = S_IDIST + S_1
+L_S_IDIST = [S_IDIST0, S_IDIST1]
+
 L_S_CTRV = ['Sign', 'WtsA', 'WtsB']
 L_S_GT = [S_GT0, S_GT1, S_GT5]
 
@@ -45,6 +52,8 @@ L_S_HDR_MC = [s1 + S_USC + s2 + S_USC + s3 for s1 in L_S_MC
               for s2 in L_S_CTRV for s3 in L_S_GT]
 L_S_HDR_IC = [s1 + S_USC + s2 + S_USC + s3 for s1 in L_S_IC
               for s2 in L_S_CTRV for s3 in L_S_GT]
+L_S_HDR_IDIST = [s1 + S_USC + s2 + S_USC + S_ALL_GT for s1 in L_S_IDIST
+                 for s2 in L_S_CTRV]
 
 S_GENERAL = 'General'
 S_I_ORIG = 'IdxOrig'
@@ -63,7 +72,7 @@ S_IC_BIN_CODE_S_2 = S_IC + S_USC + S_BIN_CODE_S_2
 R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
-lTpDat = [S_MC, S_IC_MET, S_IC_BIN_CODE_S_2]
+lTpDat = [S_MC, S_IC_MET, S_IC_BIN_CODE_S_2, S_IDIST]
 
 sFInp_MC = 'OvRep_PhoD_GTX_AllD__BinCode2_1_832_MeanConc01_Bon_pValFOver_p'
 sFOut_MC = S_SEL + S_PHO_D + S_USC + S_BIN_CODES_L + S_USC + S_MC
@@ -73,6 +82,9 @@ sFOut_ICMet = S_SEL + S_BIN_OP + S_USC + S_MET_D + S_USC + S_IC
 
 sFInp_ICBC2 = 'OvRep_BinOp_MetD_GTX_AllD_PhoD_GTX_AllD__BinCode2_1_13986_IC01_Bon_pValFOver_p'
 sFOut_ICBC2 = S_SEL + S_BIN_OP + S_USC + S_BIN_CODES_L + S_USC + S_IC
+
+sFInp_IDist = 'OvRep_PhoD_GTX_AllD__BinCode2_1_832_IDist0_Bon_pValFOver_p'
+sFOut_IDist = S_SEL + S_PHO_D + S_USC + S_BIN_CODES_L + S_USC + S_IDIST
 
 pCSV = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
                     '04_SysBio_DataAnalysis', '80_ResultsCSV')
@@ -93,7 +105,11 @@ dInput = {S_GENERAL: {'lTpDat': lTpDat,
           S_IC_BIN_CODE_S_2: {'sFInp': sFInp_ICBC2 + S_DOT + S_CSV,
                               'sFOut': sFOut_ICBC2 + S_DOT + S_CSV,
                               'lSHdr': L_S_HDR_IC,
-                              'sHdrRef': S_BIN_CODE_L_2}}
+                              'sHdrRef': S_BIN_CODE_L_2},
+          S_IDIST: {'sFInp': sFInp_IDist + S_DOT + S_CSV,
+                    'sFOut': sFOut_IDist + S_DOT + S_CSV,
+                    'lSHdr': L_S_HDR_IDIST,
+                    'sHdrRef': S_BIN_CODE_L_2}}
 for cTpDat in dInput[S_GENERAL]['lTpDat']:
     dInput[cTpDat]['pFInp'] = os.path.join(pCSV, dInput[cTpDat]['sFInp'])
     dInput[cTpDat]['pFOut'] = os.path.join(pCSV, dInput[cTpDat]['sFOut'])
@@ -139,6 +155,7 @@ def calcRIs(pdDfr, lSHdr, sHdrRef, sIOrig=S_I_ORIG, sUSC=S_USC):
 
 def loopInpDataFrames(dInp):
     for cTpDat in dInp[S_GENERAL]['lTpDat']:
+        print('Processing data of type', cTpDat, '...')
         cDfrV = pd.read_csv(dInp[cTpDat]['pFInp'], sep=dInp[S_GENERAL]['sSep'],
                             dtype={dInp[cTpDat]['sHdrRef']: str})
         cDfrR = calcRIs(cDfrV, lSHdr=dInp[cTpDat]['lSHdr'],
