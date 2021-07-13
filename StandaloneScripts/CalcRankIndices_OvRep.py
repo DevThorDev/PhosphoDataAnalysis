@@ -83,7 +83,7 @@ sFOut_ICMet = S_SEL + S_BIN_OP + S_USC + S_MET_D + S_USC + S_IC
 sFInp_ICBC2 = 'OvRep_BinOp_MetD_GTX_AllD_PhoD_GTX_AllD__BinCode2_1_13986_IC01_Bon_pValFOver_p'
 sFOut_ICBC2 = S_SEL + S_BIN_OP + S_USC + S_BIN_CODES_L + S_USC + S_IC
 
-sFInp_IDist = 'OvRep_PhoD_GTX_AllD__BinCode2_1_832_IDist0_Bon_pValFOver_p'
+sFInp_IDist = 'OvRep_PhoD_GTX_AllD__BinCode2_1_YYY_IDist01_Bon_pValFOver_p'
 sFOut_IDist = S_SEL + S_PHO_D + S_USC + S_BIN_CODES_L + S_USC + S_IDIST
 
 pCSV = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',

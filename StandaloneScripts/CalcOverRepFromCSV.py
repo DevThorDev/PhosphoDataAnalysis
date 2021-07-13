@@ -54,13 +54,20 @@ S_Y_N_OCC = 'Number of occurrences ($\it{k}$)'
 S_Y_P_VAL = '$-\log_{10}$(p-value)'
 
 R04 = 4
+R06 = 6
 
 # --- INPUT -------------------------------------------------------------------
 # --- data specific input -----------------------------------------------------
+reverseIt = False
+
 nMinIDist, nMaxIDist = 1, 832
+nMinIDist_rev, nMaxIDist_rev = 1, 289
 
 dSrtIDist = {S_IDX: {S_IDIST: {'Asc': False}},
-             S_COL: {'Srt': ('float', 0), 'Asc': True}}
+              S_COL: {'Srt': ('float', 0), 'Asc': True}}
+dSrtIDist_rev = {S_IDX: {S_IDIST: {'Asc': True}},
+                 S_COL: {'Srt': ('float', 0), 'Asc': True}}
+
 lElCIDist = [S_BIN_CODE_L_2]
 
 sMCorrectL = S_M_CORR_BON    # None / S_M_CORR_BON
@@ -71,14 +78,18 @@ sSep = ';'
 # --- profile-type specific input ---------------------------------------------
 lTpX = [S_IDIST]
 lTpY = [S_N_OCC, S_OVER_REP, S_UNDER_REP]
+
 lSXAx = ['Top $\it{n}$ of the highest distance indices']
-# lSXAx = ['Top $\it{n}$ of the lowest distance indices']
+lSXAx_rev = ['Top $\it{n}$ of the lowest distance indices']
+
 lSYAx = [S_Y_N_OCC, S_Y_P_VAL, S_Y_P_VAL]
-lNDigRndYAx = [0, 2, 2]
+lNDigRndYAx = [0, R06, R06]
 lDoPYAx = [False, True, True]
 
 # --- names and paths of files and dirs ---------------------------------------
 sFInp_IDist = 'Input__OvRep_PhoD_GTX_AllD__BinCode2_1_832_IDist0'
+sFInp_IDist_rev = 'Input__OvRep_PhoD_GTX_AllD__BinCode2_1_289_IDist1'
+
 sFOut_IDist = 'Result__OvRep_PhoD_GTX_AllD'
 
 sDirCSV = '80_ResultsCSV'
@@ -104,6 +115,13 @@ dClrBinC = {'2.1': (0.12, 0.47, 0.71),
             '29.2': (0.84, 0.15, 0.16),
             '31.4': (0.58, 0.4, 0.74),
             '33.99': (0.55, 0.34, 0.29)}
+
+# --- derived values ----------------------------------------------------------
+if reverseIt:
+    nMinIDist, nMaxIDist = nMinIDist_rev, nMaxIDist_rev
+    dSrtIDist = dSrtIDist_rev
+    lSXAx = lSXAx_rev
+    sFInp_IDist = sFInp_IDist_rev
 
 # --- assertions --------------------------------------------------------------
 assert len(lSXAx) == len(lTpX)
@@ -287,6 +305,7 @@ def calcPValsF(dPValOv, dPValUn, arrCTblF, nCur, nMin, nCAttr, cAttr,
 
 def calcPValProfiles(inpD, dOccAbs, dPValOv, dPValUn, dfrRd, lSerVC, llAttr,
                      lNAttr, nMin, nMax, nTot, lElCt):
+    print('-'*20, 'Starting calculation of p-value profiles...')
     if lElCt is not None:
         assert len(llAttr) == len(lNAttr) and len(llAttr) == len(lElCt)
     nCalc, lToInt = sum([len(l) for l in llAttr]), [True, False, False]
@@ -375,13 +394,13 @@ class BaseClass():
         self.idO = S_BASE_CL
         self.descO = 'Base class'
         print('Initiated "Base" base object.')
-    
+
     def printAttrList(self):
         lAttr = dir(self)
         print('List of attributes:')
         for cAttr in lAttr:
             print(cAttr)
-    
+
     def printAttrData(self):
         print('Attributes and attribute values:')
         d = vars(self)
@@ -396,7 +415,7 @@ class InputData(BaseClass):
         self.dI = dInp
         self.fillInp()
         print('Initiated "InputData" base object.')
-    
+
     def fillInp(self):
         for sK, cV in self.dI.items():
             setattr(self, sK, cV)
@@ -415,21 +434,21 @@ class OverRep(BaseClass):
     def printIDDesc(self):
         print('Object ID:', self.idO)
         print('Object description:', self.descO)
-    
+
     def printObjInfo(self):
         print('-'*20, 'Object', self.descO, '(ID', self.idO, ')', '-'*20)
         print('-'*8, 'Input data:')
         self.inpD.printAttrData()
         print('-'*8, 'Attributes of', self.descO, 'class:')
         self.printAttrData()
-    
+
     def printDfrInp(self):
         print(self.dfrIn)
 
     def loadDfrInp(self):
         self.dfrIn = pd.read_csv(self.inpD.pFInp, sep=self.inpD.sSep,
                                  dtype={self.inpD.sBC2_L: str})
-    
+
     def getPResF(self):
         self.lPRF, sIdx = [], self.inpD.sIdx
         t = getParProf(self.inpD)
@@ -463,6 +482,8 @@ class OverRep(BaseClass):
 # --- MAIN --------------------------------------------------------------------
 startTime = time.time()
 print('+'*25 + ' START', time.ctime(startTime), '+'*25)
+if reverseIt:
+    print('-'*8, 'Reverse mode', '-'*8)
 
 inpDat = InputData(dInput)
 cOvRepAnalysis = OverRep(inpDat)

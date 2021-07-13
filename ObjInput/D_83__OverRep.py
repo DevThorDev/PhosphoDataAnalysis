@@ -57,7 +57,7 @@ lTpY = [GC.S_N_OCC, GC.S_OVER_REP, GC.S_UNDER_REP]
 lSXAx = ['Top $\it{n}$ of the least frequent phosphopeptides',
           'Top $\it{n}$ of the strongest negative interactions']
 lSYAx = [GC.S_Y_N_OCC, GC.S_Y_P_VAL, GC.S_Y_P_VAL]
-lNDigRndYAx = [0, 2, 2]
+lNDigRndYAx = [0, GC.R06, GC.R06]
 lDoPYAx = [False, True, True]
 
 # --- names and paths of files and dirs ---------------------------------------

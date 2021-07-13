@@ -205,6 +205,7 @@ M_DETER = 'Deterministic'
 M_STOCH = 'Stochastic'
 
 R04 = 4
+R06 = 6
 
 FIGURE_MAX_OPEN_WARNING = 200
 
