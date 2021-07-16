@@ -23,90 +23,159 @@ S_BIN_CODE_L = 'BinCode'
 S_BIN_CODE_S_2 = S_BIN_CODE_S + S_2
 S_BIN_CODE_L_2 = S_BIN_CODE_L + S_2
 
-S_GT = 'GT'
-S_GT0 = S_GT + S_O
-S_GT1 = S_GT + S_1
-S_GT5 = S_GT + S_5
-S_ALL_GT = 'All' + S_GT
-
-S_MC = 'MC'
-S_IC = 'IC'
-S_IDIST = 'IDist'
-
-S_MC0 = S_MC + S_O
-S_MC1 = S_MC + S_1
-L_S_MC = [S_MC0, S_MC1]
-
-S_IC0 = S_IC + S_O
-S_IC1 = S_IC + S_1
-L_S_IC = [S_IC0, S_IC1]
-
-S_IDIST0 = S_IDIST + S_O
-S_IDIST1 = S_IDIST + S_1
-L_S_IDIST = [S_IDIST0, S_IDIST1]
-
-L_S_CTRV = ['Sign', 'WtsA', 'WtsB']
+S_GT0 = 'GT' + S_O
+S_GT1 = 'GT' + S_1
+S_GT5 = 'GT' + S_5
 L_S_GT = [S_GT0, S_GT1, S_GT5]
 
-L_S_HDR_MC = [s1 + S_USC + s2 + S_USC + s3 for s1 in L_S_MC
-              for s2 in L_S_CTRV for s3 in L_S_GT]
-L_S_HDR_IC = [s1 + S_USC + s2 + S_USC + s3 for s1 in L_S_IC
-              for s2 in L_S_CTRV for s3 in L_S_GT]
-L_S_HDR_IDIST = [s1 + S_USC + s2 + S_USC + S_ALL_GT for s1 in L_S_IDIST
-                 for s2 in L_S_CTRV]
+S_EXT_CSV = 'csv'
+S_EXT_PDF = 'pdf'
 
-S_GENERAL = 'General'
-S_I_ORIG = 'IdxOrig'
-S_RI = 'RI'
-S_SEL = 'Selections'
-S_MET_S = 'Met'
-S_MET_L = 'Metabolite'
-S_MET_D = 'MetD'
-S_PHO_D = 'PhoD'
-S_BIN_OP = 'BinOp'
-S_BIN_CODES_L = S_BIN_CODE_L + 's'
+S_IDX = 'Idx'
+S_COL = 'Col'
 
-S_IC_MET = S_IC + S_USC + S_MET_S
-S_IC_BIN_CODE_S_2 = S_IC + S_USC + S_BIN_CODE_S_2
+S_BASE_CL = 'BaseClass'
+S_INP_DATA = 'InputData'
+S_OVER_REP = 'OverRep'
+
+S_N_OCC_ABS = 'nOccurrAbs'
+S_P_VAL_OV = 'pValFOver'
+S_P_VAL_UN = 'pValFUnder'
+S_P_OF = 'p'
+S_M_CORR_BON = 'Bonferroni'
+S_IDIST = 'IDist'
+S_N_OCC = 'NOcc'
+S_OVER_REP = 'ORp'
+S_UNDER_REP = 'URp'
+S_Y_N_OCC = 'Number of occurrences ($\it{k}$)'
+S_Y_P_VAL = '$-\log_{10}$(p-value)'
 
 R04 = 4
+R06 = 6
 
 # --- INPUT -------------------------------------------------------------------
-lTpDat = [S_MC, S_IC_MET, S_IC_BIN_CODE_S_2, S_IDIST]
+# --- data specific input -----------------------------------------------------
+reverseIt = False
 
+nMinIDist, nMaxIDist = 1, 832
+nMinIDist_rev, nMaxIDist_rev = 1, 289
+
+dSrtIDist = {S_IDX: {S_IDIST: {'Asc': False}},
+              S_COL: {'Srt': ('float', 0), 'Asc': True}}
+dSrtIDist_rev = {S_IDX: {S_IDIST: {'Asc': True}},
+                 S_COL: {'Srt': ('float', 0), 'Asc': True}}
+
+lElCIDist = [S_BIN_CODE_L_2]
+
+sMCorrectL = S_M_CORR_BON    # None / S_M_CORR_BON
+sMCorrectS = sMCorrectL[:3]
+
+sSep = ';'
+
+# --- profile-type specific input ---------------------------------------------
+lTpX = [S_IDIST]
+lTpY = [S_N_OCC, S_OVER_REP, S_UNDER_REP]
+
+lSXAx = ['Top $\it{n}$ of the highest distance indices']
+lSXAx_rev = ['Top $\it{n}$ of the lowest distance indices']
+
+lSYAx = [S_Y_N_OCC, S_Y_P_VAL, S_Y_P_VAL]
+lNDigRndYAx = [0, R06, R06]
+lDoPYAx = [False, True, True]
+
+# --- names and paths of files and dirs ---------------------------------------
 sFInp_IC_Met_Pho = 'IC_Met_Pho'
 sFInp_dGT_Met = 'DistGT_Met'
 sFInp_dGT_Pho = 'DistGT_Pho'
 
 sFOut = 'ExtractedInfoOvRep_IC_dGT'
 
-pCSV = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
-                    '04_SysBio_DataAnalysis', '51_CSV_DistGT')
-sSep = ';'
+sDirCSV = '51_CSV_DistGT'
+sDirPDF = '82_ResultsPDF'
+
+pBase = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
+                    '04_SysBio_DataAnalysis')
+pCSV = os.path.join(pBase, sDirCSV)
+
+# --- graphics parameters -----------------------------------------------------
+nmPlt_Prf = 'Profile'   # name prefix of the plot
+thrProf = 0.05          # plot threshold for profiles
+sComp = '>='            # comparison string (value with threshold)
+szFontLeg = 'small'     # font size of legend
+iIncr = 1               # increase of file number
+jIncr = 10              # number of entities (e.g. metabolites) per plot
+coordAnchorBox = (1.1, 0.5)         # coordinates of the legend anchor box
+
+lWdPlt = 0.75
+dClrBinC = {'2.1': (0.12, 0.47, 0.71),
+            '4.1': (1.0, 0.5, 0.05),
+            '17.2': (0.17, 0.63, 0.17),
+            '29.2': (0.84, 0.15, 0.16),
+            '31.4': (0.58, 0.4, 0.74),
+            '33.99': (0.55, 0.34, 0.29)}
+
+# --- derived values ----------------------------------------------------------
+if reverseIt:
+    nMinIDist, nMaxIDist = nMinIDist_rev, nMaxIDist_rev
+    dSrtIDist = dSrtIDist_rev
+    lSXAx = lSXAx_rev
+    sFInp_IDist = sFInp_IDist_rev
+
+# --- assertions --------------------------------------------------------------
+assert len(lSXAx) == len(lTpX)
+assert (len(lSYAx) == len(lTpY) and len(lNDigRndYAx) == len(lTpY) and
+        len(lDoPYAx) == len(lTpY))
 
 # --- INPUT DICTIONARY --------------------------------------------------------
-dInput = {S_GENERAL: {'lTpDat': lTpDat,
-                      'pCSV': pCSV,
-                      'sSep': sSep},
-          S_MC: {'sFInp': sFInp_MC + S_DOT + S_CSV,
-                 'sFOut': sFOut_MC + S_DOT + S_CSV,
-                 'lSHdr': L_S_HDR_MC,
-                 'sHdrRef': S_BIN_CODE_L_2},
-          S_IC_MET: {'sFInp': sFInp_ICMet + S_DOT + S_CSV,
-                     'sFOut': sFOut_ICMet + S_DOT + S_CSV,
-                     'lSHdr': L_S_HDR_IC,
-                     'sHdrRef': S_MET_L},
-          S_IC_BIN_CODE_S_2: {'sFInp': sFInp_ICBC2 + S_DOT + S_CSV,
-                              'sFOut': sFOut_ICBC2 + S_DOT + S_CSV,
-                              'lSHdr': L_S_HDR_IC,
-                              'sHdrRef': S_BIN_CODE_L_2},
-          S_IDIST: {'sFInp': sFInp_IDist + S_DOT + S_CSV,
-                    'sFOut': sFOut_IDist + S_DOT + S_CSV,
-                    'lSHdr': L_S_HDR_IDIST,
-                    'sHdrRef': S_BIN_CODE_L_2}}
-for cTpDat in dInput[S_GENERAL]['lTpDat']:
-    dInput[cTpDat]['pFInp'] = os.path.join(pCSV, dInput[cTpDat]['sFInp'])
-    dInput[cTpDat]['pFOut'] = os.path.join(pCSV, dInput[cTpDat]['sFOut'])
+dInput = {# --- constants
+          'sBC_S': S_BIN_CODE_S,
+          'sBC_L': S_BIN_CODE_L,
+          'sBC2_S': S_BIN_CODE_S_2,
+          'sBC2_L': S_BIN_CODE_L_2,
+          'lSGT': L_S_GT,
+          'sExtCSV': S_EXT_CSV,
+          'sExtPDF': S_EXT_PDF,
+          'sIdx': S_IDX,
+          'sCol': S_COL,
+          'sBase': S_BASE_CL,
+          'sInpDat': S_INP_DATA,
+          'sOvRep': S_OVER_REP,
+          'sNOcc': S_N_OCC_ABS,
+          'sPValOv': S_P_VAL_OV,
+          'sPValUn': S_P_VAL_UN,
+          'sPOf': S_P_OF,
+          'sPValOvPOf': S_P_VAL_OV + '_' + S_P_OF,
+          'sPValUnPOf': S_P_VAL_UN + '_' + S_P_OF,
+          'R04': R04,
+          # --- data specific input
+          'nMin': nMinIDist,
+          'nMax': nMaxIDist,
+          'dSrt': dSrtIDist,
+          'lElC': lElCIDist,
+          'sMCorrectL': sMCorrectL,
+          'sMCorrectS': sMCorrectS,
+          'sSep': sSep,
+          # --- profile-type specific input
+          'lTpX': lTpX,
+          'lTpY': lTpY,
+          'dTpX': {lTpX[k]: lSXAx[k] for k in range(len(lTpX))},
+          'dTpY': {lTpY[k]: (lSYAx[k], lNDigRndYAx[k], lDoPYAx[k]) for k in
+                   range(len(lTpY))},
+          # --- names and paths of files and dirs
+          'pCSV': pCSV,
+          'pPDF': os.path.join(pBase, sDirPDF),
+          'pFInp': os.path.join(pCSV, sFInp_IDist + S_DOT + S_CSV),
+          'sFOut': sFOut_IDist,
+          # --- graphics parameters
+          'nmPlt_Prf': nmPlt_Prf,
+          'thrProf': thrProf,
+          'sComp': sComp,
+          'szFontLeg': szFontLeg,
+          'iIncr': iIncr,
+          'jIncr': jIncr,
+          'coordAnchorBox': coordAnchorBox,
+          'lWdPlt': lWdPlt,
+          'dClrBinC': dClrBinC}
 
 # --- FUNCTIONS ---------------------------------------------------------------
 def addToDictD(cD, cKMain, cKSub, cV):
@@ -201,8 +270,8 @@ class InputData(BaseClass):
 class ExtractedInfo(BaseClass):
     def __init__(self, InpD):
         super().__init__()
-        self.idO = InpD.sOvRep
-        self.descO = 'Over-representation'
+        self.idO = InpD.ExtrInfo
+        self.descO = 'Extracted info'
         self.inpD = InpD
         self.loadDfrInp()
         self.getPResF()
