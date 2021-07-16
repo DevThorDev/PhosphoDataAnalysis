@@ -12,29 +12,31 @@ cSep = ';'
 sMCorrectL = GC.S_M_CORR_BON    # None / S_M_CORR_BON
 sMCorrectS = sMCorrectL[:3]
 
+reverseIt = False
+
 # --- data specific (Pho data) ------------------------------------------------
 # dSrt: specifies how index and columns of DataFrame should be sorted
 # dSrt[GC.S_COL]['Srt']: (converted data type, leading positions to dismiss)
 nMinPD, nMaxPD = 1, 832
-# dSrtPD = {GC.S_IDX: {GC.S_MN_CONC: {'Asc': False}},
-#           GC.S_COL: {'Srt': ('float', 0), 'Asc': True}}
-dSrtPD = {GC.S_IDX: {GC.S_MN_CONC: {'Asc': True}},
+dSrtPD = {GC.S_IDX: {GC.S_MN_CONC: {'Asc': False}},
           GC.S_COL: {'Srt': ('float', 0), 'Asc': True}}
+dSrtPD_rev = {GC.S_IDX: {GC.S_MN_CONC: {'Asc': True}},
+              GC.S_COL: {'Srt': ('float', 0), 'Asc': True}}
 lElCPD = [GC.S_BIN_C_2]
 
 # --- data specific ("BinOps" from basic data) --------------------------------
 nMinBO, nMaxBO = 1, round(42*3330/10)
 # nMinBO, nMaxBO = 1, 1000
-# dSrtBO = {GC.S_IDX: {GC.S_PNCI: {'Asc': False},
-#                       GC.S_PCI: {'Asc': False},
-#                       GC.S_SPEAR_V: {'Asc': False},
-#                       GC.S_CORR_V: {'Asc': False}},
-#           GC.S_COL: {'Srt': ('float', 0), 'Asc': True}}
-dSrtBO = {GC.S_IDX: {GC.S_PNCI: {'Asc': True},
-                      GC.S_NCI: {'Asc': True},
-                      GC.S_SPEAR_V: {'Asc': True},
-                      GC.S_CORR_V: {'Asc': True}},
+dSrtBO = {GC.S_IDX: {GC.S_PNCI: {'Asc': False},
+                      GC.S_PCI: {'Asc': False},
+                      GC.S_SPEAR_V: {'Asc': False},
+                      GC.S_CORR_V: {'Asc': False}},
           GC.S_COL: {'Srt': ('float', 0), 'Asc': True}}
+dSrtBO_rev = {GC.S_IDX: {GC.S_PNCI: {'Asc': True},
+                         GC.S_NCI: {'Asc': True},
+                         GC.S_SPEAR_V: {'Asc': True},
+                         GC.S_CORR_V: {'Asc': True}},
+              GC.S_COL: {'Srt': ('float', 0), 'Asc': True}}
 lElCBO = [GC.S_BIN_C_2]     # columns to evaluate
                             # None: eval. MetD and PhoD columns of BO file
                             # [GC.S_MET_D]: eval. MetD column of BO file
@@ -43,19 +45,19 @@ lElCBO = [GC.S_BIN_C_2]     # columns to evaluate
 
 # --- data specific ("BinOps" from cluster result data) -----------------------
 nMinCR, nMaxCR = 1, 10
-# dSrtCR = {GC.S_IDX: {GC.S_CORR_V: {'Asc': False}},
-#           GC.S_COL: {'Srt': ('int', 3), 'Asc': True}}
-dSrtCR = {GC.S_IDX: {GC.S_CORR_V: {'Asc': True}},
+dSrtCR = {GC.S_IDX: {GC.S_CORR_V: {'Asc': False}},
           GC.S_COL: {'Srt': ('int', 3), 'Asc': True}}
+dSrtCR_rev = {GC.S_IDX: {GC.S_CORR_V: {'Asc': True}},
+              GC.S_COL: {'Srt': ('int', 3), 'Asc': True}}
 lElCCR = None
 
 # --- dictionaries containing profile-type specific input ---------------------
 lTpX = [GC.S_PD, GC.S_BO]
 lTpY = [GC.S_N_OCC, GC.S_OVER_REP, GC.S_UNDER_REP]
-# lSXAx = ['Top $\it{n}$ of the most frequent phosphopeptides',
-#           'Top $\it{n}$ of the strongest positive interactions']
-lSXAx = ['Top $\it{n}$ of the least frequent phosphopeptides',
-          'Top $\it{n}$ of the strongest negative interactions']
+lSXAx = ['Top $\it{n}$ of the most frequent phosphopeptides',
+          'Top $\it{n}$ of the strongest positive interactions']
+lSXAx_rev = ['Top $\it{n}$ of the least frequent phosphopeptides',
+             'Top $\it{n}$ of the strongest negative interactions']
 lSYAx = [GC.S_Y_N_OCC, GC.S_Y_P_VAL, GC.S_Y_P_VAL]
 lNDigRndYAx = [0, GC.R06, GC.R06]
 lDoPYAx = [False, True, True]
@@ -208,6 +210,13 @@ dClrBinC = {'2.1': (0.12, 0.47, 0.71),
             '29.2': (0.84, 0.15, 0.16),
             '31.4': (0.58, 0.4, 0.74),
             '33.99': (0.55, 0.34, 0.29)}
+
+# --- derived values ----------------------------------------------------------
+if reverseIt:
+    dSrtPD = dSrtPD_rev
+    dSrtBO = dSrtBO_rev
+    dSrtCR = dSrtCR_rev
+    lSXAx = lSXAx_rev
 
 # --- assertions --------------------------------------------------------------
 assert lElCBO is None or type(lElCBO) == list
