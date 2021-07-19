@@ -149,6 +149,7 @@ dInput = {# --- constants
           'sPValOvPOf': S_P_VAL_OV + '_' + S_P_OF,
           'sPValUnPOf': S_P_VAL_UN + '_' + S_P_OF,
           'R04': R04,
+          'R06': R06,
           # --- data specific input
           'nMin': nMinIDist,
           'nMax': nMaxIDist,

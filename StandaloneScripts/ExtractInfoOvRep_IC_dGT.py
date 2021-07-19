@@ -18,9 +18,7 @@ S_3 = '3'
 S_4 = '4'
 S_5 = '5'
 
-S_BIN_CODE_S = 'BC'
 S_BIN_CODE_L = 'BinCode'
-S_BIN_CODE_S_2 = S_BIN_CODE_S + S_2
 S_BIN_CODE_L_2 = S_BIN_CODE_L + S_2
 
 S_GT0 = 'GT' + S_O
@@ -34,68 +32,76 @@ S_EXT_PDF = 'pdf'
 S_IDX = 'Idx'
 S_COL = 'Col'
 
+S_IC_MET_PHO = 'ICMetPho'
+S_D_GT_MET = 'dGTMet'
+S_D_GT_PHO = 'dGTPho'
+
+S_SRT_BY = 'SortedBy'
+S_ASC = 'Asc'
+S_IC = 'IC'
+S_D_GT = 'd_GT'
+S_MIN = 'min'
+S_MAX = 'max'
+
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
-S_OVER_REP = 'OverRep'
+S_EXTR_INFO = 'ExtrInfo'
 
-S_N_OCC_ABS = 'nOccurrAbs'
-S_P_VAL_OV = 'pValFOver'
-S_P_VAL_UN = 'pValFUnder'
-S_P_OF = 'p'
-S_M_CORR_BON = 'Bonferroni'
-S_IDIST = 'IDist'
-S_N_OCC = 'NOcc'
-S_OVER_REP = 'ORp'
-S_UNDER_REP = 'URp'
-S_Y_N_OCC = 'Number of occurrences ($\it{k}$)'
-S_Y_P_VAL = '$-\log_{10}$(p-value)'
+S_MET = 'Metabolite'
+S_PHO = 'Phosphopeptide'
+S_REMCOL1 = 'PearsonCorr'
 
 R04 = 4
 R06 = 6
 
 # --- INPUT -------------------------------------------------------------------
+# --- general input -----------------------------------------------------------
+modDisp = 1000
+
 # --- data specific input -----------------------------------------------------
-reverseIt = False
-
-nMinIDist, nMaxIDist = 1, 832
-nMinIDist_rev, nMaxIDist_rev = 1, 289
-
-dSrtIDist = {S_IDX: {S_IDIST: {'Asc': False}},
-              S_COL: {'Srt': ('float', 0), 'Asc': True}}
-dSrtIDist_rev = {S_IDX: {S_IDIST: {'Asc': True}},
-                 S_COL: {'Srt': ('float', 0), 'Asc': True}}
-
-lElCIDist = [S_BIN_CODE_L_2]
-
-sMCorrectL = S_M_CORR_BON    # None / S_M_CORR_BON
-sMCorrectS = sMCorrectL[:3]
+dISort = {S_IC_MET_PHO: {S_SRT_BY: S_IC, S_ASC: False},
+          S_D_GT_MET: {S_SRT_BY: S_D_GT, S_ASC: False},
+          S_D_GT_PHO: {S_SRT_BY: S_D_GT, S_ASC: False}}
+# dThr = {S_IC_MET_PHO: {S_MIN: 7.25, S_MAX: None},
+#         S_D_GT_MET: {S_MIN: 0.6, S_MAX: None},
+#         S_D_GT_PHO: {S_MIN: 0.6, S_MAX: None}}
+dThr = {S_IC_MET_PHO: {S_MIN: 4.0, S_MAX: None},
+        S_D_GT_MET: {S_MIN: 0.5, S_MAX: None},
+        S_D_GT_PHO: {S_MIN: 0.5, S_MAX: None}}
 
 sSep = ';'
 
 # --- profile-type specific input ---------------------------------------------
-lTpX = [S_IDIST]
-lTpY = [S_N_OCC, S_OVER_REP, S_UNDER_REP]
+lTpX = []
+lTpY = []
 
-lSXAx = ['Top $\it{n}$ of the highest distance indices']
-lSXAx_rev = ['Top $\it{n}$ of the lowest distance indices']
+lSXAx = []
+# lSXAx = ['Top $\it{n}$ of the highest distance indices']
+# lSXAx_rev = ['Top $\it{n}$ of the lowest distance indices']
 
-lSYAx = [S_Y_N_OCC, S_Y_P_VAL, S_Y_P_VAL]
-lNDigRndYAx = [0, R06, R06]
-lDoPYAx = [False, True, True]
+# lSYAx = [S_Y_N_OCC]
+# lNDigRndYAx = [R06]
+# lDoPYAx = [True]
+lSYAx = []
+lNDigRndYAx = []
+lDoPYAx = []
 
 # --- names and paths of files and dirs ---------------------------------------
 sFInp_IC_Met_Pho = 'IC_Met_Pho'
 sFInp_dGT_Met = 'DistGT_Met'
 sFInp_dGT_Pho = 'DistGT_Pho'
 
-sFOut = 'ExtractedInfoOvRep_IC_dGT'
+sFOutS = 'ExtractedInfoOvRepShort'
+sFOutF = 'ExtractedInfoOvRepFull'
 
-sDirCSV = '51_CSV_DistGT'
-sDirPDF = '82_ResultsPDF'
+sDirInCSV = '51_CSV_In_DistGT'
+sDirOutCSV = '52_CSV_Out_DistGT'
+sDirOutPDF = '82_ResultsPDF'
 
 pBase = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
                     '04_SysBio_DataAnalysis')
-pCSV = os.path.join(pBase, sDirCSV)
+pInCSV = os.path.join(pBase, sDirInCSV)
+pOutCSV = os.path.join(pBase, sDirOutCSV)
 
 # --- graphics parameters -----------------------------------------------------
 nmPlt_Prf = 'Profile'   # name prefix of the plot
@@ -114,13 +120,6 @@ dClrBinC = {'2.1': (0.12, 0.47, 0.71),
             '31.4': (0.58, 0.4, 0.74),
             '33.99': (0.55, 0.34, 0.29)}
 
-# --- derived values ----------------------------------------------------------
-if reverseIt:
-    nMinIDist, nMaxIDist = nMinIDist_rev, nMaxIDist_rev
-    dSrtIDist = dSrtIDist_rev
-    lSXAx = lSXAx_rev
-    sFInp_IDist = sFInp_IDist_rev
-
 # --- assertions --------------------------------------------------------------
 assert len(lSXAx) == len(lTpX)
 assert (len(lSYAx) == len(lTpY) and len(lNDigRndYAx) == len(lTpY) and
@@ -128,9 +127,7 @@ assert (len(lSYAx) == len(lTpY) and len(lNDigRndYAx) == len(lTpY) and
 
 # --- INPUT DICTIONARY --------------------------------------------------------
 dInput = {# --- constants
-          'sBC_S': S_BIN_CODE_S,
           'sBC_L': S_BIN_CODE_L,
-          'sBC2_S': S_BIN_CODE_S_2,
           'sBC2_L': S_BIN_CODE_L_2,
           'lSGT': L_S_GT,
           'sExtCSV': S_EXT_CSV,
@@ -139,21 +136,16 @@ dInput = {# --- constants
           'sCol': S_COL,
           'sBase': S_BASE_CL,
           'sInpDat': S_INP_DATA,
-          'sOvRep': S_OVER_REP,
-          'sNOcc': S_N_OCC_ABS,
-          'sPValOv': S_P_VAL_OV,
-          'sPValUn': S_P_VAL_UN,
-          'sPOf': S_P_OF,
-          'sPValOvPOf': S_P_VAL_OV + '_' + S_P_OF,
-          'sPValUnPOf': S_P_VAL_UN + '_' + S_P_OF,
+          'sExtrInfo': S_EXTR_INFO,
+          'sMet': S_MET,
+          'sPho': S_PHO,
           'R04': R04,
+          'R06': R06,
+          # --- general input
+          'modDisp': modDisp,
           # --- data specific input
-          'nMin': nMinIDist,
-          'nMax': nMaxIDist,
-          'dSrt': dSrtIDist,
-          'lElC': lElCIDist,
-          'sMCorrectL': sMCorrectL,
-          'sMCorrectS': sMCorrectS,
+          'dISort': dISort,
+          'dThr': dThr,
           'sSep': sSep,
           # --- profile-type specific input
           'lTpX': lTpX,
@@ -162,10 +154,14 @@ dInput = {# --- constants
           'dTpY': {lTpY[k]: (lSYAx[k], lNDigRndYAx[k], lDoPYAx[k]) for k in
                    range(len(lTpY))},
           # --- names and paths of files and dirs
-          'pCSV': pCSV,
-          'pPDF': os.path.join(pBase, sDirPDF),
-          'pFInp': os.path.join(pCSV, sFInp_IDist + S_DOT + S_CSV),
-          'sFOut': sFOut_IDist,
+          'pInCSV': pInCSV,
+          'pOutCSV': pOutCSV,
+          'pOutPDF': os.path.join(pBase, sDirOutPDF),
+          'pFInp_IC': os.path.join(pInCSV, sFInp_IC_Met_Pho + S_DOT + S_CSV),
+          'pFInp_Met': os.path.join(pInCSV, sFInp_dGT_Met + S_DOT + S_CSV),
+          'pFInp_Pho': os.path.join(pInCSV, sFInp_dGT_Pho + S_DOT + S_CSV),
+          'sFOutS': sFOutS + S_DOT + S_CSV,
+          'sFOutF': sFOutF + S_DOT + S_CSV,
           # --- graphics parameters
           'nmPlt_Prf': nmPlt_Prf,
           'thrProf': thrProf,
@@ -204,28 +200,32 @@ def transcrDict2Dfr(cD, cDfr, lSHdrIni):
             cDfrRes[sHdr] = cDfr.loc[:, sHdr]
     return cDfrRes
 
-def calcRIs(pdDfr, lSHdr, sHdrRef, sIOrig=S_I_ORIG, sUSC=S_USC):
-    assert pdDfr.columns.to_list()[:(len(lSHdr) + 1)] == [sHdrRef] + lSHdr
-    dRI, nL = {}, pdDfr.shape[0]
-    pdDfr[sIOrig] = pdDfr.index.to_list()
-    for sHdr in lSHdr:
-        pdDfr.sort_values(by=[sHdr, sIOrig], ascending=[False, True],
-                          inplace=True, kind='stable', ignore_index=True)
-        pdDfr.loc[:, sHdr] = getLVals(pdDfr, sHdr, nEl=nL)
-        sSpec, sTp, sGT = sHdr.split(sUSC)
-        addToDictD(dRI, cKMain=(sSpec, sGT), cKSub=sTp, cV=sHdr)
-    return transcrDict2Dfr(dRI, pdDfr, [sIOrig, sHdrRef])
+def sortDfr(pdDfr, dSrt, sSrtBy, sAsc, srtKind='stable'):
+    pdDfr.sort_values(by=dSrt[sSrtBy], ascending=dSrt[sAsc], inplace=True,
+                      kind=srtKind)
 
-def loopInpDataFrames(dInp):
-    for cTpDat in dInp[S_GENERAL]['lTpDat']:
-        print('Processing data of type', cTpDat, '...')
-        cDfrV = pd.read_csv(dInp[cTpDat]['pFInp'], sep=dInp[S_GENERAL]['sSep'],
-                            dtype={dInp[cTpDat]['sHdrRef']: str})
-        cDfrR = calcRIs(cDfrV, lSHdr=dInp[cTpDat]['lSHdr'],
-                        sHdrRef=dInp[cTpDat]['sHdrRef'])
-        cDfrR.sort_values(by=S_I_ORIG, ascending=True, inplace=True,
-                          kind='stable', ignore_index=True)
-        cDfrR.to_csv(dInp[cTpDat]['pFOut'], sep=dInp[S_GENERAL]['sSep'])
+# def calcRIs(pdDfr, lSHdr, sHdrRef, sIOrig=S_I_ORIG, sUSC=S_USC):
+#     assert pdDfr.columns.to_list()[:(len(lSHdr) + 1)] == [sHdrRef] + lSHdr
+#     dRI, nL = {}, pdDfr.shape[0]
+#     pdDfr[sIOrig] = pdDfr.index.to_list()
+#     for sHdr in lSHdr:
+#         pdDfr.sort_values(by=[sHdr, sIOrig], ascending=[False, True],
+#                           inplace=True, kind='stable', ignore_index=True)
+#         pdDfr.loc[:, sHdr] = getLVals(pdDfr, sHdr, nEl=nL)
+#         sSpec, sTp, sGT = sHdr.split(sUSC)
+#         addToDictD(dRI, cKMain=(sSpec, sGT), cKSub=sTp, cV=sHdr)
+#     return transcrDict2Dfr(dRI, pdDfr, [sIOrig, sHdrRef])
+
+# def loopInpDataFrames(dInp):
+#     for cTpDat in dInp[S_GENERAL]['lTpDat']:
+#         print('Processing data of type', cTpDat, '...')
+#         cDfrV = pd.read_csv(dInp[cTpDat]['pFInp'], sep=dInp[S_GENERAL]['sSep'],
+#                             dtype={dInp[cTpDat]['sHdrRef']: str})
+#         cDfrR = calcRIs(cDfrV, lSHdr=dInp[cTpDat]['lSHdr'],
+#                         sHdrRef=dInp[cTpDat]['sHdrRef'])
+#         cDfrR.sort_values(by=S_I_ORIG, ascending=True, inplace=True,
+#                           kind='stable', ignore_index=True)
+#         cDfrR.to_csv(dInp[cTpDat]['pFOut'], sep=dInp[S_GENERAL]['sSep'])
 
 def printElapsedTimeSim(stT, cT, sPre = 'Time'):
     # calculate and display elapsed time
@@ -270,7 +270,7 @@ class InputData(BaseClass):
 class ExtractedInfo(BaseClass):
     def __init__(self, InpD):
         super().__init__()
-        self.idO = InpD.ExtrInfo
+        self.idO = InpD.sExtrInfo
         self.descO = 'Extracted info'
         self.inpD = InpD
         self.loadDfrInp()
@@ -292,47 +292,95 @@ class ExtractedInfo(BaseClass):
         print(self.dfrIn)
 
     def loadDfrInp(self):
-        self.dfrIn = pd.read_csv(self.inpD.pFInp, sep=self.inpD.sSep,
-                                 dtype={self.inpD.sBC2_L: str})
+        dDTp_IC = {sIn: str for sIn in [self.inpD.sBC_L, self.inpD.sBC2_L]}
+        dDTp_Pho = {sIn: str for sIn in [self.inpD.sBC2_L]}
+        self.dfrIn_IC = pd.read_csv(self.inpD.pFInp_IC, sep=self.inpD.sSep,
+                                    dtype=dDTp_IC)
+        self.dfrIn_Met = pd.read_csv(self.inpD.pFInp_Met, sep=self.inpD.sSep)
+        self.dfrIn_Pho = pd.read_csv(self.inpD.pFInp_Pho, sep=self.inpD.sSep,
+                                     dtype=dDTp_Pho)
 
     def getPResF(self):
-        self.lPRF, sIdx = [], self.inpD.sIdx
-        t = getParProf(self.inpD)
-        self.dSort, self.lSrt, self.lAsc, self.lElCat, self.nMin, self.nMax = t
-        sEPr = str(self.nMin) + S_USC + str(self.nMax) + S_USC
-        for sHd in self.dSort[sIdx]:
-            sEPr += sHd + str(int(self.dSort[sIdx][sHd]['Asc'])) + S_USC
-        for sCat in self.lElCat:
-            sEPr = addString(str(sCat), sPost=S_USC) + sEPr
-        for sE in [self.inpD.sNOcc, self.inpD.sPValOvPOf,
-                   self.inpD.sPValUnPOf]:
-            sE = addString(sEPr + self.inpD.sMCorrectS, sPost=S_USC) + sE
-            self.lPRF.append(getPFRes(self.inpD, sEnd=sE))
+        self.dSort, self.dThres = self.inpD.dISort, self.inpD.dThr
+        self.lAsc = [cV[S_ASC] for cV in self.inpD.dISort.values()]
+        sFOutS, sFOutF = self.inpD.sFOutS, self.inpD.sFOutF
+        for sK in self.dSort:
+            sFOutS += S_USC + sK + str(int(self.dSort[sK][S_ASC]))
+            sFOutF += S_USC + sK + str(int(self.dSort[sK][S_ASC]))
+        self.pFOutS = os.path.join(self.inpD.pOutCSV, sFOutS + S_DOT + S_CSV)
+        self.pFOutF = os.path.join(self.inpD.pOutCSV, sFOutF + S_DOT + S_CSV)
+    
+    def applyFilter(self, pdDfr, sHdC, sKThr, sMin=S_MIN, sMax=S_MAX):
+        thrMin, thrMax = self.dThres[sKThr][sMin], self.dThres[sKThr][sMax]
+        if thrMin is None:
+            if thrMax is None:
+                return pdDfr
+            else:
+                return pdDfr[pdDfr[sHdC] <= thrMax]
+        else:
+            if thrMax is None:
+                return pdDfr[pdDfr[sHdC] >= thrMin]
+            else:
+                return pdDfr[(pdDfr[sHdC] >= thrMin) & (pdDfr[sHdC] <= thrMax)]
 
-    def plotProfiles(self, dfrR, k=0, tpPr=S_IDIST):
-        d = selDataThr(self.inpD, dfrR, self.dSort, k)
-        plotProfile(self.inpD, d, self.lPRF[k], k, tpPr=tpPr)
+    def sortAndFiltDfr(self):
+        sortDfr(self.dfrIn_IC, self.dSort[S_IC_MET_PHO], S_SRT_BY, S_ASC)
+        sortDfr(self.dfrIn_Met, self.dSort[S_D_GT_MET], S_SRT_BY, S_ASC)
+        sortDfr(self.dfrIn_Pho, self.dSort[S_D_GT_PHO], S_SRT_BY, S_ASC)
+        self.dfrFilt_IC = self.applyFilter(self.dfrIn_IC, S_IC, S_IC_MET_PHO)
+        self.dfrFilt_Met = self.applyFilter(self.dfrIn_Met, S_D_GT, S_D_GT_MET)
+        self.dfrFilt_Pho = self.applyFilter(self.dfrIn_Pho, S_D_GT, S_D_GT_PHO)
 
-    def calcProfiles(self, tpPr=S_IDIST):
-        srtDfr = self.dfrIn.sort_values(by=self.lSrt, ascending=self.lAsc)
-        [dOccAbs, dPValOv, dPValUn] = [{}, {}, {}]
-        t = getSrtData(self.dfrIn, self.lSrt, self.lAsc, self.lElCat)
-        dfrRd, lSerVC, llAttr, lNAttr, N = t
-        calcPValProfiles(self.inpD, dOccAbs, dPValOv, dPValUn, srtDfr, lSerVC,
-                         llAttr, lNAttr, self.nMin, self.nMax, N, self.lElCat)
-        for k, cD in enumerate([dOccAbs, dPValOv, dPValUn]):
-            dfrR = saveDictAsPdDfr(self.inpD, self.lPRF, self.dSort, cD,
-                                   self.nMin, self.nMax, k)
-            self.plotProfiles(dfrR, k, tpPr=tpPr)
+    def fillDfrResS(self):
+        dApp = {S_MET: [], S_PHO: [], S_IC: [], S_D_GT_MET: [], S_D_GT_PHO: []}
+        lHdCF = (list(self.dfrIn_Met.columns) + list(self.dfrIn_Pho.columns) +
+                 list(self.dfrIn_IC.loc[:, S_REMCOL1:].columns))
+        self.dfrResS = pd.DataFrame(columns=list(dApp))
+        self.dfrResF = pd.DataFrame(columns=lHdCF)
+        n, N = 0, self.dfrFilt_Met.shape[0]*self.dfrFilt_Pho.shape[0]
+        for i in self.dfrFilt_Met.index:
+            sMet = self.dfrFilt_Met.at[i, S_MET]
+            dstGTMet = self.dfrFilt_Met.at[i, S_D_GT]
+            for j in self.dfrFilt_Pho.index:
+                sPho = self.dfrFilt_Pho.at[j, S_PHO]
+                dstGTPho = self.dfrFilt_Pho.at[i, S_D_GT]
+                cL = self.dfrFilt_IC[(self.dfrFilt_IC[S_MET] == sMet) &
+                                     (self.dfrFilt_IC[S_PHO] == sPho)]
+                if cL.shape[0] == 1:
+                    IC = cL.squeeze(axis=0).at[S_IC]
+                    print('TEMP - sMet =', sMet, '- sPho =', sPho, '- IC =', IC)
+                    dV = {S_MET: sMet, S_PHO: sPho, S_IC: IC,
+                          S_D_GT_MET: dstGTMet, S_D_GT_PHO: dstGTPho}
+                    # print('dV:\n', dV)
+                    for sK in dApp:
+                        dApp[sK].append(dV[sK])
+                elif cL.shape[0] > 1:
+                    print('ERROR: Shape of selected line =', cL.shape)
+                    assert False
+                n += 1
+                if n%self.inpD.modDisp == 0:
+                    print('Processed element', n, 'of', N, '.')
+        self.dfrResS.append(dApp, ignore_index=True)
+        # self.dfrResF.
+
+    def extractionOfExtremes(self):
+        self.sortAndFiltDfr()
+        self.fillDfrResS()
+        self.dfrResS.to_csv(self.pFOutS, sep=self.inpD.sSep)
+        self.dfrResF.to_csv(self.pFOutF, sep=self.inpD.sSep)
 
 # --- MAIN --------------------------------------------------------------------
 startTime = time.time()
 print('+'*25 + ' START', time.ctime(startTime), '+'*25)
 
-loopInpDataFrames(dInput)
+inpDat = InputData(dInput)
+cXtrInfo = ExtractedInfo(inpDat)
+cXtrInfo.printObjInfo()
+cXtrInfo.extractionOfExtremes()
 
 print('-'*80)
 printElapsedTimeSim(startTime, time.time(), 'Total time')
 print('+'*37, 'DONE.', '+'*36)
+
 
 ###############################################################################
