@@ -29,12 +29,9 @@ L_S_GT = [S_GT0, S_GT1, S_GT5]
 S_EXT_CSV = 'csv'
 S_EXT_PDF = 'pdf'
 
-S_IDX = 'Idx'
-S_COL = 'Col'
-
-S_IC_MET_PHO = 'ICMetPho'
-S_D_GT_MET = 'dGTMet'
-S_D_GT_PHO = 'dGTPho'
+S_IC_M_P = 'ICMetPho'
+S_D_GT_M = 'dGTMet'
+S_D_GT_P = 'dGTPho'
 
 S_SRT_BY = 'SortedBy'
 S_ASC = 'Asc'
@@ -43,13 +40,18 @@ S_D_GT = 'd_GT'
 S_MIN = 'min'
 S_MAX = 'max'
 
+S_IC_GT0 = S_IC + S_USC + S_GT0
+S_IC_GT1 = S_IC + S_USC + S_GT1
+S_IC_GT5 = S_IC + S_USC + S_GT5
+L_S_IC_GT = [S_IC_GT0, S_IC_GT1, S_IC_GT5]
+
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
 S_EXTR_INFO = 'ExtrInfo'
 
 S_MET = 'Metabolite'
 S_PHO = 'Phosphopeptide'
-S_REMCOL1 = 'PearsonCorr'
+S_RMNG_COL1_IC = 'PearsonCorr'
 
 R04 = 4
 R06 = 6
@@ -59,15 +61,15 @@ R06 = 6
 modDisp = 1000
 
 # --- data specific input -----------------------------------------------------
-dISort = {S_IC_MET_PHO: {S_SRT_BY: S_IC, S_ASC: False},
-          S_D_GT_MET: {S_SRT_BY: S_D_GT, S_ASC: False},
-          S_D_GT_PHO: {S_SRT_BY: S_D_GT, S_ASC: False}}
-# dThr = {S_IC_MET_PHO: {S_MIN: 7.25, S_MAX: None},
-#         S_D_GT_MET: {S_MIN: 0.6, S_MAX: None},
-#         S_D_GT_PHO: {S_MIN: 0.6, S_MAX: None}}
-dThr = {S_IC_MET_PHO: {S_MIN: 4.0, S_MAX: None},
-        S_D_GT_MET: {S_MIN: 0.5, S_MAX: None},
-        S_D_GT_PHO: {S_MIN: 0.5, S_MAX: None}}
+dISort = {S_IC_M_P: {S_SRT_BY: S_IC, S_ASC: False},
+          S_D_GT_M: {S_SRT_BY: S_D_GT, S_ASC: False},
+          S_D_GT_P: {S_SRT_BY: S_D_GT, S_ASC: False}}
+# dThr = {S_IC_M_P: {S_MIN: 7.25, S_MAX: None},
+#         S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
+#         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
+dThr = {S_IC_M_P: {S_MIN: 6.0, S_MAX: None},
+        S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
+        S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
 
 sSep = ';'
 
@@ -87,9 +89,9 @@ lNDigRndYAx = []
 lDoPYAx = []
 
 # --- names and paths of files and dirs ---------------------------------------
-sFInp_IC_Met_Pho = 'IC_Met_Pho'
-sFInp_dGT_Met = 'DistGT_Met'
-sFInp_dGT_Pho = 'DistGT_Pho'
+sFInp_IC_M_P = 'IC_Met_Pho'
+sFInp_dGT_M = 'DistGT_Met'
+sFInp_dGT_P = 'DistGT_Pho'
 
 sFOutS = 'ExtractedInfoOvRepShort'
 sFOutF = 'ExtractedInfoOvRepFull'
@@ -120,6 +122,11 @@ dClrBinC = {'2.1': (0.12, 0.47, 0.71),
             '31.4': (0.58, 0.4, 0.74),
             '33.99': (0.55, 0.34, 0.29)}
 
+# --- derived values ----------------------------------------------------------
+pFIGT0 = os.path.join(pInCSV, sFInp_IC_M_P + S_USC + S_GT0 + S_DOT + S_CSV)
+pFIGT1 = os.path.join(pInCSV, sFInp_IC_M_P + S_USC + S_GT1 + S_DOT + S_CSV)
+pFIGT5 = os.path.join(pInCSV, sFInp_IC_M_P + S_USC + S_GT5 + S_DOT + S_CSV)
+
 # --- assertions --------------------------------------------------------------
 assert len(lSXAx) == len(lTpX)
 assert (len(lSYAx) == len(lTpY) and len(lNDigRndYAx) == len(lTpY) and
@@ -132,8 +139,6 @@ dInput = {# --- constants
           'lSGT': L_S_GT,
           'sExtCSV': S_EXT_CSV,
           'sExtPDF': S_EXT_PDF,
-          'sIdx': S_IDX,
-          'sCol': S_COL,
           'sBase': S_BASE_CL,
           'sInpDat': S_INP_DATA,
           'sExtrInfo': S_EXTR_INFO,
@@ -157,9 +162,11 @@ dInput = {# --- constants
           'pInCSV': pInCSV,
           'pOutCSV': pOutCSV,
           'pOutPDF': os.path.join(pBase, sDirOutPDF),
-          'pFInp_IC': os.path.join(pInCSV, sFInp_IC_Met_Pho + S_DOT + S_CSV),
-          'pFInp_Met': os.path.join(pInCSV, sFInp_dGT_Met + S_DOT + S_CSV),
-          'pFInp_Pho': os.path.join(pInCSV, sFInp_dGT_Pho + S_DOT + S_CSV),
+          'pFInp_IC' + S_USC + S_GT0: pFIGT0,
+          'pFInp_IC' + S_USC + S_GT1: pFIGT1,
+          'pFInp_IC' + S_USC + S_GT5: pFIGT5,
+          'pFInp_M': os.path.join(pInCSV, sFInp_dGT_M + S_DOT + S_CSV),
+          'pFInp_P': os.path.join(pInCSV, sFInp_dGT_P + S_DOT + S_CSV),
           'sFOutS': sFOutS + S_DOT + S_CSV,
           'sFOutF': sFOutF + S_DOT + S_CSV,
           # --- graphics parameters
@@ -203,6 +210,30 @@ def transcrDict2Dfr(cD, cDfr, lSHdrIni):
 def sortDfr(pdDfr, dSrt, sSrtBy, sAsc, srtKind='stable'):
     pdDfr.sort_values(by=dSrt[sSrtBy], ascending=dSrt[sAsc], inplace=True,
                       kind=srtKind)
+
+def applyFilter(pdDfr, dThr, sHdC, sKThr, sMin=S_MIN, sMax=S_MAX):
+    thrMin, thrMax = dThr[sKThr][sMin], dThr[sKThr][sMax]
+    if thrMin is None:
+        if thrMax is None:
+            return pdDfr
+        else:
+            return pdDfr[pdDfr[sHdC] <= thrMax]
+    else:
+        if thrMax is None:
+            return pdDfr[pdDfr[sHdC] >= thrMin]
+        else:
+            return pdDfr[(pdDfr[sHdC] >= thrMin) & (pdDfr[sHdC] <= thrMax)]
+
+def fillDDat(dDat, dDfrFl, sMet, sPho, dstGTM, dstGTP):
+    for sGT in L_S_GT:
+        cDfrFl = dDfrFl[S_IC_M_P][sGT]
+        cL = cDfrFl[(cDfrFl[S_MET] == sMet) & (cDfrFl[S_PHO] == sPho)]
+        if cL.shape[0] == 1:
+            IC = cL.squeeze(axis=0).at[S_IC]
+            dDat[S_IC_M_P][sGT].append(IC)
+        elif cL.shape[0] > 1:
+            print('ERROR: Shape of selected line =', cL.shape)
+            assert False
 
 # def calcRIs(pdDfr, lSHdr, sHdrRef, sIOrig=S_I_ORIG, sUSC=S_USC):
 #     assert pdDfr.columns.to_list()[:(len(lSHdr) + 1)] == [sHdrRef] + lSHdr
@@ -273,8 +304,7 @@ class ExtractedInfo(BaseClass):
         self.idO = InpD.sExtrInfo
         self.descO = 'Extracted info'
         self.inpD = InpD
-        self.loadDfrInp()
-        self.getPResF()
+        self.getProcData()
         print('Initiated "ExtractedInfo" base object.')
 
     def printIDDesc(self):
@@ -291,15 +321,6 @@ class ExtractedInfo(BaseClass):
     def printDfrInp(self):
         print(self.dfrIn)
 
-    def loadDfrInp(self):
-        dDTp_IC = {sIn: str for sIn in [self.inpD.sBC_L, self.inpD.sBC2_L]}
-        dDTp_Pho = {sIn: str for sIn in [self.inpD.sBC2_L]}
-        self.dfrIn_IC = pd.read_csv(self.inpD.pFInp_IC, sep=self.inpD.sSep,
-                                    dtype=dDTp_IC)
-        self.dfrIn_Met = pd.read_csv(self.inpD.pFInp_Met, sep=self.inpD.sSep)
-        self.dfrIn_Pho = pd.read_csv(self.inpD.pFInp_Pho, sep=self.inpD.sSep,
-                                     dtype=dDTp_Pho)
-
     def getPResF(self):
         self.dSort, self.dThres = self.inpD.dISort, self.inpD.dThr
         self.lAsc = [cV[S_ASC] for cV in self.inpD.dISort.values()]
@@ -309,59 +330,114 @@ class ExtractedInfo(BaseClass):
             sFOutF += S_USC + sK + str(int(self.dSort[sK][S_ASC]))
         self.pFOutS = os.path.join(self.inpD.pOutCSV, sFOutS + S_DOT + S_CSV)
         self.pFOutF = os.path.join(self.inpD.pOutCSV, sFOutF + S_DOT + S_CSV)
-    
-    def applyFilter(self, pdDfr, sHdC, sKThr, sMin=S_MIN, sMax=S_MAX):
-        thrMin, thrMax = self.dThres[sKThr][sMin], self.dThres[sKThr][sMax]
-        if thrMin is None:
-            if thrMax is None:
-                return pdDfr
-            else:
-                return pdDfr[pdDfr[sHdC] <= thrMax]
-        else:
-            if thrMax is None:
-                return pdDfr[pdDfr[sHdC] >= thrMin]
-            else:
-                return pdDfr[(pdDfr[sHdC] >= thrMin) & (pdDfr[sHdC] <= thrMax)]
+
+    def getInf4Inp(self):
+        dDatTp_IC = {sIn: str for sIn in [self.inpD.sBC_L, self.inpD.sBC2_L]}
+        dDatTp_P = {sIn: str for sIn in [self.inpD.sBC2_L]}
+        self.dDatTp = {S_IC_M_P: dDatTp_IC, S_D_GT_P: dDatTp_P}
+        self.dPFInp = {S_IC_M_P: {S_GT0: self.inpD.pFInp_IC_GT0,
+                                  S_GT1: self.inpD.pFInp_IC_GT1,
+                                  S_GT5: self.inpD.pFInp_IC_GT5},
+                       S_D_GT_M: self.inpD.pFInp_M,
+                       S_D_GT_P: self.inpD.pFInp_P}
+
+    def loadDfrInp(self):
+        # load input DataFrames
+        sSep = self.inpD.sSep
+        dfrIn_IC_GT0 = pd.read_csv(self.dPFInp[S_IC_M_P][S_GT0], sep=sSep,
+                                   dtype=self.dDatTp[S_IC_M_P])
+        dfrIn_IC_GT1 = pd.read_csv(self.dPFInp[S_IC_M_P][S_GT1], sep=sSep,
+                                   dtype=self.dDatTp[S_IC_M_P])
+        dfrIn_IC_GT5 = pd.read_csv(self.dPFInp[S_IC_M_P][S_GT5], sep=sSep,
+                                   dtype=self.dDatTp[S_IC_M_P])
+        dfrIn_M = pd.read_csv(self.dPFInp[S_D_GT_M], sep=sSep)
+        dfrIn_P = pd.read_csv(self.dPFInp[S_D_GT_P], sep=sSep,
+                              dtype=self.dDatTp[S_D_GT_P])
+        self.dDfrIn = {S_IC_M_P: {S_GT0: dfrIn_IC_GT0,
+                                  S_GT1: dfrIn_IC_GT1,
+                                  S_GT5: dfrIn_IC_GT5},
+                       S_D_GT_M: dfrIn_M,
+                       S_D_GT_P: dfrIn_P}
+        # get dictionary of column headers
+        dDfrIn_IC = self.dDfrIn[S_IC_M_P]
+        lH_GT0 = list(dDfrIn_IC[S_GT0].loc[:, S_RMNG_COL1_IC:].columns)
+        lH_GT1 = list(dDfrIn_IC[S_GT1].loc[:, S_RMNG_COL1_IC:].columns)
+        lH_GT5 = list(dDfrIn_IC[S_GT5].loc[:, S_RMNG_COL1_IC:].columns)
+        self.dHdCol = {S_IC_M_P: {S_GT0: [s + S_USC + S_GT0 for s in lH_GT0],
+                                  S_GT1: [s + S_USC + S_GT1 for s in lH_GT1],
+                                  S_GT5: [s + S_USC + S_GT5 for s in lH_GT5]},
+                       S_D_GT_M: list(self.dDfrIn[S_D_GT_M].columns),
+                       S_D_GT_P: list(self.dDfrIn[S_D_GT_P].columns)}
+
+    def getProcData(self):
+        self.getPResF()
+        self.getInf4Inp()
+        self.loadDfrInp()
 
     def sortAndFiltDfr(self):
-        sortDfr(self.dfrIn_IC, self.dSort[S_IC_MET_PHO], S_SRT_BY, S_ASC)
-        sortDfr(self.dfrIn_Met, self.dSort[S_D_GT_MET], S_SRT_BY, S_ASC)
-        sortDfr(self.dfrIn_Pho, self.dSort[S_D_GT_PHO], S_SRT_BY, S_ASC)
-        self.dfrFilt_IC = self.applyFilter(self.dfrIn_IC, S_IC, S_IC_MET_PHO)
-        self.dfrFilt_Met = self.applyFilter(self.dfrIn_Met, S_D_GT, S_D_GT_MET)
-        self.dfrFilt_Pho = self.applyFilter(self.dfrIn_Pho, S_D_GT, S_D_GT_PHO)
+        for cDfr in self.dDfrIn[S_IC_M_P].values():
+            sortDfr(cDfr, self.dSort[S_IC_M_P], S_SRT_BY, S_ASC)
+        # sortDfr(self.dfrIn_IC_GT0, self.dSort[S_IC_M_P], S_SRT_BY, S_ASC)
+        # sortDfr(self.dfrIn_IC_GT1, self.dSort[S_IC_M_P], S_SRT_BY, S_ASC)
+        # sortDfr(self.dfrIn_IC_GT5, self.dSort[S_IC_M_P], S_SRT_BY, S_ASC)
+        sortDfr(self.dDfrIn[S_D_GT_M], self.dSort[S_D_GT_M], S_SRT_BY, S_ASC)
+        sortDfr(self.dDfrIn[S_D_GT_P], self.dSort[S_D_GT_P], S_SRT_BY, S_ASC)
+        dDfrIn_IC, dThr = self.dDfrIn[S_IC_M_P], self.dThres
+        dfrFl_IC_GT0 = applyFilter(dDfrIn_IC[S_GT0], dThr, S_IC, S_IC_M_P)
+        dfrFl_IC_GT1 = applyFilter(dDfrIn_IC[S_GT1], dThr, S_IC, S_IC_M_P)
+        dfrFl_IC_GT5 = applyFilter(dDfrIn_IC[S_GT5], dThr, S_IC, S_IC_M_P)
+        dfrFl_M = applyFilter(self.dDfrIn[S_D_GT_M], dThr, S_D_GT, S_D_GT_M)
+        dfrFl_P = applyFilter(self.dDfrIn[S_D_GT_P], dThr, S_D_GT, S_D_GT_P)
+        self.dDfrFl = {S_IC_M_P: {S_GT0: dfrFl_IC_GT0,
+                                  S_GT1: dfrFl_IC_GT1,
+                                  S_GT5: dfrFl_IC_GT5},
+                       S_D_GT_M: dfrFl_M,
+                       S_D_GT_P: dfrFl_P}
+
+    def iniDfrResS(self):
+        lHCS = [S_MET, S_PHO] + L_S_IC_GT + [S_D_GT_M, S_D_GT_P]
+        dDat = {cHCS: [] for cHCS in lHCS if cHCS not in L_S_IC_GT}
+        dDat[S_IC_M_P] = {sGT: [] for sGT in L_S_GT}
+        lHCF = (self.dHdCol[S_D_GT_M] + self.dHdCol[S_D_GT_P] +
+                self.dHdCol[S_IC_M_P][S_GT0] + self.dHdCol[S_IC_M_P][S_GT1] +
+                self.dHdCol[S_IC_M_P][S_GT5])
+        self.dfrResS = pd.DataFrame(columns=lHCS)
+        self.dfrResF = pd.DataFrame(columns=lHCF)
+        n, N = 0, self.dDfrFl[S_D_GT_M].shape[0]*self.dDfrFl[S_D_GT_P].shape[0]
+        return dDat, n, N
 
     def fillDfrResS(self):
-        dApp = {S_MET: [], S_PHO: [], S_IC: [], S_D_GT_MET: [], S_D_GT_PHO: []}
-        lHdCF = (list(self.dfrIn_Met.columns) + list(self.dfrIn_Pho.columns) +
-                 list(self.dfrIn_IC.loc[:, S_REMCOL1:].columns))
-        self.dfrResS = pd.DataFrame(columns=list(dApp))
-        self.dfrResF = pd.DataFrame(columns=lHdCF)
-        n, N = 0, self.dfrFilt_Met.shape[0]*self.dfrFilt_Pho.shape[0]
-        for i in self.dfrFilt_Met.index:
-            sMet = self.dfrFilt_Met.at[i, S_MET]
-            dstGTMet = self.dfrFilt_Met.at[i, S_D_GT]
-            for j in self.dfrFilt_Pho.index:
-                sPho = self.dfrFilt_Pho.at[j, S_PHO]
-                dstGTPho = self.dfrFilt_Pho.at[i, S_D_GT]
-                cL = self.dfrFilt_IC[(self.dfrFilt_IC[S_MET] == sMet) &
-                                     (self.dfrFilt_IC[S_PHO] == sPho)]
-                if cL.shape[0] == 1:
-                    IC = cL.squeeze(axis=0).at[S_IC]
-                    print('TEMP - sMet =', sMet, '- sPho =', sPho, '- IC =', IC)
-                    dV = {S_MET: sMet, S_PHO: sPho, S_IC: IC,
-                          S_D_GT_MET: dstGTMet, S_D_GT_PHO: dstGTPho}
-                    # print('dV:\n', dV)
-                    for sK in dApp:
-                        dApp[sK].append(dV[sK])
-                elif cL.shape[0] > 1:
-                    print('ERROR: Shape of selected line =', cL.shape)
-                    assert False
+        dDat, n, N = self.iniDfrResS()
+        for i in self.dDfrFl[S_D_GT_M].index:
+            sMet = self.dDfrFl[S_D_GT_M].at[i, S_MET]
+            dstGTM = self.dDfrFl[S_D_GT_M].at[i, S_D_GT]
+            for j in self.dDfrFl[S_D_GT_P].index:
+                sPho = self.dDfrFl[S_D_GT_P].at[j, S_PHO]
+                dstGTP = self.dDfrFl[S_D_GT_P].at[i, S_D_GT]
+                dDat[S_MET].append(sMet)
+                dDat[S_D_GT_M].append(dstGTM)
+                dDat[S_PHO].append(sPho)
+                dDat[S_D_GT_P].append(dstGTP)
+                fillDDat(dDat, self.dDfrFl, sMet, sPho, dstGTM, dstGTP)
                 n += 1
                 if n%self.inpD.modDisp == 0:
                     print('Processed element', n, 'of', N, '.')
-        self.dfrResS.append(dApp, ignore_index=True)
-        # self.dfrResF.
+        # print('TEMP - dDat =', dDat)
+        print('dDat keys:', list(dDat))
+        print('dDat value lengths:')
+        for sK, cL in dDat.items():
+            print(sK, ':', len(cL))
+        dAdd = {sK: cL for sK, cL in dDat.items() if sK not in [S_IC_M_P]}
+        for i, sIC_GT in enumerate(L_S_IC_GT):
+            dAdd[sIC_GT] = dDat[S_IC_M_P][L_S_GT[i]]
+        print('dAdd keys:', list(dAdd))
+        print('dAdd value lengths:')
+        for sK, cL in dAdd.items():
+            print(sK, ':', len(cL))
+        dfrAdd = pd.DataFrame(dAdd)
+        print(dfrAdd)
+        self.dfrResS = self.dfrResS.append(dfrAdd, ignore_index=True,
+                                           verify_integrity=True)
 
     def extractionOfExtremes(self):
         self.sortAndFiltDfr()
