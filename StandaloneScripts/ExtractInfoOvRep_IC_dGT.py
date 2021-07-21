@@ -26,9 +26,6 @@ S_GT1 = 'GT' + S_1
 S_GT5 = 'GT' + S_5
 L_S_GT = [S_GT0, S_GT1, S_GT5]
 
-S_EXT_CSV = 'csv'
-S_EXT_PDF = 'pdf'
-
 S_IC_M_P = 'ICMetPho'
 S_D_GT_M = 'dGTMet'
 S_D_GT_P = 'dGTPho'
@@ -49,25 +46,38 @@ S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
 S_EXTR_INFO = 'ExtrInfo'
 
+
 S_MET = 'Metabolite'
 S_PHO = 'Phosphopeptide'
+L_S_M_P = [S_MET, S_PHO]
+
 S_RMNG_COL1_IC = 'PearsonCorr'
+S_NEW_IDX = 'NewIndex'
+L_S_NO_GT = [S_MET, S_PHO, 'Protein', 'BinCode', 'BinCode2', 'MapMan',
+             'Description', 'SelBinCode']
+L_S_ADD_GT = [S_RMNG_COL1_IC, 'SpearmanCorr', 'Pearson_pVal', 'Spearman_pVal',
+              'IC_N', 'IC_P', 'IC', 'MetSig5', 'PhoSig5']
 
 R04 = 4
-R06 = 6
 
 # --- INPUT -------------------------------------------------------------------
 # --- general input -----------------------------------------------------------
 modDisp = 1000
 
 # --- data specific input -----------------------------------------------------
-dISort = {S_IC_M_P: {S_SRT_BY: S_IC, S_ASC: False},
+dISort = {S_IC_M_P: {S_GT0: {S_SRT_BY: S_IC, S_ASC: False},
+                     S_GT1: {S_SRT_BY: S_IC, S_ASC: False},
+                     S_GT5: {S_SRT_BY: S_IC, S_ASC: False}},
           S_D_GT_M: {S_SRT_BY: S_D_GT, S_ASC: False},
           S_D_GT_P: {S_SRT_BY: S_D_GT, S_ASC: False}}
-# dThr = {S_IC_M_P: {S_MIN: 7.25, S_MAX: None},
+# dThr = {S_IC_M_P: {S_GT0: {S_MIN: 7.25, S_MAX: None},
+#                    S_GT1: {S_MIN: 7.25, S_MAX: None},
+#                    S_GT5: {S_MIN: 7.25, S_MAX: None}},
 #         S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
 #         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
-dThr = {S_IC_M_P: {S_MIN: 6.0, S_MAX: None},
+dThr = {S_IC_M_P: {S_GT0: {S_MIN: 6.0, S_MAX: None},
+                   S_GT1: {S_MIN: 6.0, S_MAX: None},
+                   S_GT5: {S_MIN: 6.0, S_MAX: None}},
         S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
 
@@ -137,15 +147,12 @@ dInput = {# --- constants
           'sBC_L': S_BIN_CODE_L,
           'sBC2_L': S_BIN_CODE_L_2,
           'lSGT': L_S_GT,
-          'sExtCSV': S_EXT_CSV,
-          'sExtPDF': S_EXT_PDF,
           'sBase': S_BASE_CL,
           'sInpDat': S_INP_DATA,
           'sExtrInfo': S_EXTR_INFO,
           'sMet': S_MET,
           'sPho': S_PHO,
           'R04': R04,
-          'R06': R06,
           # --- general input
           'modDisp': modDisp,
           # --- data specific input
@@ -211,8 +218,14 @@ def sortDfr(pdDfr, dSrt, sSrtBy, sAsc, srtKind='stable'):
     pdDfr.sort_values(by=dSrt[sSrtBy], ascending=dSrt[sAsc], inplace=True,
                       kind=srtKind)
 
-def applyFilter(pdDfr, dThr, sHdC, sKThr, sMin=S_MIN, sMax=S_MAX):
-    thrMin, thrMax = dThr[sKThr][sMin], dThr[sKThr][sMax]
+def applyFilter(pdDfr, sHdC, thrMin, thrMax):
+    # if sKThr in [S_D_GT_M, S_D_GT_P]:
+    #     pdDfr = dDfrIn[sKThr]
+    #     thrMin, thrMax = dThr[sKThr][sMin], dThr[sKThr][sMax]
+    # else:
+    #     assert sGT is not None
+    #     pdDfr = dDfrIn[sKThr][sGT]
+    #     thrMin, thrMax = dThr[sKThr][sGT][sMin], dThr[sKThr][sGT][sMax]
     if thrMin is None:
         if thrMax is None:
             return pdDfr
@@ -224,6 +237,30 @@ def applyFilter(pdDfr, dThr, sHdC, sKThr, sMin=S_MIN, sMax=S_MAX):
         else:
             return pdDfr[(pdDfr[sHdC] >= thrMin) & (pdDfr[sHdC] <= thrMax)]
 
+def getLNewIdx(pdDfr):
+    assert (S_MET in pdDfr.columns) and (S_PHO in pdDfr.columns)
+    return [sM + S_USC + pdDfr[S_PHO][i] for i, sM in enumerate(pdDfr[S_MET])]
+
+def concDfr(dDfr):
+    cDfr = dDfr[L_S_GT[0]]
+    lHdCN = L_S_NO_GT + [s + S_USC + L_S_GT[0] for s in cDfr.columns
+                         if s not in L_S_NO_GT]
+    cDfr.columns = lHdCN
+    dfrM = pd.concat([pd.Series(getLNewIdx(cDfr), name=S_NEW_IDX), cDfr],
+                     axis=1, verify_integrity=True)
+    dfrM.set_index(S_NEW_IDX, inplace=True, verify_integrity=True)
+    for sGT in L_S_GT[1:]:
+        cDfr = dDfr[sGT]
+        lHdCN = L_S_NO_GT + [s + S_USC +sGT for s in cDfr.columns
+                             if s not in L_S_NO_GT]
+        cDfr.columns = lHdCN
+        cDfrM = pd.concat([pd.Series(getLNewIdx(cDfr), name=S_NEW_IDX), cDfr],
+                          axis=1, verify_integrity=True)
+        cDfrM.set_index(S_NEW_IDX, inplace=True, verify_integrity=True)
+        dfrM = pd.concat([dfrM, cDfrM.drop(columns=[S_MET, S_PHO])], axis=1,
+                         verify_integrity=True)
+    return dfrM
+
 def fillDDat(dDat, dDfrFl, sMet, sPho, dstGTM, dstGTP):
     for sGT in L_S_GT:
         cDfrFl = dDfrFl[S_IC_M_P][sGT]
@@ -234,29 +271,6 @@ def fillDDat(dDat, dDfrFl, sMet, sPho, dstGTM, dstGTP):
         elif cL.shape[0] > 1:
             print('ERROR: Shape of selected line =', cL.shape)
             assert False
-
-# def calcRIs(pdDfr, lSHdr, sHdrRef, sIOrig=S_I_ORIG, sUSC=S_USC):
-#     assert pdDfr.columns.to_list()[:(len(lSHdr) + 1)] == [sHdrRef] + lSHdr
-#     dRI, nL = {}, pdDfr.shape[0]
-#     pdDfr[sIOrig] = pdDfr.index.to_list()
-#     for sHdr in lSHdr:
-#         pdDfr.sort_values(by=[sHdr, sIOrig], ascending=[False, True],
-#                           inplace=True, kind='stable', ignore_index=True)
-#         pdDfr.loc[:, sHdr] = getLVals(pdDfr, sHdr, nEl=nL)
-#         sSpec, sTp, sGT = sHdr.split(sUSC)
-#         addToDictD(dRI, cKMain=(sSpec, sGT), cKSub=sTp, cV=sHdr)
-#     return transcrDict2Dfr(dRI, pdDfr, [sIOrig, sHdrRef])
-
-# def loopInpDataFrames(dInp):
-#     for cTpDat in dInp[S_GENERAL]['lTpDat']:
-#         print('Processing data of type', cTpDat, '...')
-#         cDfrV = pd.read_csv(dInp[cTpDat]['pFInp'], sep=dInp[S_GENERAL]['sSep'],
-#                             dtype={dInp[cTpDat]['sHdrRef']: str})
-#         cDfrR = calcRIs(cDfrV, lSHdr=dInp[cTpDat]['lSHdr'],
-#                         sHdrRef=dInp[cTpDat]['sHdrRef'])
-#         cDfrR.sort_values(by=S_I_ORIG, ascending=True, inplace=True,
-#                           kind='stable', ignore_index=True)
-#         cDfrR.to_csv(dInp[cTpDat]['pFOut'], sep=dInp[S_GENERAL]['sSep'])
 
 def printElapsedTimeSim(stT, cT, sPre = 'Time'):
     # calculate and display elapsed time
@@ -322,12 +336,20 @@ class ExtractedInfo(BaseClass):
         print(self.dfrIn)
 
     def getPResF(self):
-        self.dSort, self.dThres = self.inpD.dISort, self.inpD.dThr
+        self.dSort, self.dT = self.inpD.dISort, self.inpD.dThr
         self.lAsc = [cV[S_ASC] for cV in self.inpD.dISort.values()]
-        sFOutS, sFOutF = self.inpD.sFOutS, self.inpD.sFOutF
+        sFOutS, sFOutF, sEnd = self.inpD.sFOutS, self.inpD.sFOutF, ''
         for sK in self.dSort:
-            sFOutS += S_USC + sK + str(int(self.dSort[sK][S_ASC]))
-            sFOutF += S_USC + sK + str(int(self.dSort[sK][S_ASC]))
+            if sK in [S_D_GT_M, S_D_GT_P]:
+                sEnd += S_USC + sK + str(int(self.dSort[sK][S_ASC]))
+            else:
+                for i, sGT in enumerate(self.dSort[sK]):
+                    sAscDsc = str(int(self.dSort[sK][sGT][S_ASC]))
+                    if i == 0:
+                        sEnd += (S_USC + sK + sAscDsc)
+                    else:
+                        sEnd += (S_USC + sAscDsc)
+        sFOutS, sFOutF = sFOutS + sEnd, sFOutF + sEnd
         self.pFOutS = os.path.join(self.inpD.pOutCSV, sFOutS + S_DOT + S_CSV)
         self.pFOutF = os.path.join(self.inpD.pOutCSV, sFOutF + S_DOT + S_CSV)
 
@@ -374,20 +396,31 @@ class ExtractedInfo(BaseClass):
         self.getInf4Inp()
         self.loadDfrInp()
 
+    def simpleFilter(self, sHdC, sKey, sMin=S_MIN, sMax=S_MAX):
+        thMin, thMax = self.dT[sKey][sMin], self.dT[sKey][sMax]
+        return applyFilter(self.dDfrIn[sKey], sHdC, thMin, thMax)
+    
+    def procAndFilter(self, sHdC, sKey, sMin=S_MIN, sMax=S_MAX):
+        # process data - concatenate IC DataFrames of the three GT
+        concDfr(self.dDfrIn[sKey])
+        # filter data
+        self.dDfrFl = {sKey: {}}
+        for sGT in L_S_GT:
+            thMin, thMax = self.dT[sKey][sGT][sMin], self.dT[sKey][sGT][sMax]
+            dfrFl = applyFilter(self.dDfrIn[sKey][sGT], sHdC, thMin, thMax)
+            self.dDfrFl[sKey][sGT] = dfrFl
+    
     def sortAndFiltDfr(self):
-        for cDfr in self.dDfrIn[S_IC_M_P].values():
-            sortDfr(cDfr, self.dSort[S_IC_M_P], S_SRT_BY, S_ASC)
-        # sortDfr(self.dfrIn_IC_GT0, self.dSort[S_IC_M_P], S_SRT_BY, S_ASC)
-        # sortDfr(self.dfrIn_IC_GT1, self.dSort[S_IC_M_P], S_SRT_BY, S_ASC)
-        # sortDfr(self.dfrIn_IC_GT5, self.dSort[S_IC_M_P], S_SRT_BY, S_ASC)
+        for sGT, cDfr in self.dDfrIn[S_IC_M_P].items():
+            sortDfr(cDfr, self.dSort[S_IC_M_P][sGT], S_SRT_BY, S_ASC)
         sortDfr(self.dDfrIn[S_D_GT_M], self.dSort[S_D_GT_M], S_SRT_BY, S_ASC)
         sortDfr(self.dDfrIn[S_D_GT_P], self.dSort[S_D_GT_P], S_SRT_BY, S_ASC)
-        dDfrIn_IC, dThr = self.dDfrIn[S_IC_M_P], self.dThres
-        dfrFl_IC_GT0 = applyFilter(dDfrIn_IC[S_GT0], dThr, S_IC, S_IC_M_P)
-        dfrFl_IC_GT1 = applyFilter(dDfrIn_IC[S_GT1], dThr, S_IC, S_IC_M_P)
-        dfrFl_IC_GT5 = applyFilter(dDfrIn_IC[S_GT5], dThr, S_IC, S_IC_M_P)
-        dfrFl_M = applyFilter(self.dDfrIn[S_D_GT_M], dThr, S_D_GT, S_D_GT_M)
-        dfrFl_P = applyFilter(self.dDfrIn[S_D_GT_P], dThr, S_D_GT, S_D_GT_P)
+        dfrFl_M = self.simpleFilter(S_D_GT, S_D_GT_M)
+        dfrFl_P = self.simpleFilter(S_D_GT, S_D_GT_P)
+        dDfrFl_IC = self.procAndFilter(S_IC, S_IC_M_P)
+        dfrFl_IC_GT0 = applyFilter(self.dDfrIn, self.dT, S_IC, S_IC_M_P, S_GT0)
+        dfrFl_IC_GT1 = applyFilter(self.dDfrIn, self.dT, S_IC, S_IC_M_P, S_GT1)
+        dfrFl_IC_GT5 = applyFilter(self.dDfrIn, self.dT, S_IC, S_IC_M_P, S_GT5)
         self.dDfrFl = {S_IC_M_P: {S_GT0: dfrFl_IC_GT0,
                                   S_GT1: dfrFl_IC_GT1,
                                   S_GT5: dfrFl_IC_GT5},
