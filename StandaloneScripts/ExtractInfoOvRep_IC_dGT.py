@@ -86,16 +86,16 @@ dISort = {S_IC_M_P: {S_GT0: {S_SRT_BY: S_IC, S_ASC: False},
 #                    S_GT5: {S_MIN: 7.25, S_MAX: None}},
 #         S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
 #         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
-dThr = {S_IC_M_P: {S_GT0: {S_MIN: 6.0, S_MAX: None},
-                    S_GT1: {S_MIN: 6.0, S_MAX: None},
-                    S_GT5: {S_MIN: 6.0, S_MAX: None}},
-        S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
-        S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
-# dThr = {S_IC_M_P: {S_GT0: {S_MIN: None, S_MAX: None},
-#                     S_GT1: {S_MIN: None, S_MAX: None},
-#                     S_GT5: {S_MIN: None, S_MAX: None}},
+# dThr = {S_IC_M_P: {S_GT0: {S_MIN: 6.0, S_MAX: None},
+#                     S_GT1: {S_MIN: 6.0, S_MAX: None},
+#                     S_GT5: {S_MIN: 6.0, S_MAX: None}},
 #         S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
 #         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
+dThr = {S_IC_M_P: {S_GT0: {S_MIN: None, S_MAX: None},
+                    S_GT1: {S_MIN: None, S_MAX: None},
+                    S_GT5: {S_MIN: None, S_MAX: None}},
+        S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
+        S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
 
 sSep = ';'
 
@@ -272,30 +272,11 @@ def concDfr(dDfr):
         dfrM = pd.concat([dfrM, dfrMR], axis=1, verify_integrity=True)
     return dfrM.drop(columns=L_S_NO_GT)
 
-def addInfIC(dDat, dDfrFl, sMet, sPho):
-    for i, sGT in enumerate(L_S_GT):
-        cDfrFl, IC, sIC_GT = dDfrFl[S_IC_M_P], np.nan, L_S_IC_GT[i]
-        sI = S_USC.join([sMet, sPho])
-        if sI in cDfrFl.index:
-            IC = cDfrFl.at[sI, sIC_GT]
-        dDat[sIC_GT].append(IC)
-
-def filldDatS(dDatS, dDfrFl, N, mdDsp=1):
-    n = 0
-    for i in dDfrFl[S_D_GT_M].index:
-        sMet = dDfrFl[S_D_GT_M].at[i, S_MET]
-        for j in dDfrFl[S_D_GT_P].index:
-            sPho = dDfrFl[S_D_GT_P].at[j, S_PHO]
-            dDatS[S_MET].append(sMet)
-            dDatS[S_D_GT_M].append(dDfrFl[S_D_GT_M].at[i, S_D_GT])
-            dDatS[S_PHO].append(sPho)
-            dDatS[S_BIN_L_2].append(dDfrFl[S_D_GT_P].at[j, S_BIN_L_2])
-            dDatS[S_SELECTED].append(dDfrFl[S_D_GT_P].at[j, S_SELECTED])
-            dDatS[S_D_GT_P].append(dDfrFl[S_D_GT_P].at[j, S_D_GT])
-            addInfIC(dDatS, dDfrFl, sMet, sPho)
-            n += 1
-            if n%mdDsp == 0:
-                print('Processed element', n, 'of', N, '.')
+def appendToDDat(lDat, cDfrFl, sI, sHdC):
+    cV = np.nan
+    if sI in cDfrFl.index:
+        cV = cDfrFl.at[sI, sHdC]
+    lDat.append(cV)
 
 def printElapsedTimeSim(stT, cT, sPre = 'Time'):
     # calculate and display elapsed time
@@ -401,6 +382,8 @@ class ExtractedInfo(BaseClass):
         self.dDfrIn = {S_IC_M_P: dDfrIn_IC,
                        S_D_GT_M: dfrIn_M,
                        S_D_GT_P: dfrIn_P}
+
+    def getDHdCol(self):
         # get dictionary of column headers
         dDfr_IC = self.dDfrIn[S_IC_M_P]
         dHdCol_IC = {sGT: [sC + S_USC + sGT for sC in
@@ -410,10 +393,24 @@ class ExtractedInfo(BaseClass):
                        S_D_GT_M: list(self.dDfrIn[S_D_GT_M].columns),
                        S_D_GT_P: list(self.dDfrIn[S_D_GT_P].columns)}
 
+    def getDMapK(self):
+        # get mapping of data dictionary keys to column headers
+        self.dMapK = {}
+        for i, sMP in enumerate(L_S_M_P):
+            self.dMapK[sMP] = (L_S_D_GT[i], sMP)
+            lHdCRed = [s for s in self.dHdCol[L_S_D_GT[i]] if s not in L_S_M_P]
+            for sHdC in lHdCRed:
+                self.dMapK[S_USC.join([sHdC, sMP[0]])] = (L_S_D_GT[i], sHdC)
+        for sGT in L_S_GT:
+            for s in self.dHdCol[S_IC_M_P][sGT]:
+                self.dMapK[s] = (S_IC_M_P, s)
+
     def getProcData(self):
         self.getPResF()
         self.getInf4Inp()
         self.loadDfrInp()
+        self.getDHdCol()
+        self.getDMapK()
 
     def simpleFilter(self, sHdC, sKey, sMin=S_MIN, sMax=S_MAX):
         thMin, thMax = self.dT[sKey][sMin], self.dT[sKey][sMax]
@@ -437,30 +434,70 @@ class ExtractedInfo(BaseClass):
         self.dDfrFl = {S_IC_M_P: self.filterAndConc(S_IC, S_IC_M_P),
                        S_D_GT_M: self.simpleFilter(S_D_GT, S_D_GT_M),
                        S_D_GT_P: self.simpleFilter(S_D_GT, S_D_GT_P)}
+        self.N = self.dDfrFl[S_D_GT_M].shape[0]*self.dDfrFl[S_D_GT_P].shape[0]
 
-    def iniDfrResS(self):
-        lHCS = L_S_M_P + [S_BIN_L_2, S_SELECTED] + L_S_IC_GT + L_S_D_GT
-        dDatS = {cHCS: [] for cHCS in lHCS}
-        lHCF = (self.dHdCol[S_D_GT_M] + self.dHdCol[S_D_GT_P] +
-                self.dHdCol[S_IC_M_P][S_GT0] + self.dHdCol[S_IC_M_P][S_GT1] +
-                self.dHdCol[S_IC_M_P][S_GT5])
-        self.dfrResS = pd.DataFrame(columns=lHCS)
-        self.dfrResF = pd.DataFrame(columns=lHCF)
-        N = self.dDfrFl[S_D_GT_M].shape[0]*self.dDfrFl[S_D_GT_P].shape[0]
-        return dDatS, N
+    def iniDfrRes(self, specSel=None):
+        lC = list(self.dMapK)
+        if specSel == 'S':  # the "short" subset of data
+            # select only a subset of all keys (columns of DataFrames): lC
+            lC = [S_BIN_L_2, S_SELECTED] + L_S_IC_GT + L_S_D_GT
+            lC = [S_USC.join([s, S_PHO[0]]) for s in [S_BIN_L_2, S_SELECTED]]
+            lC = L_S_M_P + lC + L_S_IC_GT
+            lC += [S_USC.join([S_D_GT, s[0]]) for s in L_S_M_P]
+            self.dfrResS = pd.DataFrame(columns=lC)
+        else:
+            # select all keys (columns of DataFrames) defined in self.dMapK
+            self.dfrResF = pd.DataFrame(columns=lC)
+        return {cK: [] for cK in lC}
 
-    def fillDfrResS(self):
-        dDatS, N = self.iniDfrResS()
-        filldDatS(dDatS, self.dDfrFl, N, self.inpD.modDisp)
-        self.dfrResS = self.dfrResS.append(pd.DataFrame(dDatS),
-                                           ignore_index=True,
-                                           verify_integrity=True)
+    def SUB_fillDDat(self, dDat, i, j, sIMP):
+        for sKDDt, lDt in dDat.items():
+            assert sKDDt in self.dMapK
+            (sKDFl, sHdC) = self.dMapK[sKDDt]
+            if sKDFl in L_S_D_GT:
+                assert sKDFl in self.dDfrFl
+                assert sHdC in self.dDfrFl[sKDFl].columns
+                if sKDFl == S_D_GT_M:
+                    dDat[sKDDt].append(self.dDfrFl[sKDFl].at[i, sHdC])
+                else:
+                    dDat[sKDDt].append(self.dDfrFl[sKDFl].at[j, sHdC])
+            elif sKDFl in S_IC_M_P:
+                appendToDDat(lDt, self.dDfrFl[S_IC_M_P], sIMP, sHdC)
+            else:
+                print('ERROR: Unknown key of filter dictionary:', sKDFl)
+                assert False
+
+    def fillDDat(self, dDat):
+        n = 0
+        for i in self.dDfrFl[S_D_GT_M].index:
+            sMet = self.dDfrFl[S_D_GT_M].at[i, S_MET]
+            for j in self.dDfrFl[S_D_GT_P].index:
+                sPho = self.dDfrFl[S_D_GT_P].at[j, S_PHO]
+                sIMP = S_USC.join([sMet, sPho])
+                self.SUB_fillDDat(dDat, i, j, sIMP)
+                n += 1
+                if n%self.inpD.modDisp == 0:
+                    print('Processed element', n, 'of', self.N, '.')
+
+    def fillPrintDfrRes(self):
+        for spcSel in ['S', 'F']:
+            dDat = self.iniDfrRes(specSel=spcSel)
+            self.fillDDat(dDat)
+            print('Filled data dictionary for selection "' + spcSel + '".')
+            if spcSel == 'S':
+                self.dfrResS = self.dfrResS.append(pd.DataFrame(dDat),
+                                                   ignore_index=True,
+                                                   verify_integrity=True)
+                self.dfrResS.to_csv(self.pFOutS, sep=self.inpD.sSep)
+            else:
+                self.dfrResF = self.dfrResF.append(pd.DataFrame(dDat),
+                                                   ignore_index=True,
+                                                   verify_integrity=True)
+                self.dfrResF.to_csv(self.pFOutF, sep=self.inpD.sSep)
 
     def extractionOfExtremes(self):
         self.sortAndFiltDfr()
-        self.fillDfrResS()
-        self.dfrResS.to_csv(self.pFOutS, sep=self.inpD.sSep)
-        self.dfrResF.to_csv(self.pFOutF, sep=self.inpD.sSep)
+        self.fillPrintDfrRes()
 
 # --- MAIN --------------------------------------------------------------------
 startTime = time.time()
