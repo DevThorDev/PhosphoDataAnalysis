@@ -4,14 +4,16 @@
 ###############################################################################
 import os, time
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 # --- CONSTANTS ---------------------------------------------------------------
 S_DASH = '-'
 S_USC = '_'
 S_DOT = '.'
 S_CSV = 'csv'
+S_PDF = 'pdf'
 S_P = 'p'
 S_M = 'm'
 S_NO = 'No'
@@ -54,7 +56,8 @@ L_S_IC_GT = [S_IC_GT0, S_IC_GT1, S_IC_GT5]
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
 S_EXTR_INFO = 'ExtrInfo'
-
+S_PLTR = 'Plotter'
+S_PAT_PLTR = 'PatternPlotter'
 
 S_MET = 'Metabolite'
 S_PHO = 'Phosphopeptide'
@@ -69,9 +72,15 @@ L_S_NO_GT = L_S_M_P + []
 L_S_ADD_GT = [S_RMNG_COL1_IC, 'SpearmanCorr', 'Pearson_pVal', 'Spearman_pVal',
               'IC_N', 'IC_P', 'IC', 'MetSig5', 'PhoSig5']
 
+S_NM_PAT_PLT = 'PatternPlot'
+
 R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
+# --- flow control ------------------------------------------------------------
+doInfoExtr = True               # True / False
+doPlotPat = True                # True / False
+
 # --- general input -----------------------------------------------------------
 modDisp = 1000
 
@@ -114,45 +123,43 @@ lSYAx = []
 lNDigRndYAx = []
 lDoPYAx = []
 
+# --- graphics parameters -----------------------------------------------------
+dPairsPaP = {(('Leu_STTTTV'), (S_GT0, S_GT1, S_GT5)):
+             ('Leucine', 'STTTTVS(0.003)S(0.996)VHS(0.001)PTTDQDFSK')}
+
+nmPaP = S_NM_PAT_PLT            # name prefix of the plot
+szFontLeg = 'small'             # font size of legend
+coordAnchorBox = (1.1, 0.5)     # coordinates of the legend anchor box
+lWdPlt = 0.75                   # line width in plot
+
 # --- names and paths of files and dirs ---------------------------------------
-sFInp_IC_M_P = 'IC_Met_Pho'
-sFInp_dGT_M = 'DistGT_Met'
-sFInp_dGT_P = 'DistGT_Pho'
+sFIn_IC_M_P = 'IC_Met_Pho'
+sFIn_dGT_M = 'DistGT_Met'
+sFIn_dGT_P = 'DistGT_Pho'
 
 sFOutS = 'ExtrIOvRepS'
 sFOutF = 'ExtrIOvRepF'
 
+sFIn_PaP = 'ExtrIOvRepF_ICMetPho_GT0_0_No_No_GT1_0_No_No_GT5_0_No_No_dGTMet_0_0p6_No_dGTPho_0_0p6_No'
+sFOutPaP = S_NM_PAT_PLT
+
 sDirInCSV = '51_CSV_In_DistGT'
 sDirOutCSV = '52_CSV_Out_DistGT'
-sDirOutPDF = '82_ResultsPDF'
+sDirOutPaP = '56_PatternPlots'
 
 pBase = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
                     '04_SysBio_DataAnalysis')
 pInCSV = os.path.join(pBase, sDirInCSV)
 pOutCSV = os.path.join(pBase, sDirOutCSV)
 
-# --- graphics parameters -----------------------------------------------------
-nmPlt_Prf = 'Profile'   # name prefix of the plot
-thrProf = 0.05          # plot threshold for profiles
-sComp = '>='            # comparison string (value with threshold)
-szFontLeg = 'small'     # font size of legend
-iIncr = 1               # increase of file number
-jIncr = 10              # number of entities (e.g. metabolites) per plot
-coordAnchorBox = (1.1, 0.5)         # coordinates of the legend anchor box
-
-lWdPlt = 0.75
-dClrBinC = {'2.1': (0.12, 0.47, 0.71),
-            '4.1': (1.0, 0.5, 0.05),
-            '17.2': (0.17, 0.63, 0.17),
-            '29.2': (0.84, 0.15, 0.16),
-            '31.4': (0.58, 0.4, 0.74),
-            '33.99': (0.55, 0.34, 0.29)}
+pInPaP = os.path.join(pBase, sDirOutCSV)
+pOutPaP = os.path.join(pBase, sDirOutPaP)
 
 # --- derived values ----------------------------------------------------------
-pFIGT0 = os.path.join(pInCSV, sFInp_IC_M_P + S_USC + S_GT0 + S_DOT + S_CSV)
-pFIGT1 = os.path.join(pInCSV, sFInp_IC_M_P + S_USC + S_GT1 + S_DOT + S_CSV)
-pFIGT5 = os.path.join(pInCSV, sFInp_IC_M_P + S_USC + S_GT5 + S_DOT + S_CSV)
-dPFInp_IC = {S_GT0: pFIGT0, S_GT1: pFIGT1, S_GT5: pFIGT5}
+pFIGT0 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT0 + S_DOT + S_CSV)
+pFIGT1 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT1 + S_DOT + S_CSV)
+pFIGT5 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT5 + S_DOT + S_CSV)
+dPFInIC = {S_GT0: pFIGT0, S_GT1: pFIGT1, S_GT5: pFIGT5}
 
 # --- assertions --------------------------------------------------------------
 assert set(dISort) == set(dThr)
@@ -170,9 +177,14 @@ dInput = {# --- constants
           'sBase': S_BASE_CL,
           'sInpDat': S_INP_DATA,
           'sExtrInfo': S_EXTR_INFO,
+          'sPltr': S_PLTR,
+          'sPatPltr': S_PAT_PLTR,
           'sMet': S_MET,
           'sPho': S_PHO,
           'R04': R04,
+          # --- flow control
+          'doInfoExtr': doInfoExtr,
+          'doPlotPat': doPlotPat,
           # --- general input
           'modDisp': modDisp,
           # --- data specific input
@@ -185,25 +197,24 @@ dInput = {# --- constants
           'dTpX': {lTpX[k]: lSXAx[k] for k in range(len(lTpX))},
           'dTpY': {lTpY[k]: (lSYAx[k], lNDigRndYAx[k], lDoPYAx[k]) for k in
                    range(len(lTpY))},
+          # --- graphics parameters
+          'plotOfPatterns': {'dPairsPaP': dPairsPaP,
+                             'nmPaP': nmPaP,
+                             'szFontLeg': szFontLeg,
+                             'coordAnchorBox': coordAnchorBox,
+                             'lWdPlt': lWdPlt},
           # --- names and paths of files and dirs
           'pInCSV': pInCSV,
           'pOutCSV': pOutCSV,
-          'pOutPDF': os.path.join(pBase, sDirOutPDF),
-          'dPFInp_IC': dPFInp_IC,
-          'pFInp_M': os.path.join(pInCSV, sFInp_dGT_M + S_DOT + S_CSV),
-          'pFInp_P': os.path.join(pInCSV, sFInp_dGT_P + S_DOT + S_CSV),
+          'pInPaP': pInPaP,
+          'pOutPaP': pOutPaP,
+          'dPFInIC': dPFInIC,
+          'pFInM': os.path.join(pInCSV, sFIn_dGT_M + S_DOT + S_CSV),
+          'pFInP': os.path.join(pInCSV, sFIn_dGT_P + S_DOT + S_CSV),
           'sFOutS': sFOutS,
           'sFOutF': sFOutF,
-          # --- graphics parameters
-          'nmPlt_Prf': nmPlt_Prf,
-          'thrProf': thrProf,
-          'sComp': sComp,
-          'szFontLeg': szFontLeg,
-          'iIncr': iIncr,
-          'jIncr': jIncr,
-          'coordAnchorBox': coordAnchorBox,
-          'lWdPlt': lWdPlt,
-          'dClrBinC': dClrBinC}
+          'pFInPaP': os.path.join(pInPaP, sFIn_PaP + S_DOT + S_CSV),
+          'sFOutPaP': sFOutPaP}
 
 # --- FUNCTIONS ---------------------------------------------------------------
 def addToDictD(cD, cKMain, cKSub, cV):
@@ -324,6 +335,7 @@ class ExtractedInfo(BaseClass):
         self.idO = InpD.sExtrInfo
         self.descO = 'Extracted info'
         self.inpD = InpD
+        self.sSp = self.inpD.sSep
         self.getProcData()
         print('Initiated "ExtractedInfo" base object.')
 
@@ -366,18 +378,17 @@ class ExtractedInfo(BaseClass):
         dDatTp_IC = {sIn: str for sIn in [self.inpD.sBC_L, self.inpD.sBC2_L]}
         dDatTp_P = {sIn: str for sIn in [self.inpD.sBC2_L]}
         self.dDatTp = {S_IC_M_P: dDatTp_IC, S_D_GT_P: dDatTp_P}
-        self.dPFInp = {S_IC_M_P: self.inpD.dPFInp_IC,
-                       S_D_GT_M: self.inpD.pFInp_M,
-                       S_D_GT_P: self.inpD.pFInp_P}
+        self.dPFIn = {S_IC_M_P: self.inpD.dPFInIC,
+                      S_D_GT_M: self.inpD.pFInM,
+                      S_D_GT_P: self.inpD.pFInP}
 
     def loadDfrInp(self):
         # load input DataFrames
-        sSep = self.inpD.sSep
-        dDfrIn_IC = {sGT: pd.read_csv(self.dPFInp[S_IC_M_P][sGT], sep=sSep,
+        dDfrIn_IC = {sGT: pd.read_csv(self.dPFIn[S_IC_M_P][sGT], sep=self.sSp,
                                       dtype=self.dDatTp[S_IC_M_P])
                      for sGT in L_S_GT}
-        dfrIn_M = pd.read_csv(self.dPFInp[S_D_GT_M], sep=sSep)
-        dfrIn_P = pd.read_csv(self.dPFInp[S_D_GT_P], sep=sSep,
+        dfrIn_M = pd.read_csv(self.dPFIn[S_D_GT_M], sep=self.sSp)
+        dfrIn_P = pd.read_csv(self.dPFIn[S_D_GT_P], sep=self.sSp,
                               dtype=self.dDatTp[S_D_GT_P])
         self.dDfrIn = {S_IC_M_P: dDfrIn_IC,
                        S_D_GT_M: dfrIn_M,
@@ -488,25 +499,73 @@ class ExtractedInfo(BaseClass):
                 self.dfrResS = self.dfrResS.append(pd.DataFrame(dDat),
                                                    ignore_index=True,
                                                    verify_integrity=True)
-                self.dfrResS.to_csv(self.pFOutS, sep=self.inpD.sSep)
+                self.dfrResS.to_csv(self.pFOutS, sep=self.sSp)
             else:
                 self.dfrResF = self.dfrResF.append(pd.DataFrame(dDat),
                                                    ignore_index=True,
                                                    verify_integrity=True)
-                self.dfrResF.to_csv(self.pFOutF, sep=self.inpD.sSep)
+                self.dfrResF.to_csv(self.pFOutF, sep=self.sSp)
 
     def extractionOfExtremes(self):
         self.sortAndFiltDfr()
         self.fillPrintDfrRes()
+
+class Plotter(BaseClass):
+    def __init__(self, InpD):
+        super().__init__()
+        self.idO = InpD.sPltr
+        self.descO = 'Class for plotting'
+        self.inpD = InpD
+        self.sSp = self.inpD.sSep
+        self.dPPltF = {}
+
+    def printDPPltF(self):
+        print('Dictionary of plot file paths:')
+        for tK, pF in self.dPPltF.items():
+            print(tK, ':', pF)
+        print('-'*64)
+
+    def loadDfrInp(self, iC=0):
+        self.dfrInp = None
+        # load input DataFrames
+        if hasattr(self, 'pFIn'):
+            self.dfrIn = pd.read_csv(self.pFIn, sep=self.sSp, index_col=iC)
+
+class PatternPlotter(Plotter):
+    def __init__(self, InpD):
+        super().__init__(InpD)
+        self.idO = self.inpD.sPatPltr
+        self.descO = 'Pattern plotter'
+        self.pFIn = self.inpD.pFInPaP
+        self.pDOut = self.inpD.pOutPaP
+        self.dPlt = self.inpD.plotOfPatterns
+        self.getDPPltF()
+
+    def getDPPltF(self):
+        self.dPPltF, sFPlt = {}, self.inpD.sFOutPaP
+        for ((s1, tSGT), (sM, sP)) in self.dPlt['dPairsPaP'].items():
+            for sGT in tSGT:
+                sPltF = S_DOT.join([S_USC.join([sFPlt, s1, sGT]), S_PDF])
+                self.dPPltF[(s1, sGT)] = os.path.join(self.pDOut, sPltF)
+
+    def plotPatterns(self):
+        self.loadDfrInp()
+        print(self.dfrIn)
 
 # --- MAIN --------------------------------------------------------------------
 startTime = time.time()
 print('+'*25 + ' START', time.ctime(startTime), '+'*25)
 
 inpDat = InputData(dInput)
-cXtrInfo = ExtractedInfo(inpDat)
-cXtrInfo.printObjInfo()
-cXtrInfo.extractionOfExtremes()
+if inpDat.doInfoExtr:
+    cXtrInfo = ExtractedInfo(inpDat)
+    cXtrInfo.printObjInfo()
+    cXtrInfo.extractionOfExtremes()
+if inpDat.doPlotPat:
+    cPltr = PatternPlotter(inpDat)
+    cPltr.printAttrData()
+    cPltr.printDPPltF()
+    cPltr.plotPatterns()
 
 print('-'*80)
 printElapsedTimeSim(startTime, time.time(), 'Total time')
