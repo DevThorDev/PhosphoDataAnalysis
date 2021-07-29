@@ -25,8 +25,13 @@ S_3 = '3'
 S_4 = '4'
 S_5 = '5'
 
+S_MET = 'Metabolite'
+S_PHO = 'Phosphopeptide'
+L_S_M_P = [S_MET, S_PHO]
+
 S_BIN_L = 'BinCode'
 S_BIN_L_2 = S_BIN_L + S_2
+S_SEL = 'Sel'
 S_SELECTED = 'Selected'
 
 S_GT0 = 'GT' + S_O
@@ -39,29 +44,36 @@ S_D_GT_M = 'dGTMet'
 S_D_GT_P = 'dGTPho'
 L_S_D_GT = [S_D_GT_M, S_D_GT_P]
 
-S_SRT_BY = 'SortedBy'
-S_ASC = 'Asc'
-S_IC = 'IC'
-S_D_GT = 'd_GT'
+L_S_FT = ['DR', 'DS', 'NR', 'NS']
+
+D_HD_C_PA = {sMP: {sGT: [S_USC.join([sGT, sFt, sMP[0]]) for sFt in L_S_FT]
+                   for sGT in L_S_GT} for sMP in L_S_M_P}
 
 S_MIN = 'min'
 S_MAX = 'max'
 L_S_MIN_MAX = [S_MIN, S_MAX]
 
-S_IC_GT0 = S_IC + S_USC + S_GT0
-S_IC_GT1 = S_IC + S_USC + S_GT1
-S_IC_GT5 = S_IC + S_USC + S_GT5
+S_SRT_BY = 'SortedBy'
+S_ASC = 'Asc'
+S_Z_SCORE = 'Pattern (z-score)'
+S_IC = 'IC'
+S_D_GT = 'd_GT'
+
+S_IC_GT0 = S_USC.join([S_IC, S_GT0])
+S_IC_GT1 = S_USC.join([S_IC, S_GT1])
+S_IC_GT5 = S_USC.join([S_IC, S_GT5])
 L_S_IC_GT = [S_IC_GT0, S_IC_GT1, S_IC_GT5]
+
+S_SG_MET = 'MetSig5'
+S_SG_PHO = 'PhoSig5'
+L_S_SG = [S_SG_MET, S_SG_PHO]
+L_S_SG_GT = [S_USC.join([sSg, sGT]) for sGT in L_S_GT for sSg in L_S_SG]
 
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
 S_EXTR_INFO = 'ExtrInfo'
 S_PLTR = 'Plotter'
 S_PAT_PLTR = 'PatternPlotter'
-
-S_MET = 'Metabolite'
-S_PHO = 'Phosphopeptide'
-L_S_M_P = [S_MET, S_PHO]
 
 S_RMNG_COL1_IC = 'PearsonCorr'
 S_NEW_IDX = 'NewIndex'
@@ -78,7 +90,7 @@ R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
-doInfoExtr = True               # True / False
+doInfoExtr = False               # True / False
 doPlotPat = True                # True / False
 
 # --- general input -----------------------------------------------------------
@@ -100,36 +112,40 @@ dISort = {S_IC_M_P: {S_GT0: {S_SRT_BY: S_IC, S_ASC: False},
 #                     S_GT5: {S_MIN: 6.0, S_MAX: None}},
 #         S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
 #         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
-dThr = {S_IC_M_P: {S_GT0: {S_MIN: None, S_MAX: None},
-                    S_GT1: {S_MIN: None, S_MAX: None},
-                    S_GT5: {S_MIN: None, S_MAX: None}},
-        S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
-        S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
+dThr = {S_IC_M_P: {S_GT0: {S_MIN: 6.0, S_MAX: None},
+                   S_GT1: {S_MIN: 6.0, S_MAX: None},
+                   S_GT5: {S_MIN: 6.0, S_MAX: None}},
+        S_D_GT_M: {S_MIN: None, S_MAX: None},
+        S_D_GT_P: {S_MIN: None, S_MAX: None}}
+dSel = {S_SG_MET: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']},
+        S_SG_PHO: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']}}
 
 sSep = ';'
 
-# --- profile-type specific input ---------------------------------------------
-lTpX = []
-lTpY = []
-
-lSXAx = []
-# lSXAx = ['Top $\it{n}$ of the highest distance indices']
-# lSXAx_rev = ['Top $\it{n}$ of the lowest distance indices']
-
-# lSYAx = [S_Y_N_OCC]
-# lNDigRndYAx = [R06]
-# lDoPYAx = [True]
-lSYAx = []
-lNDigRndYAx = []
-lDoPYAx = []
-
 # --- graphics parameters -----------------------------------------------------
-dPairsPaP = {(('Leu_STTTTV'), (S_GT0, S_GT1, S_GT5)):
-             ('Leucine', 'STTTTVS(0.003)S(0.996)VHS(0.001)PTTDQDFSK')}
+# dPairsPaP = {(('Leu_STTTTV'), (S_GT0, S_GT1, S_GT5)):
+#              ('Leucine', 'STTTTVS(0.003)S(0.996)VHS(0.001)PTTDQDFSK')}
+# dPairsPaP = {(('Tetra_S(0.001)AS(0.749)T(0.251)P'), (S_GT0, S_GT1, S_GT5)):
+#               ('Tetradecanoic_acid', 'S(0.001)AS(0.749)T(0.251)PLLNSLVHVS(0.179)S(0.821)PRDS(1)PIETVESVHQIQR'),
+#               (('Beta_ADKTDII'), (S_GT0, S_GT1, S_GT5)):
+#               ('Beta-alanine', 'ADKTDIIS(0.607)S(0.117)S(0.12)S(0.156)DKAS(1)PPPPSAFR'),
+#               (('Hexa_S(0.001)AS(0.749)T(0.251)P'), (S_GT0, S_GT1, S_GT5)):
+#               ('Hexadecanoic_acid', 'S(0.001)AS(0.749)T(0.251)PLLNSLVHVS(0.179)S(0.821)PRDS(1)PIETVESVHQIQR')}
+dPairsPaP = {(('Isoleu_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+              ('Isoleucine', 'DLDVNES(1)GPPAAR'),
+              (('Val_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+              ('Valine', 'DLDVNES(1)GPPAAR'),
+              (('Aspart_SDKPLNY'), (S_GT0, S_GT1, S_GT5)):
+              ('Aspartic_acid', 'SDKPLNYS(1)PDPENESGINER'),
+              (('Aspart_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+              ('Aspartic_acid', 'DLDVNES(1)GPPAAR'),
+              (('Malic_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+              ('Malic_acid', 'DLDVNES(1)GPPAAR')}
 
 nmPaP = S_NM_PAT_PLT            # name prefix of the plot
 szFontLeg = 'small'             # font size of legend
-coordAnchorBox = (1.1, 0.5)     # coordinates of the legend anchor box
+nCharDsp = 60                   # number of chars displayed for legend item
+coordAnchorBox = (0.5, 1.02)    # coordinates of the legend anchor box
 lWdPlt = 0.75                   # line width in plot
 
 # --- names and paths of files and dirs ---------------------------------------
@@ -140,7 +156,8 @@ sFIn_dGT_P = 'DistGT_Pho'
 sFOutS = 'ExtrIOvRepS'
 sFOutF = 'ExtrIOvRepF'
 
-sFIn_PaP = 'ExtrIOvRepF_ICMetPho_GT0_0_No_No_GT1_0_No_No_GT5_0_No_No_dGTMet_0_0p6_No_dGTPho_0_0p6_No'
+# sFIn_PaP = 'ExtrIOvRepF_ICMetPho_GT0_0_No_No_GT1_0_No_No_GT5_0_No_No_dGTMet_0_0p6_No_dGTPho_0_0p6_No'
+sFIn_PaP = 'ExtrIOvRepF_ICMetPho_GT0_0_6p0_No_GT1_0_6p0_No_GT5_0_6p0_No_dGTMet_0_No_No_dGTPho_0_No_No'
 sFOutPaP = S_NM_PAT_PLT
 
 sDirInCSV = '51_CSV_In_DistGT'
@@ -165,9 +182,6 @@ dPFInIC = {S_GT0: pFIGT0, S_GT1: pFIGT1, S_GT5: pFIGT5}
 assert set(dISort) == set(dThr)
 for cD in [dISort, dThr]:
     assert S_IC_M_P in cD and set(cD[S_IC_M_P]) == set(L_S_GT)
-assert len(lSXAx) == len(lTpX)
-assert (len(lSYAx) == len(lTpY) and len(lNDigRndYAx) == len(lTpY) and
-        len(lDoPYAx) == len(lTpY))
 
 # --- INPUT DICTIONARY --------------------------------------------------------
 dInput = {# --- constants
@@ -190,17 +204,13 @@ dInput = {# --- constants
           # --- data specific input
           'dISort': dISort,
           'dThr': dThr,
+          'dSel': dSel,
           'sSep': sSep,
-          # --- profile-type specific input
-          'lTpX': lTpX,
-          'lTpY': lTpY,
-          'dTpX': {lTpX[k]: lSXAx[k] for k in range(len(lTpX))},
-          'dTpY': {lTpY[k]: (lSYAx[k], lNDigRndYAx[k], lDoPYAx[k]) for k in
-                   range(len(lTpY))},
           # --- graphics parameters
           'plotOfPatterns': {'dPairsPaP': dPairsPaP,
                              'nmPaP': nmPaP,
                              'szFontLeg': szFontLeg,
+                             'nCharDsp': nCharDsp,
                              'coordAnchorBox': coordAnchorBox,
                              'lWdPlt': lWdPlt},
           # --- names and paths of files and dirs
@@ -289,6 +299,16 @@ def appendToDDat(lDat, cDfrFl, sI, sHdC):
         cV = cDfrFl.at[sI, sHdC]
     lDat.append(cV)
 
+def decorateClosePlot(cFig, cAx, dPlt, pPltF):
+    cAx.set_ylabel(S_Z_SCORE)
+    l = cAx.legend(loc='lower center', bbox_to_anchor=dPlt['coordAnchorBox'],
+                   fontsize=dPlt['szFontLeg'])
+    if l is not None:
+        cFig.savefig(pPltF, bbox_extra_artists=(l,), bbox_inches='tight')
+    else:
+        cFig.savefig(pPltF)
+    plt.close()
+
 def printElapsedTimeSim(stT, cT, sPre = 'Time'):
     # calculate and display elapsed time
     elT = round(cT - stT, R04)
@@ -355,6 +375,7 @@ class ExtractedInfo(BaseClass):
 
     def getPResF(self):
         self.dSort, self.dT = self.inpD.dISort, self.inpD.dThr
+        self.dSl = self.inpD.dSel
         sFOutS, sFOutF, sEnd = self.inpD.sFOutS, self.inpD.sFOutF, ''
         for sK in self.dSort:
             if sK in L_S_D_GT:
@@ -518,6 +539,7 @@ class Plotter(BaseClass):
         self.inpD = InpD
         self.sSp = self.inpD.sSep
         self.dPPltF = {}
+        print('Initiated "Plotter" base object.')
 
     def printDPPltF(self):
         print('Dictionary of plot file paths:')
@@ -526,10 +548,11 @@ class Plotter(BaseClass):
         print('-'*64)
 
     def loadDfrInp(self, iC=0):
-        self.dfrInp = None
+        self.dfrIn, dDatTp = None, {sIn: str for sIn in L_S_SG_GT}
         # load input DataFrames
         if hasattr(self, 'pFIn'):
-            self.dfrIn = pd.read_csv(self.pFIn, sep=self.sSp, index_col=iC)
+            self.dfrIn = pd.read_csv(self.pFIn, sep=self.sSp, index_col=iC,
+                                     dtype=dDatTp)
 
 class PatternPlotter(Plotter):
     def __init__(self, InpD):
@@ -540,17 +563,28 @@ class PatternPlotter(Plotter):
         self.pDOut = self.inpD.pOutPaP
         self.dPlt = self.inpD.plotOfPatterns
         self.getDPPltF()
+        self.loadDfrInp()
+        print('Initiated "PatternPlotter" base object and loaded input data.')
 
     def getDPPltF(self):
         self.dPPltF, sFPlt = {}, self.inpD.sFOutPaP
-        for ((s1, tSGT), (sM, sP)) in self.dPlt['dPairsPaP'].items():
+        for ((s1, tSGT), tMP) in self.dPlt['dPairsPaP'].items():
             for sGT in tSGT:
                 sPltF = S_DOT.join([S_USC.join([sFPlt, s1, sGT]), S_PDF])
-                self.dPPltF[(s1, sGT)] = os.path.join(self.pDOut, sPltF)
+                self.dPPltF[(s1, sGT)] = (tMP, os.path.join(self.pDOut, sPltF))
 
     def plotPatterns(self):
-        self.loadDfrInp()
-        print(self.dfrIn)
+        d, nChD = self.dfrIn, self.dPlt['nCharDsp']
+        for ((s1, sGT), ((sM, sP), pPltF)) in self.dPPltF.items():
+            print('Plotting pattern for "' + s1 + '" and', sGT, '...')
+            # if not os.path.isfile(pPltF):
+            cFig, cAx = plt.subplots()
+            cSer = d[(d[S_MET] == sM) & (d[S_PHO] == sP)].squeeze()
+            for tMP in [(S_MET, sM), (S_PHO, sP)]:
+                cPa = cSer.loc[D_HD_C_PA[tMP[0]][sGT]]
+                cPa.index = L_S_FT
+                cAx.plot(cPa, lw=self.dPlt['lWdPlt'], label=tMP[1][:nChD])
+            decorateClosePlot(cFig, cAx, self.dPlt, pPltF)
 
 # --- MAIN --------------------------------------------------------------------
 startTime = time.time()
@@ -559,12 +593,12 @@ print('+'*25 + ' START', time.ctime(startTime), '+'*25)
 inpDat = InputData(dInput)
 if inpDat.doInfoExtr:
     cXtrInfo = ExtractedInfo(inpDat)
-    cXtrInfo.printObjInfo()
+    # cXtrInfo.printObjInfo()
     cXtrInfo.extractionOfExtremes()
 if inpDat.doPlotPat:
     cPltr = PatternPlotter(inpDat)
-    cPltr.printAttrData()
-    cPltr.printDPPltF()
+    # cPltr.printAttrData()
+    # cPltr.printDPPltF()
     cPltr.plotPatterns()
 
 print('-'*80)
