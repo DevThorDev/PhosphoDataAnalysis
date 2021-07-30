@@ -14,8 +14,10 @@ S_USC = '_'
 S_DOT = '.'
 S_CSV = 'csv'
 S_PDF = 'pdf'
-S_P = 'p'
 S_M = 'm'
+S_P = 'p'
+S_N = 'N'
+S_Y = 'Y'
 S_NO = 'No'
 
 S_O = '0'
@@ -24,6 +26,8 @@ S_2 = '2'
 S_3 = '3'
 S_4 = '4'
 S_5 = '5'
+
+S_ALL = 'All' + S_USC
 
 S_MET = 'Metabolite'
 S_PHO = 'Phosphopeptide'
@@ -39,9 +43,8 @@ S_GT1 = 'GT' + S_1
 S_GT5 = 'GT' + S_5
 L_S_GT = [S_GT0, S_GT1, S_GT5]
 
-S_IC_M_P = 'ICMetPho'
-S_D_GT_M = 'dGTMet'
-S_D_GT_P = 'dGTPho'
+S_D_GT_M = 'dGTM'
+S_D_GT_P = 'dGTP'
 L_S_D_GT = [S_D_GT_M, S_D_GT_P]
 
 L_S_FT = ['DR', 'DS', 'NR', 'NS']
@@ -57,6 +60,7 @@ S_SRT_BY = 'SortedBy'
 S_ASC = 'Asc'
 S_Z_SCORE = 'Pattern (z-score)'
 S_IC = 'IC'
+S_D_GT_S = 'dGT'
 S_D_GT = 'd_GT'
 
 S_IC_GT0 = S_USC.join([S_IC, S_GT0])
@@ -64,10 +68,17 @@ S_IC_GT1 = S_USC.join([S_IC, S_GT1])
 S_IC_GT5 = S_USC.join([S_IC, S_GT5])
 L_S_IC_GT = [S_IC_GT0, S_IC_GT1, S_IC_GT5]
 
+S_SG = 'S5'
+S_SG_M = 'MS5'
+S_SG_P = 'PS5'
+S_SG_MP = 'MPS5'
 S_SG_MET = 'MetSig5'
 S_SG_PHO = 'PhoSig5'
+L_S_SG_S = [S_SG_M, S_SG_P]
 L_S_SG = [S_SG_MET, S_SG_PHO]
 L_S_SG_GT = [S_USC.join([sSg, sGT]) for sGT in L_S_GT for sSg in L_S_SG]
+
+S_SB = 'SB'
 
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
@@ -90,35 +101,43 @@ R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
-doInfoExtr = False               # True / False
-doPlotPat = True                # True / False
+doInfoExtr = True               # True / False
+doPlotPat = False                # True / False
 
 # --- general input -----------------------------------------------------------
 modDisp = 1000
 
 # --- data specific input -----------------------------------------------------
-dISort = {S_IC_M_P: {S_GT0: {S_SRT_BY: S_IC, S_ASC: False},
-                     S_GT1: {S_SRT_BY: S_IC, S_ASC: False},
-                     S_GT5: {S_SRT_BY: S_IC, S_ASC: False}},
+dISort = {S_IC: {S_GT0: {S_SRT_BY: S_IC, S_ASC: False},
+                 S_GT1: {S_SRT_BY: S_IC, S_ASC: False},
+                 S_GT5: {S_SRT_BY: S_IC, S_ASC: False}},
           S_D_GT_M: {S_SRT_BY: S_D_GT, S_ASC: False},
           S_D_GT_P: {S_SRT_BY: S_D_GT, S_ASC: False}}
-# dThr = {S_IC_M_P: {S_GT0: {S_MIN: 7.25, S_MAX: None},
-#                    S_GT1: {S_MIN: 7.25, S_MAX: None},
-#                    S_GT5: {S_MIN: 7.25, S_MAX: None}},
+# dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
+#                S_GT1: {S_MIN: 7.25, S_MAX: None},
+#                S_GT5: {S_MIN: 7.25, S_MAX: None}},
 #         S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
 #         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
-# dThr = {S_IC_M_P: {S_GT0: {S_MIN: 6.0, S_MAX: None},
-#                     S_GT1: {S_MIN: 6.0, S_MAX: None},
-#                     S_GT5: {S_MIN: 6.0, S_MAX: None}},
+# dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
+#                S_GT1: {S_MIN: 6.0, S_MAX: None},
+#                S_GT5: {S_MIN: 6.0, S_MAX: None}},
 #         S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
 #         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
-dThr = {S_IC_M_P: {S_GT0: {S_MIN: 6.0, S_MAX: None},
-                   S_GT1: {S_MIN: 6.0, S_MAX: None},
-                   S_GT5: {S_MIN: 6.0, S_MAX: None}},
+dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
+               S_GT1: {S_MIN: 6.0, S_MAX: None},
+               S_GT5: {S_MIN: 6.0, S_MAX: None}},
         S_D_GT_M: {S_MIN: None, S_MAX: None},
         S_D_GT_P: {S_MIN: None, S_MAX: None}}
-dSel = {S_SG_MET: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']},
-        S_SG_PHO: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']}}
+# dSel = {S_SG: {S_SG_M: {S_GT0: ['Y'], S_GT1: ['Y', 'N'], S_GT5: []},
+#                S_SG_P: {S_GT0: ['Y'], S_GT1: ['Y', 'N'], S_GT5: []}}}
+dSel = {S_SG: {S_SG_M: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']},
+               S_SG_P: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']}}}
+dSel = {S_SG: {S_SG_M: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']},
+               S_SG_P: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']}}}
+dSel = {S_SG: {S_SG_M: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']},
+               S_SG_P: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']}},
+        S_SB: {S_SG_M: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']},
+               S_SG_P: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']}}}
 
 sSep = ';'
 
@@ -153,16 +172,16 @@ sFIn_IC_M_P = 'IC_Met_Pho'
 sFIn_dGT_M = 'DistGT_Met'
 sFIn_dGT_P = 'DistGT_Pho'
 
-sFOutS = 'ExtrIOvRepS'
-sFOutF = 'ExtrIOvRepF'
+sFOutS = 'S_XIOvRep'
+sFOutF = 'F_XIOvRep'
 
 # sFIn_PaP = 'ExtrIOvRepF_ICMetPho_GT0_0_No_No_GT1_0_No_No_GT5_0_No_No_dGTMet_0_0p6_No_dGTPho_0_0p6_No'
 sFIn_PaP = 'ExtrIOvRepF_ICMetPho_GT0_0_6p0_No_GT1_0_6p0_No_GT5_0_6p0_No_dGTMet_0_No_No_dGTPho_0_No_No'
 sFOutPaP = S_NM_PAT_PLT
 
-sDirInCSV = '51_CSV_In_DistGT'
-sDirOutCSV = '52_CSV_Out_DistGT'
-sDirOutPaP = '56_PatternPlots'
+sDirInCSV = '51_Inp_IC_DGT'
+sDirOutCSV = '52_OutCSV_IC_DGT'
+sDirOutPaP = '55_OutPDF_IC_DGT'
 
 pBase = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
                     '04_SysBio_DataAnalysis')
@@ -181,7 +200,7 @@ dPFInIC = {S_GT0: pFIGT0, S_GT1: pFIGT1, S_GT5: pFIGT5}
 # --- assertions --------------------------------------------------------------
 assert set(dISort) == set(dThr)
 for cD in [dISort, dThr]:
-    assert S_IC_M_P in cD and set(cD[S_IC_M_P]) == set(L_S_GT)
+    assert S_IC in cD and set(cD[S_IC]) == set(L_S_GT)
 
 # --- INPUT DICTIONARY --------------------------------------------------------
 dInput = {# --- constants
@@ -299,6 +318,63 @@ def appendToDDat(lDat, cDfrFl, sI, sHdC):
         cV = cDfrFl.at[sI, sHdC]
     lDat.append(cV)
 
+def adaptSEndDGT(dSort, dT, sK):
+    sEndDGT = ''
+    sEndDGT += S_USC + sK + S_USC + str(int(dSort[sK][S_ASC]))
+    for sMM in L_S_MIN_MAX:
+        sEndDGT += S_USC + procNum4NmF(dT[sK][sMM])
+    return sEndDGT
+
+def checkSelection(dSlS, sGT=S_GT0, sAllG=None, sSg=None):
+    sE, sK = S_USC, sSg
+    if sSg == None:
+        sK, sSg = S_SG_M, S_SG_MP
+    if sAllG == S_ALL:
+        sE += sAllG
+    if set(dSlS[sK][sGT]) == {S_N, S_Y}:
+        sE += sSg + S_N + S_Y
+    elif  set(dSlS[sK][sGT]) == {S_Y}:
+        sE += sSg + S_Y
+    elif  set(dSlS[sK][sGT]) == {S_N}:
+        sE += sSg + S_N
+    return sE
+
+def adaptSEndICSel(dSlS, lKSlS, sGT):
+    sE = ''
+    if set(dSlS[S_SG_M][sGT]) == set(dSlS[S_SG_P][sGT]):
+        sE += checkSelection(dSlS=dSlS, sGT=sGT)
+    else:
+        for sSg in lKSlS:
+            sE += checkSelection(dSlS=dSlS, sGT=sGT, sSg=sSg)
+    return sE
+
+def adaptSEndIC(dSort, dT, dSl, sK):
+    sEndIC, lSetsEq = '', [False]*len(dSl)
+    for i, cSl in enumerate(dSl):
+        lKSlS = list(dSl[cSl])
+        lSets = [set(dSl[cSl][sSg][sGT]) for sSg in lKSlS for sGT in L_S_GT]
+        if set.intersection(*lSets) == set.union(*lSets):
+            lSetsEq[i] = True
+        if i == 0:
+            for j, sGT in enumerate(dSort[sK]):
+                sAscDsc = str(int(dSort[sK][sGT][S_ASC]))
+                if j == 0:
+                    sEndIC += S_USC + sK + S_USC + sGT + S_USC + sAscDsc
+                else:
+                    sEndIC += S_USC + sGT + S_USC + sAscDsc
+                for sMM in L_S_MIN_MAX:
+                    sEndIC += S_USC + procNum4NmF(dT[sK][sGT][sMM])
+        # for sGT in dSort[sK]:
+                if not lSetsEq[i]:
+                    sEndIC += adaptSEndICSel(dSl[cSl], lKSlS, sGT)
+    for i, cSl in enumerate(dSl):
+        if lSetsEq[i]:
+            if i == 0:
+                sEndIC += checkSelection(dSl[cSl], sAllG=S_ALL)
+            else:
+                sEndIC += checkSelection(dSl[cSl])
+    return sEndIC
+
 def decorateClosePlot(cFig, cAx, dPlt, pPltF):
     cAx.set_ylabel(S_Z_SCORE)
     l = cAx.legend(loc='lower center', bbox_to_anchor=dPlt['coordAnchorBox'],
@@ -379,18 +455,9 @@ class ExtractedInfo(BaseClass):
         sFOutS, sFOutF, sEnd = self.inpD.sFOutS, self.inpD.sFOutF, ''
         for sK in self.dSort:
             if sK in L_S_D_GT:
-                sEnd += S_USC + sK + S_USC + str(int(self.dSort[sK][S_ASC]))
-                for sMM in L_S_MIN_MAX:
-                    sEnd += S_USC + procNum4NmF(self.dT[sK][sMM])
+                sEnd += adaptSEndDGT(self.dSort, self.dT, sK)
             else:
-                for i, sGT in enumerate(self.dSort[sK]):
-                    sAscDsc = str(int(self.dSort[sK][sGT][S_ASC]))
-                    if i == 0:
-                        sEnd += S_USC + sK + S_USC + sGT + S_USC + sAscDsc
-                    else:
-                        sEnd += S_USC + sGT + S_USC + sAscDsc
-                    for sMM in L_S_MIN_MAX:
-                        sEnd += S_USC + procNum4NmF(self.dT[sK][sGT][sMM])
+                sEnd += adaptSEndIC(self.dSort, self.dT, self.dSl, sK)
         sFOutS, sFOutF = sFOutS + sEnd, sFOutF + sEnd
         self.pFOutS = os.path.join(self.inpD.pOutCSV, sFOutS + S_DOT + S_CSV)
         self.pFOutF = os.path.join(self.inpD.pOutCSV, sFOutF + S_DOT + S_CSV)
@@ -398,30 +465,30 @@ class ExtractedInfo(BaseClass):
     def getInf4Inp(self):
         dDatTp_IC = {sIn: str for sIn in [self.inpD.sBC_L, self.inpD.sBC2_L]}
         dDatTp_P = {sIn: str for sIn in [self.inpD.sBC2_L]}
-        self.dDatTp = {S_IC_M_P: dDatTp_IC, S_D_GT_P: dDatTp_P}
-        self.dPFIn = {S_IC_M_P: self.inpD.dPFInIC,
+        self.dDatTp = {S_IC: dDatTp_IC, S_D_GT_P: dDatTp_P}
+        self.dPFIn = {S_IC: self.inpD.dPFInIC,
                       S_D_GT_M: self.inpD.pFInM,
                       S_D_GT_P: self.inpD.pFInP}
 
     def loadDfrInp(self):
         # load input DataFrames
-        dDfrIn_IC = {sGT: pd.read_csv(self.dPFIn[S_IC_M_P][sGT], sep=self.sSp,
-                                      dtype=self.dDatTp[S_IC_M_P])
+        dDfrIn_IC = {sGT: pd.read_csv(self.dPFIn[S_IC][sGT], sep=self.sSp,
+                                      dtype=self.dDatTp[S_IC])
                      for sGT in L_S_GT}
         dfrIn_M = pd.read_csv(self.dPFIn[S_D_GT_M], sep=self.sSp)
         dfrIn_P = pd.read_csv(self.dPFIn[S_D_GT_P], sep=self.sSp,
                               dtype=self.dDatTp[S_D_GT_P])
-        self.dDfrIn = {S_IC_M_P: dDfrIn_IC,
+        self.dDfrIn = {S_IC: dDfrIn_IC,
                        S_D_GT_M: dfrIn_M,
                        S_D_GT_P: dfrIn_P}
 
     def getDHdCol(self):
         # get dictionary of column headers
-        dDfr_IC = self.dDfrIn[S_IC_M_P]
+        dDfr_IC = self.dDfrIn[S_IC]
         dHdCol_IC = {sGT: [sC + S_USC + sGT for sC in
                            list(dDfr_IC[sGT].loc[:, S_RMNG_COL1_IC:].columns)]
                      for sGT in L_S_GT}
-        self.dHdCol = {S_IC_M_P: dHdCol_IC,
+        self.dHdCol = {S_IC: dHdCol_IC,
                        S_D_GT_M: list(self.dDfrIn[S_D_GT_M].columns),
                        S_D_GT_P: list(self.dDfrIn[S_D_GT_P].columns)}
 
@@ -434,8 +501,8 @@ class ExtractedInfo(BaseClass):
             for sHdC in lHdCRed:
                 self.dMapK[S_USC.join([sHdC, sMP[0]])] = (L_S_D_GT[i], sHdC)
         for sGT in L_S_GT:
-            for s in self.dHdCol[S_IC_M_P][sGT]:
-                self.dMapK[s] = (S_IC_M_P, s)
+            for s in self.dHdCol[S_IC][sGT]:
+                self.dMapK[s] = (S_IC, s)
 
     def getProcData(self):
         self.getPResF()
@@ -459,11 +526,11 @@ class ExtractedInfo(BaseClass):
         return concDfr(self.dDfrFl[sKey])
 
     def sortAndFiltDfr(self):
-        for sGT, cDfr in self.dDfrIn[S_IC_M_P].items():
-            sortDfr(cDfr, self.dSort[S_IC_M_P][sGT], S_SRT_BY, S_ASC)
+        for sGT, cDfr in self.dDfrIn[S_IC].items():
+            sortDfr(cDfr, self.dSort[S_IC][sGT], S_SRT_BY, S_ASC)
         sortDfr(self.dDfrIn[S_D_GT_M], self.dSort[S_D_GT_M], S_SRT_BY, S_ASC)
         sortDfr(self.dDfrIn[S_D_GT_P], self.dSort[S_D_GT_P], S_SRT_BY, S_ASC)
-        self.dDfrFl = {S_IC_M_P: self.filterAndConc(S_IC, S_IC_M_P),
+        self.dDfrFl = {S_IC: self.filterAndConc(S_IC, S_IC),
                        S_D_GT_M: self.simpleFilter(S_D_GT, S_D_GT_M),
                        S_D_GT_P: self.simpleFilter(S_D_GT, S_D_GT_P)}
         self.N = self.dDfrFl[S_D_GT_M].shape[0]*self.dDfrFl[S_D_GT_P].shape[0]
@@ -493,8 +560,8 @@ class ExtractedInfo(BaseClass):
                     dDat[sKDDt].append(self.dDfrFl[sKDFl].at[i, sHdC])
                 else:
                     dDat[sKDDt].append(self.dDfrFl[sKDFl].at[j, sHdC])
-            elif sKDFl in S_IC_M_P:
-                appendToDDat(lDt, self.dDfrFl[S_IC_M_P], sIMP, sHdC)
+            elif sKDFl in S_IC:
+                appendToDDat(lDt, self.dDfrFl[S_IC], sIMP, sHdC)
             else:
                 print('ERROR: Unknown key of filter dictionary:', sKDFl)
                 assert False
