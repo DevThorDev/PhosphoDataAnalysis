@@ -27,6 +27,9 @@ S_3 = '3'
 S_4 = '4'
 S_5 = '5'
 
+S_SRT = 'Sort'
+S_THR = 'Threshold'
+S_SEL = 'Selection'
 S_ALL = 'All'
 S_SGL = 'Sgl'
 
@@ -36,7 +39,6 @@ L_S_M_P = [S_MET, S_PHO]
 
 S_BIN_L = 'BinCode'
 S_BIN_L_2 = S_BIN_L + S_2
-S_SEL = 'Sel'
 S_SELECTED = 'Selected'
 
 S_GT = 'GT'
@@ -58,8 +60,10 @@ S_MIN = 'min'
 S_MAX = 'max'
 L_S_MIN_MAX = [S_MIN, S_MAX]
 
-S_SRT_BY = 'SortedBy'
+S_SRT_BY = S_SRT + 'edBy'
+S_ORD = 'Order'
 S_ASC = 'Asc'
+S_DSC = 'Dsc'
 S_Z_SCORE = 'Pattern (z-score)'
 S_IC = 'IC'
 S_D_GT_S = 'dGT'
@@ -86,7 +90,7 @@ L_S_SB_S = [S_SB_P]
 
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
-S_F_NM_CMP = 'FileNameCmp'
+S_F_NM_CMP = 'FNmCmp'
 S_F_NM_CMP_DGT = S_F_NM_CMP + 'DGT'
 S_F_NM_CMP_IC_ALL_GT = S_F_NM_CMP + S_IC + S_ALL + S_GT
 S_F_NM_CMP_IC_SGL_GT = S_F_NM_CMP + S_IC + S_SGL + S_GT
@@ -117,11 +121,17 @@ doPlotPat = False                # True / False
 modDisp = 1000
 
 # --- data specific input -----------------------------------------------------
-dISort = {S_IC: {S_GT0: {S_SRT_BY: S_IC, S_ASC: False},
-                 S_GT1: {S_SRT_BY: S_IC, S_ASC: False},
-                 S_GT5: {S_SRT_BY: S_IC, S_ASC: False}},
-          S_D_GT_M: {S_SRT_BY: S_D_GT, S_ASC: False},
-          S_D_GT_P: {S_SRT_BY: S_D_GT, S_ASC: False}}
+dISort = {S_IC: {S_GT0: {S_SRT_BY: S_IC, S_ORD: S_DSC},
+                  S_GT1: {S_SRT_BY: S_IC, S_ORD: S_DSC},
+                  S_GT5: {S_SRT_BY: S_IC, S_ORD: S_DSC}},
+          S_D_GT_M: {S_SRT_BY: S_D_GT, S_ORD: S_DSC},
+          S_D_GT_P: {S_SRT_BY: S_D_GT, S_ORD: S_DSC}}
+# dISort = {S_IC: {S_GT0: {S_SRT_BY: S_IC, S_ORD: S_DSC},
+#                   S_GT1: {S_SRT_BY: S_IC, S_ORD: S_ASC},
+#                   S_GT5: {S_SRT_BY: S_IC, S_ORD: S_DSC}},
+#           S_D_GT_M: {S_SRT_BY: S_D_GT, S_ORD: S_DSC},
+#           S_D_GT_P: {S_SRT_BY: S_D_GT, S_ORD: S_ASC}}
+
 # dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
 #                S_GT1: {S_MIN: 7.25, S_MAX: None},
 #                S_GT5: {S_MIN: 7.25, S_MAX: None}},
@@ -133,24 +143,37 @@ dISort = {S_IC: {S_GT0: {S_SRT_BY: S_IC, S_ASC: False},
 #         S_D_GT_M: {S_MIN: 0.6, S_MAX: None},
 #         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
 dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
-               S_GT1: {S_MIN: 6.0, S_MAX: None},
-               S_GT5: {S_MIN: 6.0, S_MAX: None}},
+                S_GT1: {S_MIN: 6.0, S_MAX: None},
+                S_GT5: {S_MIN: 6.0, S_MAX: None}},
         S_D_GT_M: {S_MIN: None, S_MAX: None},
         S_D_GT_P: {S_MIN: None, S_MAX: None}}
-# dSel = {S_SG: {S_SG_M: {S_GT0: ['Y'], S_GT1: ['Y', 'N'], S_GT5: []},
-#                S_SG_P: {S_GT0: ['Y'], S_GT1: ['Y', 'N'], S_GT5: []}}}
-# dSel = {S_SG: {S_SG_M: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']},
-#                S_SG_P: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'], S_GT5: ['Y', 'N']}}}
-# dSel = {S_SG: {S_SG_M: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']},
-#                S_SG_P: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']}}}
-dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: ['Y', 'N'],
-                                   S_GT1: ['Y', 'N'],
-                                   S_GT5: ['Y', 'N']},
-                          S_SG_P: {S_GT0: ['Y', 'N'],
-                                   S_GT1: ['Y', 'N'],
-                                   S_GT5: ['Y', 'N']}},
-        (S_SB, S_SB_P): {S_SB_P: {S_GT0: ['Y', 'N'],
-                                  S_GT1: ['Y', 'N'],
+# dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
+#                S_GT1: {S_MIN: 5.0, S_MAX: None},
+#                S_GT5: {S_MIN: 6.0, S_MAX: None}},
+#         S_D_GT_M: {S_MIN: None, S_MAX: 0.8},
+#         S_D_GT_P: {S_MIN: None, S_MAX: None}}
+
+# dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: ['Y', 'N'],
+#                                     S_GT1: ['Y', 'N'],
+#                                     S_GT5: ['Y', 'N']},
+#                           S_SG_P: {S_GT0: ['Y', 'N'],
+#                                     S_GT1: ['Y', 'N'],
+#                                     S_GT5: ['Y', 'N']}},
+#         (S_SB, S_SB_P): {S_SB_P: {S_GT0: ['Y', 'N'],
+#                                   S_GT1: ['Y', 'N'],
+#                                   S_GT5: ['Y', 'N']}}}
+# dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: ['Y', 'N'],
+#                                     S_GT1: ['Y'],
+#                                     S_GT5: ['Y', 'N']},
+#                           S_SG_P: {S_GT0: ['Y', 'N'],
+#                                     S_GT1: ['Y', 'N'],
+#                                     S_GT5: ['Y', 'N']}},
+#         (S_SB, S_SB_P): {S_SB_P: {S_GT0: ['Y', 'N'],
+#                                   S_GT1: ['Y'],
+#                                   S_GT5: ['N']}}}
+dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']},
+                          S_SG_P: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']}},
+        (S_SB, S_SB_P): {S_SB_P: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'],
                                   S_GT5: ['Y', 'N']}}}
 
 sSep = ';'
@@ -273,7 +296,13 @@ def addToDictD(cD, cKMain, cKSub, cV):
         cD[cKMain] = {}
         cD[cKMain][cKSub] = cV
 
-def procNum4NmF(cV, dRepl={S_DOT: S_P, S_DASH: S_M, 'None': S_NO}):
+def addIt(s='', sAdd='', sSep=S_USC):
+    if len(s) > 0:
+        if s[-1] != sSep:
+            s += sSep
+    return s + sAdd
+
+def num2StrF(cV, dRepl={S_DOT: S_P, S_DASH: S_M, 'None': S_NO}):
     cS = str(cV)
     for sK, sV in dRepl.items():
         cS = cS.replace(sK, sV)
@@ -297,8 +326,9 @@ def transcrDict2Dfr(cD, cDfr, lSHdrIni):
             cDfrRes[sHdr] = cDfr.loc[:, sHdr]
     return cDfrRes
 
-def sortDfr(pdDfr, dSrt, sSrtBy, sAsc, srtKind='stable'):
-    pdDfr.sort_values(by=dSrt[sSrtBy], ascending=dSrt[sAsc], inplace=True,
+def sortDfr(pdDfr, dSrt, sSrtBy, sOrd, srtKind='stable'):
+    isAsc = (dSrt[sOrd] == S_ASC)
+    pdDfr.sort_values(by=dSrt[sSrtBy], ascending=isAsc, inplace=True,
                       kind=srtKind)
 
 def applyFilter(pdDfr, sHdC, thrMin, thrMax):
@@ -337,90 +367,32 @@ def appendToDDat(lDat, cDfrFl, sI, sHdC):
         cV = cDfrFl.at[sI, sHdC]
     lDat.append(cV)
 
-def adaptSEndDGT(dSort, dT, sK):
-    sEndDGT = ''
-    sEndDGT += S_USC + sK + S_USC + str(int(dSort[sK][S_ASC]))
-    for sMM in L_S_MIN_MAX:
-        sEndDGT += S_USC + procNum4NmF(dT[sK][sMM])
-    return sEndDGT
+def checkAllSetsEqSrtThr(dSTIC):
+    lSets = [set(dSTIC[sGT].values()) for sGT in L_S_GT]
+    # print('TEMP - lSets (checkAllSetsEqSrtThr) =', lSets)
+    return set.intersection(*lSets) == set.union(*lSets)
 
-def checkSetsEqSl(dSlS):
-    lKSlS, setsEq = list(dSlS), False
-    lSets = [set(dSlS[sKSl][sGT]) for sKSl in lKSlS for sGT in L_S_GT]
-    if set.intersection(*lSets) == set.union(*lSets):
-        setsEq = True
-    # return lKSlS, setsEq
-    return setsEq
+def checkMPSetsEqSl(dSlS, sGT):
+    lSets = [set(dSlS[sKSlS][sGT]) for sKSlS in dSlS]
+    return set.intersection(*lSets) == set.union(*lSets)
 
-def checkSetsEqThr(dTIC):
-    setsEq = False
-    lSets = [set(dTIC[sGT]) for sGT in L_S_GT]
-    if set.intersection(*lSets) == set.union(*lSets):
-        setsEq = True
-    # return lKSlS, setsEq
-    return setsEq
+def checkAllSetsEqSl(dSlS):
+    lSets = [set(dSlS[sKSlS][sGT]) for sKSlS in dSlS for sGT in L_S_GT]
+    # print('TEMP - lSets (checkAllSetsEqSl) =', lSets)
+    return set.intersection(*lSets) == set.union(*lSets)
 
-def checkSelection(dSl, tKSl, sSubKSl=None, sGT=S_GT0):
-    sE, sIDSl = '', tKSl[1]
-    if sSubKSl is None:
-        sSubKSl = list(dSl[tKSl])[0]
-    if set(dSl[tKSl][sSubKSl][sGT]) == {S_N, S_Y}:
-        sE += sIDSl + S_N + S_Y
-    elif  set(dSl[tKSl][sSubKSl][sGT]) == {S_Y}:
-        sE += sIDSl + S_Y
-    elif  set(dSl[tKSl][sSubKSl][sGT]) == {S_N}:
-        sE += sIDSl + S_N
-    return sE
+def getSel(setSel, sIDSl):
+    if setSel == {S_N, S_Y}:
+        return sIDSl + S_N + S_Y
+    elif  setSel == {S_Y}:
+        return sIDSl + S_Y
+    elif  setSel == {S_N}:
+        return sIDSl + S_N
+    return ''
 
-# def checkSelection(dSl, tKSl, sSubKSl=None, sGT=S_GT0, sAllG=None):
-#     sE, sIDSl = '', tKSl[1]
-#     if sSubKSl is None:
-#         sSubKSl = list(dSl[tKSl])[0]
-#     if sAllG == S_ALL:
-#         sE += sAllG + S_USC
-#     if set(dSl[tKSl][sSubKSl][sGT]) == {S_N, S_Y}:
-#         sE += sIDSl + S_N + S_Y
-#     elif  set(dSl[tKSl][sSubKSl][sGT]) == {S_Y}:
-#         sE += sIDSl + S_Y
-#     elif  set(dSl[tKSl][sSubKSl][sGT]) == {S_N}:
-#         sE += sIDSl + S_N
-#     return sE
-
-# def adaptSEndICSel(dSlS, lKSlS, sGT):
-#     sE = ''
-#     if set(dSlS[S_SG_M][sGT]) == set(dSlS[S_SG_P][sGT]):
-#         sE += checkSelection(dSlS=dSlS, sGT=sGT)
-#     else:
-#         for sKSl in lKSlS:
-#             sE += checkSelection(dSlS=dSlS, sGT=sGT, sKSl=sKSl)
-#     return sE
-
-# def adaptSEndIC(dSort, dT, dSl, sK):
-#     sEndIC, lSetsEq = '', [False]*len(dSl)
-#     for i, cSl in enumerate(dSl):
-#         lKSlS = list(dSl[cSl])
-#         lSets = [set(dSl[cSl][sKSl][sGT]) for sKSl in lKSlS for sGT in L_S_GT]
-#         if set.intersection(*lSets) == set.union(*lSets):
-#             lSetsEq[i] = True
-#         if i == 0:
-#             for j, sGT in enumerate(dSort[sK]):
-#                 sAscDsc = str(int(dSort[sK][sGT][S_ASC]))
-#                 if j == 0:
-#                     sEndIC += S_USC + sK + S_USC + sGT + S_USC + sAscDsc
-#                 else:
-#                     sEndIC += S_USC + sGT + S_USC + sAscDsc
-#                 for sMM in L_S_MIN_MAX:
-#                     sEndIC += S_USC + procNum4NmF(dT[sK][sGT][sMM])
-#         # for sGT in dSort[sK]:
-#                 if not lSetsEq[i]:
-#                     sEndIC += adaptSEndICSel(dSl[cSl], lKSlS, sGT)
-#     for i, cSl in enumerate(dSl):
-#         if lSetsEq[i]:
-#             if i == 0:
-#                 sEndIC += checkSelection(dSl[cSl], sAllG=S_ALL)
-#             else:
-#                 sEndIC += checkSelection(dSl[cSl])
-#     return sEndIC
+def addSelAll(dSl, tKSl, sGT=S_GT0):
+    sSubKSl, sIDSl = list(dSl[tKSl])[0], tKSl[1]
+    return getSel(set(dSl[tKSl][sSubKSl][sGT]), sIDSl)
 
 def decorateClosePlot(cFig, cAx, dPlt, pPltF):
     cAx.set_ylabel(S_Z_SCORE)
@@ -472,8 +444,8 @@ class InputData(BaseClass):
             setattr(self, sK, cV)
         print('Set InputData attributes.')
 
-class FileNameCmp(BaseClass):
-    def __init__(self, InpD):
+class FNmCmp(BaseClass):
+    def __init__(self, InpD, dSetsEq):
         super().__init__()
         self.idO = InpD.sFNmCmp
         self.descO = 'File name component'
@@ -481,102 +453,108 @@ class FileNameCmp(BaseClass):
         self.dSort = self.inpD.dISort
         self.dT = self.inpD.dThr
         self.dSl = self.inpD.dSel
-        print('Initiated "FileNameCmp" base object.')
+        self.dSetsEq = dSetsEq
+        print('Initiated "FNmCmp" base object.')
 
-class FileNameCmpICSglGT(FileNameCmp):
-    def __init__(self, InpD, sK):
-        super().__init__(InpD)
+class FNmCmpICSglGT(FNmCmp):
+    def __init__(self, InpD, dSetsEq, sK):
+        super().__init__(InpD, dSetsEq)
         self.idO = InpD.sFNmCmpICSglGT
         self.descO = 'File name component for IC valid for all GTs'
         self.buildCmpIC()
-        print('Initiated "FileNameCmpICSglGT" base object.')
+        print('Initiated "FNmCmpICSglGT" base object.')
+
+    def buildCmpSrt(self, sK=S_IC, sGT=S_GT0):
+        if not self.dSetsEq[S_SRT]:
+            for sGT in self.dCmp:
+                self.dCmp[sGT] = addIt(self.dCmp[sGT],
+                                       self.dSort[sK][sGT][S_ORD])
+
+    def buildCmpThr(self, sK=S_IC, sGT=S_GT0):
+        if not self.dSetsEq[S_THR]:
+            for sGT in self.dCmp:
+                for sMM in L_S_MIN_MAX:
+                    self.dCmp[sGT] = addIt(self.dCmp[sGT],
+                                           num2StrF(self.dT[sK][sGT][sMM]))
 
     def buildCmpSel(self):
-        # lSetsEq = [False]*len(self.dSl)
-        for i, tSl in enumerate(self.dSl):
-            # lKSlS, lSetsEq[i] = checkSetsEq(self.dSl[tSl])
-            # if lSetsEq[i]:
-            if checkSetsEqSl(self.dSl[tSl]):
-                sAll = None
-                if i == 0:
-                    sAll = S_ALL
-                else:
-                    self.sCmpIC += S_USC
-                self.sCmpIC += checkSelection(self.dSl, tSl, sAllG=sAll)
+        for tSl in self.dSl:
+            if not self.dSetsEq[S_SEL][tSl]:
+                dDoSub = {sGT: True for sGT in self.dCmp}
+                for sKSub in self.dSl[tSl]:
+                    for sGT in self.dCmp:
+                        if dDoSub[sGT]:
+                            setSl, sID = set(self.dSl[tSl][sKSub][sGT]), tSl[1]
+                            if checkMPSetsEqSl(self.dSl[tSl], sGT):
+                                dDoSub[sGT] = False
+                            else:
+                                sID = sKSub
+                            self.dCmp[sGT] = addIt(self.dCmp[sGT],
+                                                   getSel(setSl, sID))
 
-    def buildCmpThr(self, sK=S_IC):
-        if not checkSetsEqThr(self.dT[sK]):
-            for j, sGT in enumerate(self.dSort[sK]):
-                lJoin = [sGT, str(int(self.dSort[sK][sGT][S_ASC]))]
-                if j == 0:
-                    lJoin = [sK] + lJoin
-                self.sCmpIC += S_USC + S_USC.join(lJoin)
-                for sMM in L_S_MIN_MAX:
-                    self.sCmpIC += S_USC + procNum4NmF(self.dT[sK][sGT][sMM])
-        #     # for sGT in self.dSort[sK]:
-        #             if not lSetsEq[i]:
-        #                 sEndIC += adaptSEndICSel(self.dSl[cSl], lKSlS, sGT)
-        # for i, cSl in enumerate(self.dSl):
-        #     if lSetsEq[i]:
-        #         if i == 0:
-        #             sEndIC += checkSelection(self.dSl[cSl], sAllG=S_ALL)
-        #         else:
-        #             sEndIC += checkSelection(self.dSl[cSl])
-        # return sEndIC
+    def assembleSCmp(self):
+        for sGT in self.dCmp:
+            if len(self.dCmp[sGT]) > 0:
+                self.dCmp[sGT] = sGT + S_USC + self.dCmp[sGT]
+                self.sCmp = addIt(self.sCmp, self.dCmp[sGT])
 
     def buildCmpIC(self):
-        self.sCmpIC = S_IC
+        self.sCmp = S_IC
+        self.dCmp = {sGT: '' for sGT in L_S_GT}
+        self.buildCmpSrt(sK=S_IC)
+        self.buildCmpThr(sK=S_IC)
         self.buildCmpSel()
+        print('TEMP - self.dCmp:')
+        print(self.dCmp)
+        self.assembleSCmp()
 
-class FileNameCmpICAllGT(FileNameCmp):
-    def __init__(self, InpD, sK):
-        super().__init__(InpD)
+class FNmCmpICAllGT(FNmCmp):
+    def __init__(self, InpD, dSetsEq, sK):
+        super().__init__(InpD, dSetsEq)
         self.idO = InpD.sFNmCmpICAllGT
         self.descO = 'File name component for IC valid for all GTs'
         self.buildCmpIC()
-        print('Initiated "FileNameCmpICAllGT" base object.')
+        print('Initiated "FNmCmpICAllGT" base object.')
 
-    def buildCmpSel(self):
-        # lSetsEq = [False]*len(self.dSl)
-        for i, tSl in enumerate(self.dSl):
-            # lKSlS, lSetsEq[i] = checkSetsEqSl(self.dSl[tSl])
-            # if lSetsEq[i]:
-            if checkSetsEqSl(self.dSl[tSl]):
-                # sAll = None
-                # if i == 0:
-                #     sAll = S_ALL
-                if i > 0:
-                    self.sCmpIC += S_USC
-                # self.sCmpIC += checkSelection(self.dSl, tSl, sAllG=sAll)
-                self.sCmpIC += checkSelection(self.dSl, tSl)
+    def buildCmpSrt(self, sK=S_IC, sGT=S_GT0):
+        if self.dSetsEq[S_SRT]:
+            self.sCmp = addIt(self.sCmp, self.dSort[sK][sGT][S_ORD])
 
     def buildCmpThr(self, sK=S_IC, sGT=S_GT0):
-        if checkSetsEqThr(self.dT[sK]):
+        if self.dSetsEq[S_THR]:
             for sMM in L_S_MIN_MAX:
-                self.sCmpIC += S_USC + procNum4NmF(self.dT[sK][sGT][sMM])
-            self.sCmpIC += S_USC
+                self.sCmp = addIt(self.sCmp, num2StrF(self.dT[sK][sGT][sMM]))
+            # self.sCmp += S_USC
+
+    def buildCmpSel(self):
+        for tSl in self.dSl:
+            if self.dSetsEq[S_SEL][tSl]:
+                self.sCmp = addIt(self.sCmp, addSelAll(self.dSl, tSl))
+        if len(self.sCmp) > 0:
+            self.sCmp = addIt(S_ALL, self.sCmp)
 
     def buildCmpIC(self):
-        self.sCmpIC = S_ALL
+        self.sCmp = ''
+        self.buildCmpSrt(sK=S_IC)
         self.buildCmpThr(sK=S_IC)
         self.buildCmpSel()
 
-class FileNameCmpDGT(FileNameCmp):
-    def __init__(self, InpD, lSK):
-        super().__init__(InpD)
+class FNmCmpDGT(FNmCmp):
+    def __init__(self, InpD, dSetsEq, lSK):
+        super().__init__(InpD, dSetsEq)
         self.idO = InpD.sFNmCmpDGT
         self.descO = 'File name component for dGT'
-        self.sCmpDGT = ''
+        self.sCmp = ''
         for i, sK in enumerate(lSK):
             self.buildCmpDGT(sK, i < (len(lSK) - 1))
-        print('Initiated "FileNameCmpDGT" base object.')
+        print('Initiated "FNmCmpDGT" base object.')
 
     def buildCmpDGT(self, sK, addUSC):
-        self.sCmpDGT += S_USC.join([sK, str(int(self.dSort[sK][S_ASC]))])
+        self.sCmp += S_USC.join([sK, self.dSort[sK][S_ORD]])
         for sMM in L_S_MIN_MAX:
-            self.sCmpDGT += S_USC + procNum4NmF(self.dT[sK][sMM])
+            self.sCmp += S_USC + num2StrF(self.dT[sK][sMM])
         if addUSC:
-            self.sCmpDGT += S_USC
+            self.sCmp += S_USC
 
 class FileNameConstructor(BaseClass):
     def __init__(self, InpD, tpFNm='F'):
@@ -586,32 +564,37 @@ class FileNameConstructor(BaseClass):
         self.inpD = InpD
         self.constrFNm(tpFNm=tpFNm)
         print('Initiated "FileNameConstructor" base object.')
+        
+    def checkSetsEq(self):
+        self.dSetsEq = {S_SRT: checkAllSetsEqSrtThr(self.inpD.dISort[S_IC]),
+                        S_THR: checkAllSetsEqSrtThr(self.inpD.dThr[S_IC]),
+                        S_SEL: {}}
+        for tSl, dSlSub in self.inpD.dSel.items():
+            self.dSetsEq[S_SEL][tSl] = checkAllSetsEqSl(dSlSub)
+
+    def joinCmpToFNm(self):
+        self.sFNm = self.sFOut
+        l = [self.oCmpICSglGT.sCmp, self.oCmpICAllGT.sCmp, self.oCmpDGT.sCmp]
+        for s in l:
+            if len(s) > 0:
+                self.sFNm += S_USC + s
 
     def constrFNm(self, tpFNm='F'):
         self.sFOut = self.inpD.sFOutF
         if tpFNm == 'S':
             self.sFOut = self.inpD.sFOutS
-        # self.oCmpICSglGT = FileNameCmpICSglGT(self.inpD, sK=S_IC)
-        self.oCmpICAllGT = FileNameCmpICAllGT(self.inpD, sK=S_IC)
-        self.oCmpDGT = FileNameCmpDGT(self.inpD, lSK=L_S_D_GT)
-        self.sFNm = S_USC.join([self.sFOut,
-                                # self.oCmpICSglGT.sCmpIC,
-                                self.oCmpICAllGT.sCmpIC,
-                                self.oCmpDGT.sCmpDGT])
-        print('_'*8, 'Attribute data of FileNameCmpDGT:', '_'*8)
+        self.checkSetsEq()
+        print('self.dSetsEq =', self.dSetsEq)
+        self.oCmpICSglGT = FNmCmpICSglGT(self.inpD, self.dSetsEq, sK=S_IC)
+        self.oCmpICAllGT = FNmCmpICAllGT(self.inpD, self.dSetsEq, sK=S_IC)
+        if len(self.oCmpICSglGT.sCmp) == 0:
+            self.oCmpICAllGT.sCmp = S_IC + S_USC + self.oCmpICAllGT.sCmp
+        self.oCmpDGT = FNmCmpDGT(self.inpD, self.dSetsEq, lSK=L_S_D_GT)
+        self.joinCmpToFNm()
+        print('_'*8, 'Attribute data of FNmCmpDGT:', '_'*8)
         self.oCmpDGT.printAttrData()
         print('='*8, 'Attribute data of FileNameConstructor:', '='*8)
         self.printAttrData()
-
-        # sFOutS, sFOutF, sEnd = self.inpD.sFOutS, self.inpD.sFOutF, ''
-        # for sK in self.dSort:
-        #     if sK in L_S_D_GT:
-        #         sEnd += adaptSEndDGT(self.dSort, self.dT, sK)
-        #     else:
-        #         sEnd += adaptSEndIC(self.dSort, self.dT, self.dSl, sK)
-        # sFOutS, sFOutF = sFOutS + sEnd, sFOutF + sEnd
-        # self.pFOutS = os.path.join(self.inpD.pOutCSV, sFOutS + S_DOT + S_CSV)
-        # self.pFOutF = os.path.join(self.inpD.pOutCSV, sFOutF + S_DOT + S_CSV)
 
 class ExtractedInfo(BaseClass):
     def __init__(self, InpD):
@@ -619,6 +602,9 @@ class ExtractedInfo(BaseClass):
         self.idO = InpD.sExtrInfo
         self.descO = 'Extracted info'
         self.inpD = InpD
+        self.dSort = self.inpD.dISort
+        self.dT = self.inpD.dThr
+        self.dSl = self.inpD.dSel
         self.sSp = self.inpD.sSep
         self.getProcData()
         print('Initiated "ExtractedInfo" base object.')
@@ -640,22 +626,9 @@ class ExtractedInfo(BaseClass):
     def getPResF(self):
         cnstrFNmS = FileNameConstructor(self.inpD, tpFNm='S')
         cnstrFNmF = FileNameConstructor(self.inpD, tpFNm='F')
-        assert False
-
-        # self.pFOutS = cFNmCnstr(tpFNm='S')
-        # self.pFOutF = cFNmCnstr(tpFNm='F')
-
-        # self.dSort, self.dT = self.inpD.dISort, self.inpD.dThr
-        # self.dSl = self.inpD.dSel
-        # sFOutS, sFOutF, sEnd = self.inpD.sFOutS, self.inpD.sFOutF, ''
-        # for sK in self.dSort:
-        #     if sK in L_S_D_GT:
-        #         sEnd += adaptSEndDGT(self.dSort, self.dT, sK)
-        #     else:
-        #         sEnd += adaptSEndIC(self.dSort, self.dT, self.dSl, sK)
-        # sFOutS, sFOutF = sFOutS + sEnd, sFOutF + sEnd
-        # self.pFOutS = os.path.join(self.inpD.pOutCSV, sFOutS + S_DOT + S_CSV)
-        # self.pFOutF = os.path.join(self.inpD.pOutCSV, sFOutF + S_DOT + S_CSV)
+        pOut = self.inpD.pOutCSV
+        self.pFOutS = os.path.join(pOut, S_DOT.join([cnstrFNmS.sFNm, S_CSV]))
+        self.pFOutF = os.path.join(pOut, S_DOT.join([cnstrFNmF.sFNm, S_CSV]))
 
     def getInf4Inp(self):
         dDatTp_IC = {sIn: str for sIn in [self.inpD.sBC_L, self.inpD.sBC2_L]}
@@ -722,9 +695,9 @@ class ExtractedInfo(BaseClass):
 
     def sortAndFiltDfr(self):
         for sGT, cDfr in self.dDfrIn[S_IC].items():
-            sortDfr(cDfr, self.dSort[S_IC][sGT], S_SRT_BY, S_ASC)
-        sortDfr(self.dDfrIn[S_D_GT_M], self.dSort[S_D_GT_M], S_SRT_BY, S_ASC)
-        sortDfr(self.dDfrIn[S_D_GT_P], self.dSort[S_D_GT_P], S_SRT_BY, S_ASC)
+            sortDfr(cDfr, self.dSort[S_IC][sGT], S_SRT_BY, S_ORD)
+        sortDfr(self.dDfrIn[S_D_GT_M], self.dSort[S_D_GT_M], S_SRT_BY, S_ORD)
+        sortDfr(self.dDfrIn[S_D_GT_P], self.dSort[S_D_GT_P], S_SRT_BY, S_ORD)
         self.dDfrFl = {S_IC: self.filterAndConc(S_IC, S_IC),
                        S_D_GT_M: self.simpleFilter(S_D_GT, S_D_GT_M),
                        S_D_GT_P: self.simpleFilter(S_D_GT, S_D_GT_P)}
