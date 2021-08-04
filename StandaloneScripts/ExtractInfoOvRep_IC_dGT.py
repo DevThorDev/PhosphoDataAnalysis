@@ -82,14 +82,18 @@ S_SG_MET = 'MetSig5'
 S_SG_PHO = 'PhoSig5'
 L_S_SG_S = [S_SG_M, S_SG_P]
 L_S_SG = [S_SG_MET, S_SG_PHO]
+L_S_SG_MET_GT = [S_USC.join([S_SG_MET, sGT]) for sGT in L_S_GT]
+L_S_SG_PHO_GT = [S_USC.join([S_SG_PHO, sGT]) for sGT in L_S_GT]
 L_S_SG_GT = [S_USC.join([sSg, sGT]) for sGT in L_S_GT for sSg in L_S_SG]
 
 S_SB = 'SB'
 S_SB_P = 'P' + S_SB
+L_S_SB_GT = [S_USC.join([sSB, sGT]) for sGT in L_S_GT for sSB in L_S_SG]
 L_S_SB_S = [S_SB_P]
 
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
+S_ROOT_CL = 'RootClass'
 S_F_NM_CMP = 'FNmCmp'
 S_F_NM_CMP_DGT = S_F_NM_CMP + 'DGT'
 S_F_NM_CMP_IC_ALL_GT = S_F_NM_CMP + S_IC + S_ALL + S_GT
@@ -153,6 +157,7 @@ dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
 #         S_D_GT_M: {S_MIN: None, S_MAX: 0.8},
 #         S_D_GT_P: {S_MIN: None, S_MAX: None}}
 
+lSelSB = ['Y']          # ['Y', 'N'] / ['Y'] / ['N']
 # dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: ['Y', 'N'],
 #                                     S_GT1: ['Y', 'N'],
 #                                     S_GT5: ['Y', 'N']},
@@ -171,10 +176,14 @@ dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
 #         (S_SB, S_SB_P): {S_SB_P: {S_GT0: ['Y', 'N'],
 #                                   S_GT1: ['Y'],
 #                                   S_GT5: ['N']}}}
+# dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']},
+#                           S_SG_P: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']}},
+#         (S_SB, S_SB_P): {S_SB_P: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'],
+#                                   S_GT5: ['Y', 'N']}}}
 dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']},
                           S_SG_P: {S_GT0: ['Y'], S_GT1: ['Y'], S_GT5: ['Y']}},
-        (S_SB, S_SB_P): {S_SB_P: {S_GT0: ['Y', 'N'], S_GT1: ['Y', 'N'],
-                                  S_GT5: ['Y', 'N']}}}
+        (S_SB, S_SB_P): {S_SB_P: {S_GT0: lSelSB, S_GT1: lSelSB,
+                                  S_GT5: lSelSB}}}
 
 sSep = ';'
 
@@ -229,6 +238,13 @@ pInPaP = os.path.join(pBase, sDirOutCSV)
 pOutPaP = os.path.join(pBase, sDirOutPaP)
 
 # --- derived values ----------------------------------------------------------
+dMapCHdSel = {S_SG: {S_SG_M: {sGT: L_S_SG_MET_GT[k]
+                              for k, sGT in enumerate(L_S_GT)},
+                     S_SG_P: {sGT: L_S_SG_PHO_GT[k]
+                              for k, sGT in enumerate(L_S_GT)}},
+              S_SB: {S_SB_P: {sGT: S_USC.join([S_SELECTED, S_PHO[0]])
+                              for sGT in L_S_GT}}}
+
 pFIGT0 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT0 + S_DOT + S_CSV)
 pFIGT1 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT1 + S_DOT + S_CSV)
 pFIGT5 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT5 + S_DOT + S_CSV)
@@ -246,6 +262,7 @@ dInput = {# --- constants
           'lSGT': L_S_GT,
           'sBase': S_BASE_CL,
           'sInpDat': S_INP_DATA,
+          'sRoot': S_ROOT_CL,
           'sFNmCmp': S_F_NM_CMP,
           'sFNmCmpDGT': S_F_NM_CMP_DGT,
           'sFNmCmpICAllGT': S_F_NM_CMP_IC_ALL_GT,
@@ -285,7 +302,9 @@ dInput = {# --- constants
           'sFOutS': sFOutS,
           'sFOutF': sFOutF,
           'pFInPaP': os.path.join(pInPaP, sFIn_PaP + S_DOT + S_CSV),
-          'sFOutPaP': sFOutPaP}
+          'sFOutPaP': sFOutPaP,
+          # --- further derived values
+          'dMapCHdSel': dMapCHdSel}
 
 # --- FUNCTIONS ---------------------------------------------------------------
 def addToDictD(cD, cKMain, cKSub, cV):
@@ -295,6 +314,14 @@ def addToDictD(cD, cKMain, cKSub, cV):
     else:
         cD[cKMain] = {}
         cD[cKMain][cKSub] = cV
+
+def allElEq(iterator):
+    iterator = iter(iterator)
+    try:
+        first = next(iterator)
+    except StopIteration:
+        return True
+    return all(first == x for x in iterator)
 
 def addIt(s='', sAdd='', sSep=S_USC):
     if len(s) > 0:
@@ -331,7 +358,7 @@ def sortDfr(pdDfr, dSrt, sSrtBy, sOrd, srtKind='stable'):
     pdDfr.sort_values(by=dSrt[sSrtBy], ascending=isAsc, inplace=True,
                       kind=srtKind)
 
-def applyFilter(pdDfr, sHdC, thrMin, thrMax):
+def applyThrFilter(pdDfr, sHdC, thrMin, thrMax):
     if thrMin is None:
         if thrMax is None:
             return pdDfr
@@ -342,6 +369,22 @@ def applyFilter(pdDfr, sHdC, thrMin, thrMax):
             return pdDfr[pdDfr[sHdC] >= thrMin]
         else:
             return pdDfr[(pdDfr[sHdC] >= thrMin) & (pdDfr[sHdC] <= thrMax)]
+
+def filterDfrSel(pdDfr, dGT, dMap, sKMain, sKSub, sGT):
+    sHdC, lSSel = dMap[sKMain][sKSub][sGT], dGT[sGT]
+    if sHdC in pdDfr.columns:
+        return pdDfr[pdDfr[sHdC].isin(lSSel)]
+    else:
+        return pdDfr
+
+def applySelFilter(pdDfr, dSel, dMap):
+    for tK, dSub in dSel.items():
+        for sKSub, dGT in dSub.items():
+            if allElEq(dGT.values()) and allElEq(dMap[tK[0]][sKSub].values()):
+                pdDfr = filterDfrSel(pdDfr, dGT, dMap, tK[0], sKSub, L_S_GT[0])
+            else:
+                for sGT in dGT:
+                    pdDfr = filterDfrSel(pdDfr, dGT, dMap, tK[0], sKSub, sGT)
 
 def getLNewIdx(pdDfr):
     assert (S_MET in pdDfr.columns) and (S_PHO in pdDfr.columns)
@@ -369,7 +412,6 @@ def appendToDDat(lDat, cDfrFl, sI, sHdC):
 
 def checkAllSetsEqSrtThr(dSTIC):
     lSets = [set(dSTIC[sGT].values()) for sGT in L_S_GT]
-    # print('TEMP - lSets (checkAllSetsEqSrtThr) =', lSets)
     return set.intersection(*lSets) == set.union(*lSets)
 
 def checkMPSetsEqSl(dSlS, sGT):
@@ -378,7 +420,6 @@ def checkMPSetsEqSl(dSlS, sGT):
 
 def checkAllSetsEqSl(dSlS):
     lSets = [set(dSlS[sKSlS][sGT]) for sKSlS in dSlS for sGT in L_S_GT]
-    # print('TEMP - lSets (checkAllSetsEqSl) =', lSets)
     return set.intersection(*lSets) == set.union(*lSets)
 
 def getSel(setSel, sIDSl):
@@ -393,6 +434,14 @@ def getSel(setSel, sIDSl):
 def addSelAll(dSl, tKSl, sGT=S_GT0):
     sSubKSl, sIDSl = list(dSl[tKSl])[0], tKSl[1]
     return getSel(set(dSl[tKSl][sSubKSl][sGT]), sIDSl)
+
+def saveDfrRes(dfrRes, dDat, pFOut, sSep, dSel=None, dMap=None):
+    dfrRes = dfrRes.append(pd.DataFrame(dDat), ignore_index=True,
+                           verify_integrity=True)
+    if dSel is not None and dMap is not None:
+        applySelFilter(dfrRes, dSel, dMap)
+    dfrRes.to_csv(pFOut, sep=sSep)
+    return dfrRes
 
 def decorateClosePlot(cFig, cAx, dPlt, pPltF):
     cAx.set_ylabel(S_Z_SCORE)
@@ -417,6 +466,10 @@ class BaseClass():
         self.idO = S_BASE_CL
         self.descO = 'Base class'
         print('Initiated "Base" base object.')
+
+    def printIDDesc(self):
+        print('Object ID:', self.idO)
+        print('Object description:', self.descO)
 
     def printAttrList(self):
         lAttr = dir(self)
@@ -444,15 +497,56 @@ class InputData(BaseClass):
             setattr(self, sK, cV)
         print('Set InputData attributes.')
 
-class FNmCmp(BaseClass):
-    def __init__(self, InpD, dSetsEq):
+class RootClass(BaseClass):
+    def __init__(self, InpD):
         super().__init__()
-        self.idO = InpD.sFNmCmp
-        self.descO = 'File name component'
+        self.idO = InpD.sRoot
+        self.descO = 'Root class'
         self.inpD = InpD
         self.dSort = self.inpD.dISort
         self.dT = self.inpD.dThr
         self.dSl = self.inpD.dSel
+        self.dfrIn, self.dDfrIn = None, None
+        print('Initiated "RootClass" base object.')
+
+    def printObjInfo(self):
+        print('-'*20, 'Object', self.descO, '(ID', self.idO, ')', '-'*20)
+        print('-'*8, 'Input data:')
+        self.inpD.printAttrData()
+        print('-'*8, 'Attributes of', self.descO, 'class:')
+        self.printAttrData()
+
+    def printDfrInp(self):
+        if self.dfrIn is None:
+            print('Input DataFrame does not have any content yet.')
+        else:
+            print('Input DataFrame:')
+            print(self.dfrIn)
+
+    def printDDfrInp(self):
+        if self.dDfrIn is None:
+            print('Input DataFrames dictionary does not have any content yet.')
+        else:
+            print('Input DataFrames dictionary:')
+            print(self.dDfrIn)
+
+    def printDictsSortFilt(self):
+        print('_'*8, 'Sorting dictionary:', '_'*8)
+        for cK, cV in self.dSort.items():
+            print('* ' + str(cK) + ':\n' + str(cV))
+        print('_'*8, 'Threshold dictionary:', '_'*8)
+        for cK, cV in self.dT.items():
+            print('* ' + str(cK) + ':\n' + str(cV))
+        print('_'*8, 'Selection dictionary:', '_'*8)
+        for cK, cV in self.dSl.items():
+            print('* ' + str(cK) + ':\n' + str(cV))
+
+class FNmCmp(RootClass):
+    def __init__(self, InpD, dSetsEq):
+        super().__init__(InpD)
+        self.idO = InpD.sFNmCmp
+        self.descO = 'File name component'
+        self.inpD = InpD
         self.dSetsEq = dSetsEq
         print('Initiated "FNmCmp" base object.')
 
@@ -504,8 +598,6 @@ class FNmCmpICSglGT(FNmCmp):
         self.buildCmpSrt(sK=S_IC)
         self.buildCmpThr(sK=S_IC)
         self.buildCmpSel()
-        print('TEMP - self.dCmp:')
-        print(self.dCmp)
         self.assembleSCmp()
 
 class FNmCmpICAllGT(FNmCmp):
@@ -556,20 +648,20 @@ class FNmCmpDGT(FNmCmp):
         if addUSC:
             self.sCmp += S_USC
 
-class FileNameConstructor(BaseClass):
+class FileNameConstructor(RootClass):
     def __init__(self, InpD, tpFNm='F'):
-        super().__init__()
+        super().__init__(InpD)
         self.idO = InpD.sFNmCnstr
         self.descO = 'File name constructor'
         self.inpD = InpD
         self.constrFNm(tpFNm=tpFNm)
         print('Initiated "FileNameConstructor" base object.')
-        
+
     def checkSetsEq(self):
-        self.dSetsEq = {S_SRT: checkAllSetsEqSrtThr(self.inpD.dISort[S_IC]),
-                        S_THR: checkAllSetsEqSrtThr(self.inpD.dThr[S_IC]),
+        self.dSetsEq = {S_SRT: checkAllSetsEqSrtThr(self.dSort[S_IC]),
+                        S_THR: checkAllSetsEqSrtThr(self.dT[S_IC]),
                         S_SEL: {}}
-        for tSl, dSlSub in self.inpD.dSel.items():
+        for tSl, dSlSub in self.dSl.items():
             self.dSetsEq[S_SEL][tSl] = checkAllSetsEqSl(dSlSub)
 
     def joinCmpToFNm(self):
@@ -584,44 +676,23 @@ class FileNameConstructor(BaseClass):
         if tpFNm == 'S':
             self.sFOut = self.inpD.sFOutS
         self.checkSetsEq()
-        print('self.dSetsEq =', self.dSetsEq)
         self.oCmpICSglGT = FNmCmpICSglGT(self.inpD, self.dSetsEq, sK=S_IC)
         self.oCmpICAllGT = FNmCmpICAllGT(self.inpD, self.dSetsEq, sK=S_IC)
         if len(self.oCmpICSglGT.sCmp) == 0:
             self.oCmpICAllGT.sCmp = S_IC + S_USC + self.oCmpICAllGT.sCmp
         self.oCmpDGT = FNmCmpDGT(self.inpD, self.dSetsEq, lSK=L_S_D_GT)
         self.joinCmpToFNm()
-        print('_'*8, 'Attribute data of FNmCmpDGT:', '_'*8)
-        self.oCmpDGT.printAttrData()
-        print('='*8, 'Attribute data of FileNameConstructor:', '='*8)
-        self.printAttrData()
 
-class ExtractedInfo(BaseClass):
+class ExtractedInfo(RootClass):
     def __init__(self, InpD):
-        super().__init__()
+        super().__init__(InpD)
         self.idO = InpD.sExtrInfo
         self.descO = 'Extracted info'
         self.inpD = InpD
-        self.dSort = self.inpD.dISort
-        self.dT = self.inpD.dThr
-        self.dSl = self.inpD.dSel
+        self.dMap = self.inpD.dMapCHdSel
         self.sSp = self.inpD.sSep
         self.getProcData()
         print('Initiated "ExtractedInfo" base object.')
-
-    def printIDDesc(self):
-        print('Object ID:', self.idO)
-        print('Object description:', self.descO)
-
-    def printObjInfo(self):
-        print('-'*20, 'Object', self.descO, '(ID', self.idO, ')', '-'*20)
-        print('-'*8, 'Input data:')
-        self.inpD.printAttrData()
-        print('-'*8, 'Attributes of', self.descO, 'class:')
-        self.printAttrData()
-
-    def printDfrInp(self):
-        print(self.dfrIn)
 
     def getPResF(self):
         cnstrFNmS = FileNameConstructor(self.inpD, tpFNm='S')
@@ -638,7 +709,7 @@ class ExtractedInfo(BaseClass):
                       S_D_GT_M: self.inpD.pFInM,
                       S_D_GT_P: self.inpD.pFInP}
 
-    def loadDfrInp(self):
+    def loadDDfrInp(self):
         # load input DataFrames
         dDfrIn_IC = {sGT: pd.read_csv(self.dPFIn[S_IC][sGT], sep=self.sSp,
                                       dtype=self.dDatTp[S_IC])
@@ -675,20 +746,20 @@ class ExtractedInfo(BaseClass):
     def getProcData(self):
         self.getPResF()
         self.getInf4Inp()
-        self.loadDfrInp()
+        self.loadDDfrInp()
         self.getDHdCol()
         self.getDMapK()
 
     def simpleFilter(self, sHdC, sKey, sMin=S_MIN, sMax=S_MAX):
         thMin, thMax = self.dT[sKey][sMin], self.dT[sKey][sMax]
-        return applyFilter(self.dDfrIn[sKey], sHdC, thMin, thMax)
+        return applyThrFilter(self.dDfrIn[sKey], sHdC, thMin, thMax)
 
     def filterAndConc(self, sHdC, sKey, sMin=S_MIN, sMax=S_MAX):
         # filter data
         self.dDfrFl = {sKey: {}}
         for sGT in L_S_GT:
             thMin, thMax = self.dT[sKey][sGT][sMin], self.dT[sKey][sGT][sMax]
-            dfrFl = applyFilter(self.dDfrIn[sKey][sGT], sHdC, thMin, thMax)
+            dfrFl = applyThrFilter(self.dDfrIn[sKey][sGT], sHdC, thMin, thMax)
             self.dDfrFl[sKey][sGT] = dfrFl
         # process data - concatenate IC DataFrames of the three GT
         return concDfr(self.dDfrFl[sKey])
@@ -746,29 +817,25 @@ class ExtractedInfo(BaseClass):
                 if n%self.inpD.modDisp == 0:
                     print('Processed element', n, 'of', self.N, '.')
 
-    def fillPrintDfrRes(self):
+    def fillSaveDfrRes(self):
         for spcSel in ['S', 'F']:
             dDat = self.iniDfrRes(specSel=spcSel)
             self.fillDDat(dDat)
             print('Filled data dictionary for selection "' + spcSel + '".')
             if spcSel == 'S':
-                self.dfrResS = self.dfrResS.append(pd.DataFrame(dDat),
-                                                   ignore_index=True,
-                                                   verify_integrity=True)
-                self.dfrResS.to_csv(self.pFOutS, sep=self.sSp)
+                self.dfrResS = saveDfrRes(self.dfrResS, dDat, self.pFOutS,
+                                          self.sSp, self.dSl, self.dMap)
             else:
-                self.dfrResF = self.dfrResF.append(pd.DataFrame(dDat),
-                                                   ignore_index=True,
-                                                   verify_integrity=True)
-                self.dfrResF.to_csv(self.pFOutF, sep=self.sSp)
+                self.dfrResF = saveDfrRes(self.dfrResF, dDat, self.pFOutF,
+                                          self.sSp, self.dSl, self.dMap)
 
     def extractionOfExtremes(self):
         self.sortAndFiltDfr()
-        self.fillPrintDfrRes()
+        self.fillSaveDfrRes()
 
-class Plotter(BaseClass):
+class Plotter(RootClass):
     def __init__(self, InpD):
-        super().__init__()
+        super().__init__(InpD)
         self.idO = InpD.sPltr
         self.descO = 'Class for plotting'
         self.inpD = InpD
@@ -783,7 +850,7 @@ class Plotter(BaseClass):
         print('-'*64)
 
     def loadDfrInp(self, iC=0):
-        self.dfrIn, dDatTp = None, {sIn: str for sIn in L_S_SG_GT}
+        dDatTp = {sIn: str for sIn in L_S_SG_GT}
         # load input DataFrames
         if hasattr(self, 'pFIn'):
             self.dfrIn = pd.read_csv(self.pFIn, sep=self.sSp, index_col=iC,
@@ -828,6 +895,11 @@ print('+'*25 + ' START', time.ctime(startTime), '+'*25)
 inpDat = InputData(dInput)
 if inpDat.doInfoExtr:
     cXtrInfo = ExtractedInfo(inpDat)
+    cXtrInfo.printIDDesc()
+    cXtrInfo.printDfrInp()
+    cXtrInfo.printDDfrInp()
+    cXtrInfo.printAttrData()
+    cXtrInfo.printDictsSortFilt()
     # cXtrInfo.printObjInfo()
     cXtrInfo.extractionOfExtremes()
 if inpDat.doPlotPat:
