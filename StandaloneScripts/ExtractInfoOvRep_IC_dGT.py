@@ -75,17 +75,27 @@ S_PEAR_CR = 'PearsonCorr'
 S_SPEAR_CR = 'SpearmanCorr'
 S_PEAR_P = 'Pearson_pVal'
 S_SPEAR_P = 'Spearman_pVal'
+S_IC_P_S = S_IC + 'P'
+S_IC_N_S = S_IC + 'N'
+S_PEAR_CR_S = 'PeC'
+S_SPEAR_CR_S = 'SpC'
+S_PEAR_P_S = 'Pep'
+S_SPEAR_P_S = 'Spp'
+
+S_D_CL = 'd' + S_USC + 'Cl'
+S_D_E = 'd' + S_USC + 'E'
+S_D_GT = S_D + S_USC + S_GT
+S_D_CL_S = 'dCl'
+S_D_E_S = 'dE'
+S_D_GT_S = S_D + S_GT
+L_S_D_2GT = [S_D + S_USC*2 + s1 + S_USC + s2 for s1 in L_S_GT for s2 in L_S_GT
+             if int(s1[-1]) > int(s2[-1])]
 
 S_SRT_BY = S_SRT + 'edBy'
 S_ORD = 'Order'
 S_ASC = 'Asc'
 S_DSC = 'Dsc'
 S_Z_SCORE = 'Pattern (z-score)'
-
-S_D_GT_S = S_D + S_GT
-S_D_GT = S_D + S_USC + S_GT
-L_S_D_2GT = [S_D + S_USC*2 + s1 + S_USC + s2 for s1 in L_S_GT for s2 in L_S_GT
-             if int(s1[-1]) > int(s2[-1])]
 
 S_IC_GT0 = S_USC.join([S_IC, S_GT0])
 S_IC_GT1 = S_USC.join([S_IC, S_GT1])
@@ -143,9 +153,9 @@ lSpecSel = ['S', 'F']           # list of column selections: 'S'hort / 'F'ull
 modDisp = 10000
 
 # --- data specific input -----------------------------------------------------
-dUsedK = {S_IC: S_IC_N,         # key (col. hdr.) for the IC file
-          S_D_GT_M: 'd_E',      # key (col. hdr.) for the dGTM file
-          S_D_GT_P: 'd_Cl'}     # key (col. hdr.) for the dGTP file
+dUsedK = {S_IC: S_SPEAR_P,         # key (col. hdr.) for the IC file
+          S_D_GT_M: S_D_E,      # key (col. hdr.) for the dGTM file
+          S_D_GT_P: S_D_CL}     # key (col. hdr.) for the dGTP file
 
 dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
                  S_GT1: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
@@ -158,11 +168,16 @@ dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
 #                S_GT5: {S_MIN: 6.0, S_MAX: None}},
 #         S_D_GT_M: {S_MIN: None, S_MAX: None},
 #         S_D_GT_P: {S_MIN: None, S_MAX: None}}
-dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
-               S_GT1: {S_MIN: 6.0, S_MAX: None},
-               S_GT5: {S_MIN: 6.0, S_MAX: None}},
-        S_D_GT_M: {S_MIN: 0.4, S_MAX: None},
-        S_D_GT_P: {S_MIN: 0.4, S_MAX: None}}
+# dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
+#                S_GT1: {S_MIN: 6.0, S_MAX: None},
+#                S_GT5: {S_MIN: 6.0, S_MAX: None}},
+#         S_D_GT_M: {S_MIN: 0.5, S_MAX: None},
+#         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
+dThr = {S_IC: {S_GT0: {S_MIN: None, S_MAX: 0.05},
+               S_GT1: {S_MIN: None, S_MAX: 0.1},
+               S_GT5: {S_MIN: 0.001, S_MAX: None}},
+        S_D_GT_M: {S_MIN: 0.5, S_MAX: None},
+        S_D_GT_P: {S_MIN: 0.6, S_MAX: 0.9}}
 
 lSelSB = L_NY                    # L_NY / L_Y (sel. bins only) / L_N
 # dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: L_Y, S_GT1: L_Y, S_GT5: L_Y},
@@ -218,13 +233,16 @@ sDirInCSV = '51_Inp_IC_DGT'
 sDirOutCSV = '52_OutCSV_IC_DGT'
 sDirOutPaP = '55_OutPDF_IC_DGT'
 
-pBase = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
-                    '04_SysBio_DataAnalysis')
-pInCSV = os.path.join(pBase, sDirInCSV)
-pOutCSV = os.path.join(pBase, sDirOutCSV)
+pBaseIn = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
+                       '04_SysBio_DataAnalysis')
+# pBaseOut = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
+#                         '04_SysBio_DataAnalysis')
+pBaseOut = os.path.join('..', '..', '..', '..', '..', '..', 'W')
+pInCSV = os.path.join(pBaseIn, sDirInCSV)
+pOutCSV = os.path.join(pBaseOut, sDirOutCSV)
 
-pInPaP = os.path.join(pBase, sDirOutCSV)
-pOutPaP = os.path.join(pBase, sDirOutPaP)
+pInPaP = os.path.join(pBaseOut, sDirOutCSV)
+pOutPaP = os.path.join(pBaseOut, sDirOutPaP)
 
 # --- derived values ----------------------------------------------------------
 dMapCHdSel = {S_SG: {S_SG_M: {sGT: L_S_SG_MET_GT[k]
@@ -233,6 +251,15 @@ dMapCHdSel = {S_SG: {S_SG_M: {sGT: L_S_SG_MET_GT[k]
                               for k, sGT in enumerate(L_S_GT)}},
               S_SB: {S_SB_P: {sGT: S_USC.join([S_SELECTED, S_PHO[0]])
                               for sGT in L_S_GT}}}
+dComprStr = {S_IC_P: S_IC_P_S,
+             S_IC_N: S_IC_N_S,
+             S_PEAR_CR: S_PEAR_CR_S,
+             S_SPEAR_CR: S_SPEAR_CR_S,
+             S_PEAR_P: S_PEAR_P_S,
+             S_SPEAR_P: S_SPEAR_P_S,
+             S_D_CL: S_D_CL_S,
+             S_D_E: S_D_E_S,
+             S_D_GT: S_D_GT_S}
 
 pFIGT0 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT0 + S_DOT + S_CSV)
 pFIGT1 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT1 + S_DOT + S_CSV)
@@ -295,7 +322,8 @@ dInput = {# --- constants
           'pFInPaP': os.path.join(pInPaP, sFIn_PaP + S_DOT + S_CSV),
           'sFOutPaP': sFOutPaP,
           # --- further derived values
-          'dMapCHdSel': dMapCHdSel}
+          'dMapCHdSel': dMapCHdSel,
+          'dComprStr': dComprStr}
 
 # --- FUNCTIONS ---------------------------------------------------------------
 def addToDictD(cD, cKMain, cKSub, cV):
@@ -319,6 +347,20 @@ def addIt(s='', sAdd='', sSep=S_USC):
         if s[-1] != sSep:
             s += sSep
     return s + sAdd
+
+def comprStr(s, dCmpr, sSep=S_USC):
+    lSSplO, lSSplN = s.split(sSep), []
+    for i, s1s in enumerate(lSSplO):
+        s2s = s1s
+        if i > 0:
+            s2s = sSep.join([lSSplO[i - 1], s1s])
+        if s2s in dCmpr:
+            lSSplN[-1] = dCmpr[s2s]
+        elif s1s in dCmpr:
+            lSSplN.append(dCmpr[s1s])
+        else:
+            lSSplN.append(s1s)
+    return sSep.join(lSSplN)
 
 def num2StrF(cV, dRepl={S_DOT: S_P, S_DASH: S_M, 'None': S_NO}):
     cS = str(cV)
@@ -444,7 +486,7 @@ def saveDfrRes(dfrRes, dDat, pFOut, sSep, dSel=None, dMap=None):
                            verify_integrity=True)
     if dSel is not None and dMap is not None:
         dfrRes = applySelFilter(dfrRes, dSel, dMap)
-    dfrRes.to_csv(pFOut, sep=sSep)
+    dfrRes.reset_index(drop=True).to_csv(pFOut, sep=sSep)
     return dfrRes
 
 def decorateClosePlot(cFig, cAx, dPlt, pPltF):
@@ -565,8 +607,9 @@ class FNmCmpICSglGT(FNmCmp):
     def buildCmpSrt(self, sK=S_IC):
         if not self.dSetsEq[S_SRT]:
             for sGT in self.dCmp:
-                self.dCmp[sGT] = addIt(self.dCmp[sGT],
-                                       self.dSort[sK][sGT][S_ORD])
+                sKSrt = S_USC.join([self.dSort[sK][sGT][S_ORD],
+                                    self.dSort[sK][sGT][S_SRT_BY]])
+                self.dCmp[sGT] = addIt(self.dCmp[sGT], sKSrt)
 
     def buildCmpThr(self, sK=S_IC):
         if not self.dSetsEq[S_THR]:
@@ -597,7 +640,7 @@ class FNmCmpICSglGT(FNmCmp):
                 self.sCmp = addIt(self.sCmp, self.dCmp[sGT])
 
     def buildCmpIC(self, sK=S_IC):
-        self.sCmp = self.dUsedK[sK]
+        self.sCmp = S_USC.join([sK, self.dUsedK[sK]])
         self.dCmp = {sGT: '' for sGT in L_S_GT}
         self.buildCmpSrt(sK=sK)
         self.buildCmpThr(sK=sK)
@@ -614,7 +657,9 @@ class FNmCmpICAllGT(FNmCmp):
 
     def buildCmpSrt(self, sK=S_IC, sGT=S_GT0):
         if self.dSetsEq[S_SRT]:
-            self.sCmp = addIt(self.sCmp, self.dSort[sK][sGT][S_ORD])
+            sKSrt = S_USC.join([self.dSort[sK][sGT][S_ORD],
+                                self.dSort[sK][sGT][S_SRT_BY]])
+            self.sCmp = addIt(self.sCmp, sKSrt)
 
     def buildCmpThr(self, sK=S_IC, sGT=S_GT0):
         if self.dSetsEq[S_THR]:
@@ -645,7 +690,8 @@ class FNmCmpDGT(FNmCmp):
         print('Initiated "FNmCmpDGT" base object.')
 
     def buildCmpDGT(self, sK, addUSC):
-        self.sCmp += S_USC.join([sK, self.dUsedK[sK], self.dSort[sK][S_ORD]])
+        sKSrt = S_USC.join([self.dSort[sK][S_ORD], self.dSort[sK][S_SRT_BY]])
+        self.sCmp += S_USC.join([sK, self.dUsedK[sK], sKSrt])
         for sMM in L_S_MIN_MAX:
             self.sCmp += S_USC + num2StrF(self.dT[sK][sMM])
         if addUSC:
@@ -671,7 +717,7 @@ class FileNameConstructor(RootClass):
         l = [self.oCmpICSglGT.sCmp, self.oCmpICAllGT.sCmp, self.oCmpDGT.sCmp]
         for s in l:
             if len(s) > 0:
-                self.sFNm += S_USC + s
+                self.sFNm += S_USC + comprStr(s, self.inpD.dComprStr)
 
     def constrFNm(self, tpFNm='F'):
         self.sFOut = self.inpD.sFOutF
