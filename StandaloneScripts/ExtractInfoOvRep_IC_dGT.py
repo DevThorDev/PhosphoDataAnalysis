@@ -153,9 +153,11 @@ lSpecSel = ['S', 'F']           # list of column selections: 'S'hort / 'F'ull
 modDisp = 10000
 
 # --- data specific input -----------------------------------------------------
-dUsedK = {S_IC: S_SPEAR_P,         # key (col. hdr.) for the IC file
-          S_D_GT_M: S_D_E,      # key (col. hdr.) for the dGTM file
-          S_D_GT_P: S_D_CL}     # key (col. hdr.) for the dGTP file
+sortInFNm = False               # sorting in file name? (True / False)
+
+dUsedK = {S_IC: S_IC,           # key (col. hdr.) for the IC file
+          S_D_GT_M: S_50,     # key (col. hdr.) for the dGTM file
+          S_D_GT_P: S_50}     # key (col. hdr.) for the dGTP file
 
 dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
                  S_GT1: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
@@ -173,13 +175,14 @@ dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
 #                S_GT5: {S_MIN: 6.0, S_MAX: None}},
 #         S_D_GT_M: {S_MIN: 0.5, S_MAX: None},
 #         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
-dThr = {S_IC: {S_GT0: {S_MIN: None, S_MAX: 0.05},
-               S_GT1: {S_MIN: None, S_MAX: 0.1},
-               S_GT5: {S_MIN: 0.001, S_MAX: None}},
-        S_D_GT_M: {S_MIN: 0.5, S_MAX: None},
-        S_D_GT_P: {S_MIN: 0.6, S_MAX: 0.9}}
+dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
+               S_GT1: {S_MIN: 7.25, S_MAX: None},
+               S_GT5: {S_MIN: 7.25, S_MAX: None}},
+        S_D_GT_M: {S_MIN: 0.4, S_MAX: None},
+        S_D_GT_P: {S_MIN: 0.4, S_MAX: None}}
 
 lSelSB = L_NY                    # L_NY / L_Y (sel. bins only) / L_N
+# lSelSB = L_Y                    # L_NY / L_Y (sel. bins only) / L_N
 # dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: L_Y, S_GT1: L_Y, S_GT5: L_Y},
 #                           S_SG_P: {S_GT0: L_Y, S_GT1: L_Y, S_GT5: L_Y}},
 #         (S_SB, S_SB_P): {S_SB_P: {S_GT0: lSelSB, S_GT1: lSelSB,
@@ -297,6 +300,7 @@ dInput = {# --- constants
           # --- general input
           'modDisp': modDisp,
           # --- data specific input
+          'sortInFNm': sortInFNm,
           'dUsedK': dUsedK,
           'dISort': dISort,
           'dThr': dThr,
@@ -395,9 +399,10 @@ def transcrDict2Dfr(cD, cDfr, lSHdrIni):
     return cDfrRes
 
 def sortDfr(pdDfr, dSrt, sSrtBy, sOrd, srtKind='stable'):
-    isAsc = (dSrt[sOrd] == S_ASC)
-    pdDfr.sort_values(by=dSrt[sSrtBy], ascending=isAsc, inplace=True,
-                      kind=srtKind)
+    isAsc, sHdC = (dSrt[sOrd] == S_ASC), dSrt[sSrtBy]
+    if sHdC not in pdDfr.columns:
+        sHdC = getSHdCD2GT(sHdC, L_S_D_2GT)
+    pdDfr.sort_values(by=sHdC, ascending=isAsc, inplace=True, kind=srtKind)
 
 def thrFilter(pdDfr, sHdC, thrMin, thrMax):
     if sHdC not in pdDfr.columns:
@@ -605,11 +610,12 @@ class FNmCmpICSglGT(FNmCmp):
         print('Initiated "FNmCmpICSglGT" base object.')
 
     def buildCmpSrt(self, sK=S_IC):
-        if not self.dSetsEq[S_SRT]:
-            for sGT in self.dCmp:
-                sKSrt = S_USC.join([self.dSort[sK][sGT][S_ORD],
-                                    self.dSort[sK][sGT][S_SRT_BY]])
-                self.dCmp[sGT] = addIt(self.dCmp[sGT], sKSrt)
+        if self.inpD.sortInFNm:
+            if not self.dSetsEq[S_SRT]:
+                for sGT in self.dCmp:
+                    sKSrt = S_USC.join([self.dSort[sK][sGT][S_ORD],
+                                        self.dSort[sK][sGT][S_SRT_BY]])
+                    self.dCmp[sGT] = addIt(self.dCmp[sGT], sKSrt)
 
     def buildCmpThr(self, sK=S_IC):
         if not self.dSetsEq[S_THR]:
@@ -656,10 +662,11 @@ class FNmCmpICAllGT(FNmCmp):
         print('Initiated "FNmCmpICAllGT" base object.')
 
     def buildCmpSrt(self, sK=S_IC, sGT=S_GT0):
-        if self.dSetsEq[S_SRT]:
-            sKSrt = S_USC.join([self.dSort[sK][sGT][S_ORD],
-                                self.dSort[sK][sGT][S_SRT_BY]])
-            self.sCmp = addIt(self.sCmp, sKSrt)
+        if self.inpD.sortInFNm:
+            if self.dSetsEq[S_SRT]:
+                sKSrt = S_USC.join([self.dSort[sK][sGT][S_ORD],
+                                    self.dSort[sK][sGT][S_SRT_BY]])
+                self.sCmp = addIt(self.sCmp, sKSrt)
 
     def buildCmpThr(self, sK=S_IC, sGT=S_GT0):
         if self.dSetsEq[S_THR]:
@@ -690,8 +697,12 @@ class FNmCmpDGT(FNmCmp):
         print('Initiated "FNmCmpDGT" base object.')
 
     def buildCmpDGT(self, sK, addUSC):
-        sKSrt = S_USC.join([self.dSort[sK][S_ORD], self.dSort[sK][S_SRT_BY]])
-        self.sCmp += S_USC.join([sK, self.dUsedK[sK], sKSrt])
+        if self.inpD.sortInFNm:
+            sKSrt = S_USC.join([self.dSort[sK][S_ORD],
+                                self.dSort[sK][S_SRT_BY]])
+            self.sCmp += S_USC.join([sK, self.dUsedK[sK], sKSrt])
+        else:
+            self.sCmp += S_USC.join([sK, self.dUsedK[sK]])
         for sMM in L_S_MIN_MAX:
             self.sCmp += S_USC + num2StrF(self.dT[sK][sMM])
         if addUSC:
