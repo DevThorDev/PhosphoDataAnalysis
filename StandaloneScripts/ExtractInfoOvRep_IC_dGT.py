@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 # --- CONSTANTS ---------------------------------------------------------------
 S_DASH = '-'
 S_USC = '_'
+S_BAR = '|'
 S_DOT = '.'
 S_CSV = 'csv'
 S_PDF = 'pdf'
@@ -60,6 +61,8 @@ S_D_GT_P = S_D + S_GT + 'P'
 L_S_D_GT = [S_D_GT_M, S_D_GT_P]
 
 L_S_FT = ['DR', 'DS', 'NR', 'NS']
+L_S_FT_CHG = [L_S_FT[i] + S_BAR + L_S_FT[j] for j in range(len(L_S_FT))
+              for i in range(len(L_S_FT)) if i != j]
 
 D_HD_C_PA = {sMP: {sGT: [S_USC.join([sGT, sFt, sMP[0]]) for sFt in L_S_FT]
                    for sGT in L_S_GT} for sMP in L_S_M_P}
@@ -90,12 +93,17 @@ S_D_E_S = 'dE'
 S_D_GT_S = S_D + S_GT
 L_S_D_2GT = [S_D + S_USC*2 + s1 + S_USC + s2 for s1 in L_S_GT for s2 in L_S_GT
              if int(s1[-1]) > int(s2[-1])]
+S_ICC = S_IC + 'C'
+S_ICC_LEG = 'Concordance index component'
+D_HD_C_ICC = {sMPI: [S_USC.join([sFtChg, sMPI[0]]) for sFtChg in L_S_FT_CHG]
+              for sMPI in L_S_M_P + [S_ICC]}
 
 S_SRT_BY = S_SRT + 'edBy'
 S_ORD = 'Order'
 S_ASC = 'Asc'
 S_DSC = 'Dsc'
-S_Z_SCORE = 'Pattern (z-score)'
+S_YLBL_PAT_PLT = 'Pattern (z-score)'
+S_YLBL_ICC_PLT = 'Change (xSD) / IC component'
 
 S_IC_GT0 = S_USC.join([S_IC, S_GT0])
 S_IC_GT1 = S_USC.join([S_IC, S_GT1])
@@ -130,6 +138,7 @@ S_F_NM_CNSTR = 'FileNameConstructor'
 S_EXTR_INFO = 'ExtrInfo'
 S_PLTR = 'Plotter'
 S_PAT_PLTR = 'PatternPlotter'
+S_ICC_PLTR = 'ICCmpPlotter'
 
 S_RMNG_COL1_IC = 'PearsonCorr'
 S_NEW_IDX = 'NewIndex'
@@ -140,13 +149,15 @@ L_S_ADD_GT = [S_RMNG_COL1_IC, 'SpearmanCorr', 'Pearson_pVal', 'Spearman_pVal',
               'IC_N', 'IC_P', 'IC', 'MetSig5', 'PhoSig5']
 
 S_NM_PAT_PLT = 'PatternPlot'
+S_NM_ICC_PLT = 'ICCmpPlot'
 
 R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
-doInfoExtr = True               # True / False
-doPlotPat = False                # True / False
+doInfoExtr = False               # True / False
+doPlotPat = True                # True / False
+doPlotICC = True                # True / False
 lSpecSel = ['S', 'F']           # list of column selections: 'S'hort / 'F'ull
 
 # --- general input -----------------------------------------------------------
@@ -156,8 +167,11 @@ modDisp = 10000
 sortInFNm = False               # sorting in file name? (True / False)
 
 dUsedK = {S_IC: S_IC,           # key (col. hdr.) for the IC file
-          S_D_GT_M: S_50,     # key (col. hdr.) for the dGTM file
-          S_D_GT_P: S_50}     # key (col. hdr.) for the dGTP file
+          S_D_GT_M: S_D_GT,     # key (col. hdr.) for the dGTM file
+          S_D_GT_P: S_D_GT}     # key (col. hdr.) for the dGTP file
+# dUsedK = {S_IC: S_IC,           # key (col. hdr.) for the IC file
+#           S_D_GT_M: S_10,     # key (col. hdr.) for the dGTM file
+#           S_D_GT_P: S_10}     # key (col. hdr.) for the dGTP file
 
 dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
                  S_GT1: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
@@ -165,36 +179,31 @@ dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
           S_D_GT_M: {S_SRT_BY: dUsedK[S_D_GT_M], S_ORD: S_DSC},
           S_D_GT_P: {S_SRT_BY: dUsedK[S_D_GT_P], S_ORD: S_DSC}}
 
-# dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
-#                S_GT1: {S_MIN: 6.0, S_MAX: None},
-#                S_GT5: {S_MIN: 6.0, S_MAX: None}},
-#         S_D_GT_M: {S_MIN: None, S_MAX: None},
-#         S_D_GT_P: {S_MIN: None, S_MAX: None}}
-# dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
-#                S_GT1: {S_MIN: 6.0, S_MAX: None},
-#                S_GT5: {S_MIN: 6.0, S_MAX: None}},
-#         S_D_GT_M: {S_MIN: 0.5, S_MAX: None},
-#         S_D_GT_P: {S_MIN: 0.6, S_MAX: None}}
-dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
-               S_GT1: {S_MIN: 7.25, S_MAX: None},
-               S_GT5: {S_MIN: 7.25, S_MAX: None}},
-        S_D_GT_M: {S_MIN: 0.4, S_MAX: None},
-        S_D_GT_P: {S_MIN: 0.4, S_MAX: None}}
+dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
+                S_GT1: {S_MIN: 6.0, S_MAX: None},
+                S_GT5: {S_MIN: 6.0, S_MAX: None}},
+        S_D_GT_M: {S_MIN: None, S_MAX: None},
+        S_D_GT_P: {S_MIN: None, S_MAX: None}}
 
-lSelSB = L_NY                    # L_NY / L_Y (sel. bins only) / L_N
-# lSelSB = L_Y                    # L_NY / L_Y (sel. bins only) / L_N
-# dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: L_Y, S_GT1: L_Y, S_GT5: L_Y},
-#                           S_SG_P: {S_GT0: L_Y, S_GT1: L_Y, S_GT5: L_Y}},
-#         (S_SB, S_SB_P): {S_SB_P: {S_GT0: lSelSB, S_GT1: lSelSB,
-#                                   S_GT5: lSelSB}}}
-dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: L_Y, S_GT1: L_Y, S_GT5: L_Y},
-                          S_SG_P: {S_GT0: L_Y, S_GT1: L_Y, S_GT5: L_Y}},
+lSelSGM, lSelSGP = L_Y, L_Y
+# lSelSB = L_NY                    # L_NY / L_Y (sel. bins only) / L_N
+lSelSB = L_Y                    # L_NY / L_Y (sel. bins only) / L_N
+dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: lSelSGM, S_GT1: lSelSGM,
+                                   S_GT5: lSelSGM},
+                          S_SG_P: {S_GT0: lSelSGP, S_GT1: lSelSGP,
+                                   S_GT5: lSelSGP}},
         (S_SB, S_SB_P): {S_SB_P: {S_GT0: lSelSB, S_GT1: lSelSB,
                                   S_GT5: lSelSB}}}
 
 sSep = ';'
 
-# --- graphics parameters -----------------------------------------------------
+# --- graphics parameters / all plots -----------------------------------------
+szFontLeg = 'small'             # font size of legend
+nCharDsp = 60                   # number of chars displayed for legend item
+coordAnchorBox = (0.5, 1.02)    # coordinates of the legend anchor box
+lWdPlt = 0.75                   # line width in plot
+
+# --- graphics parameters / pattern plot --------------------------------------
 # dPairsPaP = {(('Leu_STTTTV'), (S_GT0, S_GT1, S_GT5)):
 #              ('Leucine', 'STTTTVS(0.003)S(0.996)VHS(0.001)PTTDQDFSK')}
 # dPairsPaP = {(('Tetra_S(0.001)AS(0.749)T(0.251)P'), (S_GT0, S_GT1, S_GT5)):
@@ -203,22 +212,29 @@ sSep = ';'
 #               ('Beta-alanine', 'ADKTDIIS(0.607)S(0.117)S(0.12)S(0.156)DKAS(1)PPPPSAFR'),
 #               (('Hexa_S(0.001)AS(0.749)T(0.251)P'), (S_GT0, S_GT1, S_GT5)):
 #               ('Hexadecanoic_acid', 'S(0.001)AS(0.749)T(0.251)PLLNSLVHVS(0.179)S(0.821)PRDS(1)PIETVESVHQIQR')}
-dPairsPaP = {(('Isoleu_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
-              ('Isoleucine', 'DLDVNES(1)GPPAAR'),
-              (('Val_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
-              ('Valine', 'DLDVNES(1)GPPAAR'),
-              (('Aspart_SDKPLNY'), (S_GT0, S_GT1, S_GT5)):
-              ('Aspartic_acid', 'SDKPLNYS(1)PDPENESGINER'),
-              (('Aspart_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
-              ('Aspartic_acid', 'DLDVNES(1)GPPAAR'),
-              (('Malic_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
-              ('Malic_acid', 'DLDVNES(1)GPPAAR')}
+# dPairsPaP = {(('Isoleu_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+#               ('Isoleucine', 'DLDVNES(1)GPPAAR'),
+#               (('Val_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+#               ('Valine', 'DLDVNES(1)GPPAAR'),
+#               (('Aspart_SDKPLNY'), (S_GT0, S_GT1, S_GT5)):
+#               ('Aspartic_acid', 'SDKPLNYS(1)PDPENESGINER'),
+#               (('Aspart_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+#               ('Aspartic_acid', 'DLDVNES(1)GPPAAR'),
+#               (('Malic_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+#               ('Malic_acid', 'DLDVNES(1)GPPAAR')}
+dPairsPaP = {(('Tetradeca_KTSSST'), (S_GT0, S_GT1, S_GT5)):
+              ('Tetradecanoic_acid', 'KTSSSTISTNPS(0.001)S(0.998)PIS(0.001)TASTGKPPLPR'),
+              (('Isoleu_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+              ('Isoleucine', 'DLDVNES(1)GPPAAR')}
 
-nmPaP = S_NM_PAT_PLT            # name prefix of the plot
-szFontLeg = 'small'             # font size of legend
-nCharDsp = 60                   # number of chars displayed for legend item
-coordAnchorBox = (0.5, 1.02)    # coordinates of the legend anchor box
-lWdPlt = 0.75                   # line width in plot
+nmPaP = S_NM_PAT_PLT            # name prefix of the pattern plot
+
+# --- graphics parameters / IC component plot ---------------------------------
+dPairsICP = dPairsPaP
+nmICP = S_NM_ICC_PLT            # name prefix of the IC component plot
+wdthBar = 0.2                   # width of single bars
+wdthGrp = 0.75                   # width of bar group
+degRotXLbl = 90                 # degree rotation of x-labels
 
 # --- names and paths of files and dirs ---------------------------------------
 sFIn_IC_M_P = 'IC_Met_Pho'
@@ -228,13 +244,16 @@ sFIn_dGT_P = 'DistGT_Pho'
 sFOutS = 'S_XIOvRep'
 sFOutF = 'F_XIOvRep'
 
-# sFIn_PaP = 'ExtrIOvRepF_ICMetPho_GT0_0_No_No_GT1_0_No_No_GT5_0_No_No_dGTMet_0_0p6_No_dGTPho_0_0p6_No'
-sFIn_PaP = 'ExtrIOvRepF_ICMetPho_GT0_0_6p0_No_GT1_0_6p0_No_GT5_0_6p0_No_dGTMet_0_No_No_dGTPho_0_No_No'
-sFOutPaP = S_NM_PAT_PLT
+sFIn_PaP = 'F_XIOvRep_IC_IC_All_7p25_No_MPS5Y_PSBY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+dSFIn_ICP = {sGT: ('ICCmp__BinOp_MetD_DvSD_' + sGT + '_AllD_PhoD_DvSD_'
+                   + sGT + '_AllD') for sGT in L_S_GT}
+sFOutPaP = nmPaP
+sFOutICP = nmICP
 
 sDirInCSV = '51_Inp_IC_DGT'
 sDirOutCSV = '52_OutCSV_IC_DGT'
 sDirOutPaP = '55_OutPDF_IC_DGT'
+sDirOutICP = sDirOutPaP
 
 pBaseIn = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
                        '04_SysBio_DataAnalysis')
@@ -245,7 +264,9 @@ pInCSV = os.path.join(pBaseIn, sDirInCSV)
 pOutCSV = os.path.join(pBaseOut, sDirOutCSV)
 
 pInPaP = os.path.join(pBaseOut, sDirOutCSV)
+pInICP = os.path.join(pBaseIn, sDirInCSV)
 pOutPaP = os.path.join(pBaseOut, sDirOutPaP)
+pOutICP = os.path.join(pBaseOut, sDirOutICP)
 
 # --- derived values ----------------------------------------------------------
 dMapCHdSel = {S_SG: {S_SG_M: {sGT: L_S_SG_MET_GT[k]
@@ -264,10 +285,12 @@ dComprStr = {S_IC_P: S_IC_P_S,
              S_D_E: S_D_E_S,
              S_D_GT: S_D_GT_S}
 
-pFIGT0 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT0 + S_DOT + S_CSV)
-pFIGT1 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT1 + S_DOT + S_CSV)
-pFIGT5 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT5 + S_DOT + S_CSV)
-dPFInIC = {S_GT0: pFIGT0, S_GT1: pFIGT1, S_GT5: pFIGT5}
+# pFIGT0 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT0 + S_DOT + S_CSV)
+# pFIGT1 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT1 + S_DOT + S_CSV)
+# pFIGT5 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT5 + S_DOT + S_CSV)
+# dPFInIC = {S_GT0: pFIGT0, S_GT1: pFIGT1, S_GT5: pFIGT5}
+dPFInIC = {sGT: os.path.join(pInCSV, sFIn_IC_M_P + S_USC + sGT + S_DOT + S_CSV)
+           for sGT in L_S_GT}
 
 # --- assertions --------------------------------------------------------------
 assert set(dISort) == set(dThr)
@@ -290,12 +313,14 @@ dInput = {# --- constants
           'sExtrInfo': S_EXTR_INFO,
           'sPltr': S_PLTR,
           'sPatPltr': S_PAT_PLTR,
+          'sICCPltr': S_ICC_PLTR,
           'sMet': S_MET,
           'sPho': S_PHO,
           'R04': R04,
           # --- flow control
           'doInfoExtr': doInfoExtr,
           'doPlotPat': doPlotPat,
+          'doPlotICC': doPlotICC,
           'lSpecSel': lSpecSel,
           # --- general input
           'modDisp': modDisp,
@@ -306,25 +331,40 @@ dInput = {# --- constants
           'dThr': dThr,
           'dSel': dSel,
           'sSep': sSep,
-          # --- graphics parameters
+          # --- graphics parameters / pattern plot
           'plotOfPatterns': {'dPairsPaP': dPairsPaP,
                              'nmPaP': nmPaP,
                              'szFontLeg': szFontLeg,
                              'nCharDsp': nCharDsp,
                              'coordAnchorBox': coordAnchorBox,
                              'lWdPlt': lWdPlt},
+          # --- graphics parameters / IC component plot
+          'plotOfICCmp': {'dPairsICP': dPairsICP,
+                          'nmICP': nmICP,
+                          'szFontLeg': szFontLeg,
+                          'nCharDsp': nCharDsp,
+                          'coordAnchorBox': coordAnchorBox,
+                          'lWdPlt': lWdPlt,
+                          'wdthBar': wdthBar,
+                          'wdthGrp': wdthGrp,
+                          'degRotXLbl': degRotXLbl},
           # --- names and paths of files and dirs
           'pInCSV': pInCSV,
           'pOutCSV': pOutCSV,
           'pInPaP': pInPaP,
+          'pInICP': pInICP,
           'pOutPaP': pOutPaP,
+          'pOutICP': pOutICP,
           'dPFInIC': dPFInIC,
           'pFInM': os.path.join(pInCSV, sFIn_dGT_M + S_DOT + S_CSV),
           'pFInP': os.path.join(pInCSV, sFIn_dGT_P + S_DOT + S_CSV),
           'sFOutS': sFOutS,
           'sFOutF': sFOutF,
           'pFInPaP': os.path.join(pInPaP, sFIn_PaP + S_DOT + S_CSV),
+          'dPFInICP': {sGT: os.path.join(pInICP, dSFIn_ICP[sGT] + S_DOT +
+                                         S_CSV) for sGT in L_S_GT},
           'sFOutPaP': sFOutPaP,
+          'sFOutICP': sFOutICP,
           # --- further derived values
           'dMapCHdSel': dMapCHdSel,
           'dComprStr': dComprStr}
@@ -491,11 +531,12 @@ def saveDfrRes(dfrRes, dDat, pFOut, sSep, dSel=None, dMap=None):
                            verify_integrity=True)
     if dSel is not None and dMap is not None:
         dfrRes = applySelFilter(dfrRes, dSel, dMap)
+    dfrRes.dropna(axis=0, how='any', inplace=True)
     dfrRes.reset_index(drop=True).to_csv(pFOut, sep=sSep)
     return dfrRes
 
-def decorateClosePlot(cFig, cAx, dPlt, pPltF):
-    cAx.set_ylabel(S_Z_SCORE)
+def decorateClosePlot(cFig, cAx, dPlt, pPltF, sYLbl=''):
+    cAx.set_ylabel(sYLbl)
     l = cAx.legend(loc='lower center', bbox_to_anchor=dPlt['coordAnchorBox'],
                    fontsize=dPlt['szFontLeg'])
     if l is not None:
@@ -910,10 +951,17 @@ class Plotter(RootClass):
 
     def loadDfrInp(self, iC=0):
         dDatTp = {sIn: str for sIn in L_S_SG_GT}
-        # load input DataFrames
+        # load input DataFrame
         if hasattr(self, 'pFIn'):
             self.dfrIn = pd.read_csv(self.pFIn, sep=self.sSp, index_col=iC,
                                      dtype=dDatTp)
+
+    def loadDDfrInp(self):
+        # load input DataFrames, and save them in dictionary
+        if hasattr(self, 'dPFIn'):
+            self.dDfrIn = {sGT: None for sGT in L_S_GT}
+            for sGT in self.dDfrIn:
+                self.dDfrIn[sGT] = pd.read_csv(self.dPFIn[sGT], sep=self.sSp)
 
 class PatternPlotter(Plotter):
     def __init__(self, InpD):
@@ -938,14 +986,58 @@ class PatternPlotter(Plotter):
         d, nChD = self.dfrIn, self.dPlt['nCharDsp']
         for ((s1, sGT), ((sM, sP), pPltF)) in self.dPPltF.items():
             print('Plotting pattern for "' + s1 + '" and', sGT, '...')
+            cSer = d[(d[S_MET] == sM) & (d[S_PHO] == sP)].squeeze()
+            lTDat = [(S_MET, sM), (S_PHO, sP)]
             # if not os.path.isfile(pPltF):
             cFig, cAx = plt.subplots()
-            cSer = d[(d[S_MET] == sM) & (d[S_PHO] == sP)].squeeze()
-            for tMP in [(S_MET, sM), (S_PHO, sP)]:
+            for tMP in lTDat:
                 cPa = cSer.loc[D_HD_C_PA[tMP[0]][sGT]]
                 cPa.index = L_S_FT
                 cAx.plot(cPa, lw=self.dPlt['lWdPlt'], label=tMP[1][:nChD])
-            decorateClosePlot(cFig, cAx, self.dPlt, pPltF)
+            decorateClosePlot(cFig, cAx, self.dPlt, pPltF, S_YLBL_PAT_PLT)
+
+class ICCmpPlotter(Plotter):
+    def __init__(self, InpD):
+        super().__init__(InpD)
+        self.idO = self.inpD.sICCPltr
+        self.descO = 'Concordance index component plotter'
+        self.dPFIn = self.inpD.dPFInICP
+        self.pDOut = self.inpD.pOutICP
+        self.dPlt = self.inpD.plotOfICCmp
+        self.getDPPltF()
+        self.loadDDfrInp()
+        print('Initiated "ICCmpPlotter" base object and loaded input data.')
+
+    def getDPPltF(self):
+        self.dPPltF, sFPlt = {}, self.inpD.sFOutICP
+        for ((s1, tSGT), tMP) in self.dPlt['dPairsICP'].items():
+            for sGT in tSGT:
+                sPltF = S_DOT.join([S_USC.join([sFPlt, s1, sGT]), S_PDF])
+                self.dPPltF[(s1, sGT)] = (tMP, os.path.join(self.pDOut, sPltF))
+
+    def plotICCmp(self):
+        nChD, wdBar = self.dPlt['nCharDsp'], self.dPlt['wdthBar']
+        for ((s1, sGT), ((sM, sP), pPltF)) in self.dPPltF.items():
+            print('Plotting IC components for "' + s1 + '" and', sGT, '...')
+            d = self.dDfrIn[sGT]
+            cSer = d[(d[S_MET] == sM) & (d[S_PHO] == sP)].squeeze()
+            lTDat = [(S_MET, sM), (S_PHO, sP), (S_ICC, S_ICC_LEG)]
+            xLocG = np.arange(len(L_S_FT_CHG))
+            # if not os.path.isfile(pPltF):
+            cFig, cAx = plt.subplots()
+            for k, tMP in enumerate(lTDat):
+                cICC = cSer.loc[D_HD_C_ICC[tMP[0]]]
+                cICC.index = L_S_FT_CHG
+                xLoc = xLocG + (2*k + 1)/(2*len(lTDat))*self.dPlt['wdthGrp']
+                cAx.bar(xLoc - 1/2, height=cICC, width=wdBar,
+                        lw=self.dPlt['lWdPlt'], label=tMP[1][:nChD])
+            cAx.plot([-1/2, len(L_S_FT_CHG) + 1/2], [0, 0],
+                     lw=self.dPlt['lWdPlt'], color='black')
+            cAx.set_xticks(xLocG)
+            cAx.set_xticklabels(L_S_FT_CHG)
+            for cXLbl in cAx.get_xticklabels():
+              cXLbl.set_rotation(self.dPlt['degRotXLbl'])
+            decorateClosePlot(cFig, cAx, self.dPlt, pPltF, S_YLBL_ICC_PLT)
 
 # --- MAIN --------------------------------------------------------------------
 startTime = time.time()
@@ -966,6 +1058,9 @@ if inpDat.doPlotPat:
     # cPltr.printAttrData()
     # cPltr.printDPPltF()
     cPltr.plotPatterns()
+if inpDat.doPlotICC:
+    cPltr = ICCmpPlotter(inpDat)
+    cPltr.plotICCmp()
 
 print('-'*80)
 printElapsedTimeSim(startTime, time.time(), 'Total time')
