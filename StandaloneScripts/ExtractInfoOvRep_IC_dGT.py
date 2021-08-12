@@ -166,12 +166,12 @@ modDisp = 10000
 # --- data specific input -----------------------------------------------------
 sortInFNm = False               # sorting in file name? (True / False)
 
-dUsedK = {S_IC: S_IC,           # key (col. hdr.) for the IC file
-          S_D_GT_M: S_D_GT,     # key (col. hdr.) for the dGTM file
-          S_D_GT_P: S_D_GT}     # key (col. hdr.) for the dGTP file
 # dUsedK = {S_IC: S_IC,           # key (col. hdr.) for the IC file
-#           S_D_GT_M: S_10,     # key (col. hdr.) for the dGTM file
-#           S_D_GT_P: S_10}     # key (col. hdr.) for the dGTP file
+#           S_D_GT_M: S_D_GT,     # key (col. hdr.) for the dGTM file
+#           S_D_GT_P: S_D_GT}     # key (col. hdr.) for the dGTP file
+dUsedK = {S_IC: S_IC,           # key (col. hdr.) for the IC file
+          S_D_GT_M: S_10,     # key (col. hdr.) for the dGTM file
+          S_D_GT_P: S_10}     # key (col. hdr.) for the dGTP file
 
 dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
                  S_GT1: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
@@ -179,11 +179,11 @@ dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
           S_D_GT_M: {S_SRT_BY: dUsedK[S_D_GT_M], S_ORD: S_DSC},
           S_D_GT_P: {S_SRT_BY: dUsedK[S_D_GT_P], S_ORD: S_DSC}}
 
-dThr = {S_IC: {S_GT0: {S_MIN: 6.0, S_MAX: None},
-                S_GT1: {S_MIN: 6.0, S_MAX: None},
-                S_GT5: {S_MIN: 6.0, S_MAX: None}},
-        S_D_GT_M: {S_MIN: None, S_MAX: None},
-        S_D_GT_P: {S_MIN: None, S_MAX: None}}
+dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
+                S_GT1: {S_MIN: 7.25, S_MAX: None},
+                S_GT5: {S_MIN: None, S_MAX: None}},
+        S_D_GT_M: {S_MIN: 0.2, S_MAX: None},
+        S_D_GT_P: {S_MIN: 0.2, S_MAX: None}}
 
 lSelSGM, lSelSGP = L_Y, L_Y
 # lSelSB = L_NY                    # L_NY / L_Y (sel. bins only) / L_N
@@ -222,10 +222,10 @@ lWdPlt = 0.75                   # line width in plot
 #               ('Aspartic_acid', 'DLDVNES(1)GPPAAR'),
 #               (('Malic_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
 #               ('Malic_acid', 'DLDVNES(1)GPPAAR')}
-dPairsPaP = {(('Tetradeca_KTSSST'), (S_GT0, S_GT1, S_GT5)):
-              ('Tetradecanoic_acid', 'KTSSSTISTNPS(0.001)S(0.998)PIS(0.001)TASTGKPPLPR'),
-              (('Isoleu_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
-              ('Isoleucine', 'DLDVNES(1)GPPAAR')}
+dPairsPaP = {(('Leu_SSFQEDHE'), (S_GT0, S_GT1, S_GT5)):
+             ('Leucine', 'SSFQEDHS(1)NIGGPGFSR'),
+             (('Beta-alan_SSFQEDHE'), (S_GT0, S_GT1, S_GT5)):
+                 ('Beta-alanine', 'SSFQEDHS(1)NIGGPGFSR')}
 
 nmPaP = S_NM_PAT_PLT            # name prefix of the pattern plot
 
@@ -244,7 +244,8 @@ sFIn_dGT_P = 'DistGT_Pho'
 sFOutS = 'S_XIOvRep'
 sFOutF = 'F_XIOvRep'
 
-sFIn_PaP = 'F_XIOvRep_IC_IC_All_7p25_No_MPS5Y_PSBY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+# sFIn_PaP = 'F_XIOvRep_IC_IC_All_7p25_No_MPS5Y_PSBY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_7p25_No_GT1_7p25_No_GT5_No_No_All_MPS5Y_PSBY_dGTM_10_0p2_No_dGTP_10_0p2_No'
 dSFIn_ICP = {sGT: ('ICCmp__BinOp_MetD_DvSD_' + sGT + '_AllD_PhoD_DvSD_'
                    + sGT + '_AllD') for sGT in L_S_GT}
 sFOutPaP = nmPaP
