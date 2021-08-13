@@ -38,12 +38,18 @@ dPltSCorr = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): True,    # plot strongest corr.
              (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): True,
              (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): True}
 
-dSCorrBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (-0.94, 0.93),    # (lowB, upB)
-             (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): (-0.96, 0.94),
-             (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): (-0.94, 0.95),
-             (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): (-0.95, 0.955),
-             (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): (-0.93, 0.92),
-             (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): (-0.9, 0.955)}
+# dSCorrBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (-0.94, 0.93),    # (lowB, upB)
+#              (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): (-0.96, 0.94),
+#              (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): (-0.94, 0.95),
+#              (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): (-0.95, 0.955),
+#              (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): (-0.93, 0.92),
+#              (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): (-0.9, 0.955)}
+dSCorrBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (-0.99, 0.79),    # (lowB, upB)
+             (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): (-0.99, 0.8),
+             (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): (-0.99, 0.9),
+             (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): (-0.99, 0.9),
+             (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): (-0.99, 0.9),
+             (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): (-0.99, 0.8)}
 
 # --- deviations between features ---------------------------------------------
 dPosCIBnd = {'C1': (1., 0.25),    # positive concordance index bound (x SD)

@@ -217,10 +217,16 @@ def SUB_pltSCorr(dfr1, dfr2, pF, lOD, nmC1, nmC2, cFml, sTtl, lClr, lSXY):
     cAx = cFig.axes[0]
     # plot the data in multiple colours, according to category
     cAx.set_title(sTtl)
-    # cAx.set_xlim((min(np.floor(serX)), max(np.ceil(serX))))
-    # cAx.set_ylim((min(np.floor(serY)), max(np.ceil(serY))))
-    cAx.set_xlim((min(serX), max(serX)))
-    cAx.set_ylim((min(serY), max(serY)))
+    try:
+        cAx.set_xlim((min(np.floor(serX.dropna())),
+                      max(np.ceil(serX.dropna()))))
+    except:
+        print('Cannot set x-limits for series', list(serX))
+    try:
+        cAx.set_ylim((min(np.floor(serY.dropna())),
+                      max(np.ceil(serY.dropna()))))
+    except:
+        print('Cannot set y-limits for series', list(serY))
     for i, (cHd, lNmR) in enumerate(SF.getDMap(lOD).items()):
         serX, serY = dfr1.loc[lNmR, nmC1], dfr2.loc[lNmR, nmC2]
         cAx.plot(serX, serY, ls = '', marker = 'x', mec = lClr[i], label = cHd)
@@ -243,8 +249,8 @@ def pltSCorr(dIG, dITp, dOIn, cDfr, pF, lODat):
                 for i, cRD in selDfr.iterrows():
                     nmO1C, nmO2C = selDfr.loc[i, nmO1], selDfr.loc[i, nmO2]
                     sTtl = getTitlePltSCorr(selDfr, nmCr, i)
-                    # sNCr = '__' + '0'*(7 - len(str(i + 1))) + str(i + 1)
-                    sNCr = '__' + '0'
+                    sNCr = '__' + '0'*(7 - len(str(i + 1))) + str(i + 1)
+                    # sNCr = '__' + '0'
                     pFN = GF.adaptPF4Plot(pF, dITp['pRelPltF'], sPost = sNCr)
                     if not os.path.isfile(pFN):
                         SUB_pltSCorr(dfrO1, dfrO2, pFN, lODat, nmO1C, nmO2C,

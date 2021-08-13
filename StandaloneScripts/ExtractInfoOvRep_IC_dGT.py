@@ -55,6 +55,7 @@ S_GT0 = S_GT + S_0
 S_GT1 = S_GT + S_1
 S_GT5 = S_GT + S_5
 L_S_GT = [S_GT0, S_GT1, S_GT5]
+T_S_GT = tuple(L_S_GT)
 
 S_D_GT_M = S_D + S_GT + 'M'
 S_D_GT_P = S_D + S_GT + 'P'
@@ -158,7 +159,8 @@ R04 = 4
 doInfoExtr = False               # True / False
 doPlotPat = True                # True / False
 doPlotICC = True                # True / False
-lSpecSel = ['S', 'F']           # list of column selections: 'S'hort / 'F'ull
+dSpecSel = {'S': {'dropNA': True},      # key: column sel.: 'S'hort / 'F'ull
+            'F': {'dropNA': False}}     # value: data for sel., e.g. dropNA
 
 # --- general input -----------------------------------------------------------
 modDisp = 10000
@@ -166,12 +168,12 @@ modDisp = 10000
 # --- data specific input -----------------------------------------------------
 sortInFNm = False               # sorting in file name? (True / False)
 
-# dUsedK = {S_IC: S_IC,           # key (col. hdr.) for the IC file
-#           S_D_GT_M: S_D_GT,     # key (col. hdr.) for the dGTM file
-#           S_D_GT_P: S_D_GT}     # key (col. hdr.) for the dGTP file
 dUsedK = {S_IC: S_IC,           # key (col. hdr.) for the IC file
-          S_D_GT_M: S_10,     # key (col. hdr.) for the dGTM file
-          S_D_GT_P: S_10}     # key (col. hdr.) for the dGTP file
+          S_D_GT_M: S_D_GT,     # key (col. hdr.) for the dGTM file
+          S_D_GT_P: S_D_GT}     # key (col. hdr.) for the dGTP file
+# dUsedK = {S_IC: S_IC,           # key (col. hdr.) for the IC file
+#           S_D_GT_M: S_50,     # key (col. hdr.) for the dGTM file
+#           S_D_GT_P: S_50}     # key (col. hdr.) for the dGTP file
 
 dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
                  S_GT1: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
@@ -179,15 +181,20 @@ dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
           S_D_GT_M: {S_SRT_BY: dUsedK[S_D_GT_M], S_ORD: S_DSC},
           S_D_GT_P: {S_SRT_BY: dUsedK[S_D_GT_P], S_ORD: S_DSC}}
 
-dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
-                S_GT1: {S_MIN: 7.25, S_MAX: None},
+dThr = {S_IC: {S_GT0: {S_MIN: None, S_MAX: None},
+                S_GT1: {S_MIN: None, S_MAX: None},
                 S_GT5: {S_MIN: None, S_MAX: None}},
-        S_D_GT_M: {S_MIN: 0.2, S_MAX: None},
-        S_D_GT_P: {S_MIN: 0.2, S_MAX: None}}
+        S_D_GT_M: {S_MIN: None, S_MAX: None},
+        S_D_GT_P: {S_MIN: None, S_MAX: None}}
+# dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
+#                 S_GT1: {S_MIN: None, S_MAX: None},
+#                 S_GT5: {S_MIN: 7.25, S_MAX: None}},
+#         S_D_GT_M: {S_MIN: 0.2, S_MAX: None},
+#         S_D_GT_P: {S_MIN: 0.2, S_MAX: None}}
 
 lSelSGM, lSelSGP = L_Y, L_Y
-# lSelSB = L_NY                    # L_NY / L_Y (sel. bins only) / L_N
-lSelSB = L_Y                    # L_NY / L_Y (sel. bins only) / L_N
+lSelSB = L_NY                    # L_NY / L_Y (sel. bins only) / L_N
+# lSelSB = L_Y                    # L_NY / L_Y (sel. bins only) / L_N
 dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: lSelSGM, S_GT1: lSelSGM,
                                    S_GT5: lSelSGM},
                           S_SG_P: {S_GT0: lSelSGP, S_GT1: lSelSGP,
@@ -204,28 +211,49 @@ coordAnchorBox = (0.5, 1.02)    # coordinates of the legend anchor box
 lWdPlt = 0.75                   # line width in plot
 
 # --- graphics parameters / pattern plot --------------------------------------
-# dPairsPaP = {(('Leu_STTTTV'), (S_GT0, S_GT1, S_GT5)):
+# dPairsPaP = {(('Leu_STTTTV'), T_S_GT):
 #              ('Leucine', 'STTTTVS(0.003)S(0.996)VHS(0.001)PTTDQDFSK')}
-# dPairsPaP = {(('Tetra_S(0.001)AS(0.749)T(0.251)P'), (S_GT0, S_GT1, S_GT5)):
+# dPairsPaP = {(('Tetra_S(0.001)AS(0.749)T(0.251)P'), T_S_GT):
 #               ('Tetradecanoic_acid', 'S(0.001)AS(0.749)T(0.251)PLLNSLVHVS(0.179)S(0.821)PRDS(1)PIETVESVHQIQR'),
-#               (('Beta_ADKTDII'), (S_GT0, S_GT1, S_GT5)):
+#               (('Beta_ADKTDII'), T_S_GT):
 #               ('Beta-alanine', 'ADKTDIIS(0.607)S(0.117)S(0.12)S(0.156)DKAS(1)PPPPSAFR'),
-#               (('Hexa_S(0.001)AS(0.749)T(0.251)P'), (S_GT0, S_GT1, S_GT5)):
+#               (('Hexa_S(0.001)AS(0.749)T(0.251)P'), T_S_GT):
 #               ('Hexadecanoic_acid', 'S(0.001)AS(0.749)T(0.251)PLLNSLVHVS(0.179)S(0.821)PRDS(1)PIETVESVHQIQR')}
-# dPairsPaP = {(('Isoleu_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+# dPairsPaP = {(('Isoleu_DLDVNE'), T_S_GT):
 #               ('Isoleucine', 'DLDVNES(1)GPPAAR'),
-#               (('Val_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+#               (('Val_DLDVNE'), T_S_GT):
 #               ('Valine', 'DLDVNES(1)GPPAAR'),
-#               (('Aspart_SDKPLNY'), (S_GT0, S_GT1, S_GT5)):
+#               (('Aspart_SDKPLNY'), T_S_GT):
 #               ('Aspartic_acid', 'SDKPLNYS(1)PDPENESGINER'),
-#               (('Aspart_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+#               (('Aspart_DLDVNE'), T_S_GT):
 #               ('Aspartic_acid', 'DLDVNES(1)GPPAAR'),
-#               (('Malic_DLDVNE'), (S_GT0, S_GT1, S_GT5)):
+#               (('Malic_DLDVNE'), T_S_GT):
 #               ('Malic_acid', 'DLDVNES(1)GPPAAR')}
-dPairsPaP = {(('Leu_SSFQEDHE'), (S_GT0, S_GT1, S_GT5)):
-             ('Leucine', 'SSFQEDHS(1)NIGGPGFSR'),
-             (('Beta-alan_SSFQEDHE'), (S_GT0, S_GT1, S_GT5)):
-                 ('Beta-alanine', 'SSFQEDHS(1)NIGGPGFSR')}
+
+# IC_No_No_SBNY_dGT_No_No
+dPairsPaP = {(('Phenylala_VSS(1)AGL'), T_S_GT): ('Phenylalanine', 'VSS(1)AGLRTESVLQR'),
+             (('Phospho_YSS(1)PS(0.008)S(0.992)P'), T_S_GT): ('Phosphoric_acid', 'YSS(1)PS(0.008)S(0.992)PPPSFYRK'),
+             (('Aspartic_QGTLPTVIE'), T_S_GT): ('Aspartic_acid', 'QGTLPTVIEEDDS(0.016)S(0.977)ET(0.007)'),
+             (('Phenylala_S(0.001)GRT(0.004)S(0.996)E'), T_S_GT): ('Phenylalanine', 'S(0.001)GRT(0.004)S(0.996)EPNS(1)EDEAAGVGK'),
+             (('Ornith_TDSEVTS'), T_S_GT): ('Ornithine', 'TDSEVTSLAAS(0.024)S(0.976)PARS(1)PR'),
+             (('Lys_HPQWQSDDG'), T_S_GT): ('Lysine', 'HPQWQSDDGGDNS(1)EPESPSDSLR'),
+             (('Aspartic_IGS(0.999)S(0.001)E'), T_S_GT): ('Aspartic_acid', 'IGS(0.999)S(0.001)EMLIEGEDVR'),
+             (('Lys_VSS(1)FEAL'), T_S_GT): ('Lysine', 'VSS(1)FEALQPATR'),
+             (('Lys_ETLNRPAAP'), T_S_GT): ('Lysine', 'ETLNRPAAPTNYVAISKEEAASSPVSGAADHQVPAS(1)P'),
+             (('Beta-ala_IGS(0.999)S(0.001)EML'), T_S_GT): ('Beta-alanine', 'IGS(0.999)S(0.001)EMLIEGEDVR')}
+
+# IC10_7p25_No_SBY_dGT10_0p2_No
+# dPairsPaP = {(('Leu_SSFQEDHE'), T_S_GT): ('Leucine', 'SSFQEDHS(1)NIGGPGFSR'),
+#              (('Beta-alan_SSFQEDHE'), T_S_GT): ('Beta-alanine', 'SSFQEDHS(1)NIGGPGFSR'),
+#              (('Ala_VSS(1)AGL'), T_S_GT): ('Alanine', 'VSS(1)AGLRTESVLQR')}
+
+# IC50_7p25_No_SBY_dGT50_0p2_No
+# dPairsPaP = {(('Isoleu_ASGAGPN'), T_S_GT): ('Isoleucine', 'ASGAGPNSLVS(1)PQR'),
+#              (('Isoleu_DYEDPPP'), T_S_GT): ('Isoleucine', 'DYEDPPPT(1)PFFDADELTK'),
+#              (('Isoleu_DLDVNES(1)G'), T_S_GT): ('Isoleucine', 'DLDVNES(1)GPPAAR'),
+#              (('Val_ASGAGPN'), T_S_GT): ('Valine', 'ASGAGPNSLVS(1)PQR'),
+#              (('Val_DYEDPPP'), T_S_GT): ('Valine', 'DYEDPPPT(1)PFFDADELTK'),
+#              (('Val_DLDVNES(1)G'), T_S_GT): ('Valine', 'DLDVNES(1)GPPAAR')}
 
 nmPaP = S_NM_PAT_PLT            # name prefix of the pattern plot
 
@@ -244,8 +272,18 @@ sFIn_dGT_P = 'DistGT_Pho'
 sFOutS = 'S_XIOvRep'
 sFOutF = 'F_XIOvRep'
 
+# IC_No_No_SBNY_dGT_No_No
+sFIn_PaP = 'F_XIOvRep_IC_IC_All_No_No_MPS5Y_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+
+# IC_7p25_No_SBY_dGT_No_No
 # sFIn_PaP = 'F_XIOvRep_IC_IC_All_7p25_No_MPS5Y_PSBY_dGTM_dGT_No_No_dGTP_dGT_No_No'
-sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_7p25_No_GT1_7p25_No_GT5_No_No_All_MPS5Y_PSBY_dGTM_10_0p2_No_dGTP_10_0p2_No'
+
+# IC_10_7p25_No_dGT_10_0p2_No
+# sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_7p25_No_GT1_7p25_No_GT5_No_No_All_MPS5Y_PSBY_dGTM_10_0p2_No_dGTP_10_0p2_No'
+
+# IC_50_7p25_No_dGT_50_0p2_No
+# sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_7p25_No_GT1_No_No_GT5_7p25_No_All_MPS5Y_PSBY_dGTM_50_0p2_No_dGTP_50_0p2_No'
+
 dSFIn_ICP = {sGT: ('ICCmp__BinOp_MetD_DvSD_' + sGT + '_AllD_PhoD_DvSD_'
                    + sGT + '_AllD') for sGT in L_S_GT}
 sFOutPaP = nmPaP
@@ -286,10 +324,6 @@ dComprStr = {S_IC_P: S_IC_P_S,
              S_D_E: S_D_E_S,
              S_D_GT: S_D_GT_S}
 
-# pFIGT0 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT0 + S_DOT + S_CSV)
-# pFIGT1 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT1 + S_DOT + S_CSV)
-# pFIGT5 = os.path.join(pInCSV, sFIn_IC_M_P + S_USC + S_GT5 + S_DOT + S_CSV)
-# dPFInIC = {S_GT0: pFIGT0, S_GT1: pFIGT1, S_GT5: pFIGT5}
 dPFInIC = {sGT: os.path.join(pInCSV, sFIn_IC_M_P + S_USC + sGT + S_DOT + S_CSV)
            for sGT in L_S_GT}
 
@@ -322,7 +356,7 @@ dInput = {# --- constants
           'doInfoExtr': doInfoExtr,
           'doPlotPat': doPlotPat,
           'doPlotICC': doPlotICC,
-          'lSpecSel': lSpecSel,
+          'dSpecSel': dSpecSel,
           # --- general input
           'modDisp': modDisp,
           # --- data specific input
@@ -527,12 +561,13 @@ def addSelAll(dSl, tKSl, sGT=S_GT0):
     sSubKSl, sIDSl = list(dSl[tKSl])[0], tKSl[1]
     return getSel(set(dSl[tKSl][sSubKSl][sGT]), sIDSl)
 
-def saveDfrRes(dfrRes, dDat, pFOut, sSep, dSel=None, dMap=None):
+def saveDfrRes(dfrRes, dDat, pFOut, sSep, dSel=None, dMap=None, dropNA=True):
     dfrRes = dfrRes.append(pd.DataFrame(dDat), ignore_index=True,
                            verify_integrity=True)
     if dSel is not None and dMap is not None:
         dfrRes = applySelFilter(dfrRes, dSel, dMap)
-    dfrRes.dropna(axis=0, how='any', inplace=True)
+    if dropNA:
+        dfrRes.dropna(axis=0, how='any', inplace=True)
     dfrRes.reset_index(drop=True).to_csv(pFOut, sep=sSep)
     return dfrRes
 
@@ -923,13 +958,13 @@ class ExtractedInfo(RootClass):
                     print('Processed element', n, 'of', self.N, '.')
 
     def fillSaveDfrRes(self):
-        for spcSel in self.inpD.lSpecSel:
+        for spcSel, dISpcSel in self.inpD.dSpecSel.items():
             dDat = self.iniDfrRes(specSel=spcSel)
             self.fillDDat(dDat)
             print('Filled data dictionary for selection "' + spcSel + '".')
-            dISel = self.dSpcSel[spcSel]
+            dISel, dropNA = self.dSpcSel[spcSel], dISpcSel['dropNA']
             dISel['dfr'] = saveDfrRes(dISel['dfr'], dDat, dISel['pF'],
-                                      self.sSp, self.dSl, self.dMap)
+                                      self.sSp, self.dSl, self.dMap, dropNA)
 
     def extractionOfExtremes(self):
         self.sortAndFiltDfr()
