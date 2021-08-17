@@ -21,6 +21,8 @@ sKendV = GC.S_KEND_V
 sCorrP = GC.S_CORR_P
 sSpearP = GC.S_SPEAR_P
 sKendP = GC.S_KEND_P
+sCorrTtl = GC.S_CORR_TTL
+sSpearTtl = GC.S_SPEAR_TTL
 sDvSc = GC.S_DV_SC
 sCI = GC.S_CI
 sOccCI = GC.S_OCC_CI
@@ -192,6 +194,8 @@ dIO = {# --- general and names
        'sCorrP': sCorrP,
        'sSpearP': sSpearP,
        'sKendP': sKendP,
+       'sCorrTtl': sCorrTtl,
+       'sSpearTtl': sSpearTtl,
        'sDvSc': sDvSc,
        'sCI': sCI,
        'sOccCI': sOccCI,

@@ -204,8 +204,10 @@ def pltHist1C(dITp, dOIn, cDfr, pF, useMns = False):
         decorateSavePlot(pF, sTtl = sTtl, xLbl = nmCr, xLim = xLm)
         plt.close()
 
-def getTitlePltSCorr(cDfr, nmCr, i):
-    return nmCr + ' = ' + str(round(cDfr.loc[i, nmCr], 4))
+def getTitlePltSCorr(dITp, cDfr, i):
+    sT = dITp['sCorrTtl'] + ' = ' + str(round(cDfr.loc[i, dITp['sCorrV']], 3))
+    sT += ' / ' + dITp['sSpearTtl'] + ' = '
+    return sT + str(round(cDfr.loc[i, dITp['sSpearV']], 3))
 
 def SUB_pltSCorr(dfr1, dfr2, pF, lOD, nmC1, nmC2, cFml, sTtl, lClr, lSXY):
     # create a DataFrame for fitting, and fit the regression line
@@ -248,7 +250,7 @@ def pltSCorr(dIG, dITp, dOIn, cDfr, pF, lODat):
                 selDfr = cDfr[(cDfr[nmCr] <= lowBd) | (cDfr[nmCr] >= upBd)]
                 for i, cRD in selDfr.iterrows():
                     nmO1C, nmO2C = selDfr.loc[i, nmO1], selDfr.loc[i, nmO2]
-                    sTtl = getTitlePltSCorr(selDfr, nmCr, i)
+                    sTtl = getTitlePltSCorr(dITp, selDfr, i)
                     sNCr = '__' + '0'*(7 - len(str(i + 1))) + str(i + 1)
                     # sNCr = '__' + '0'
                     pFN = GF.adaptPF4Plot(pF, dITp['pRelPltF'], sPost = sNCr)
