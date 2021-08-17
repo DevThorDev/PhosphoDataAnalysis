@@ -56,6 +56,9 @@ S_GT1 = S_GT + S_1
 S_GT5 = S_GT + S_5
 L_S_GT = [S_GT0, S_GT1, S_GT5]
 T_S_GT = tuple(L_S_GT)
+T_S_GT0 = tuple([S_GT0])
+T_S_GT1 = tuple([S_GT1])
+T_S_GT5 = tuple([S_GT5])
 
 S_D_GT_M = S_D + S_GT + 'M'
 S_D_GT_P = S_D + S_GT + 'P'
@@ -182,8 +185,8 @@ dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
           S_D_GT_P: {S_SRT_BY: dUsedK[S_D_GT_P], S_ORD: S_DSC}}
 
 dThr = {S_IC: {S_GT0: {S_MIN: None, S_MAX: None},
-                S_GT1: {S_MIN: None, S_MAX: None},
-                S_GT5: {S_MIN: None, S_MAX: None}},
+               S_GT1: {S_MIN: None, S_MAX: None},
+               S_GT5: {S_MIN: None, S_MAX: None}},
         S_D_GT_M: {S_MIN: None, S_MAX: None},
         S_D_GT_P: {S_MIN: None, S_MAX: None}}
 # dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
@@ -192,13 +195,13 @@ dThr = {S_IC: {S_GT0: {S_MIN: None, S_MAX: None},
 #         S_D_GT_M: {S_MIN: 0.2, S_MAX: None},
 #         S_D_GT_P: {S_MIN: 0.2, S_MAX: None}}
 
-lSelSGM, lSelSGP = L_Y, L_Y
+lSelSGM_GT0, lSelSGM_GT1, lSelSGM_GT5 = L_NY, L_NY, L_Y
+lSelSGP_GT0, lSelSGP_GT1, lSelSGP_GT5 = L_NY, L_NY, L_Y
 lSelSB = L_NY                    # L_NY / L_Y (sel. bins only) / L_N
-# lSelSB = L_Y                    # L_NY / L_Y (sel. bins only) / L_N
-dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: lSelSGM, S_GT1: lSelSGM,
-                                   S_GT5: lSelSGM},
-                          S_SG_P: {S_GT0: lSelSGP, S_GT1: lSelSGP,
-                                   S_GT5: lSelSGP}},
+dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: lSelSGM_GT0, S_GT1: lSelSGM_GT1,
+                                   S_GT5: lSelSGM_GT5},
+                          S_SG_P: {S_GT0: lSelSGP_GT0, S_GT1: lSelSGP_GT1,
+                                   S_GT5: lSelSGP_GT5}},
         (S_SB, S_SB_P): {S_SB_P: {S_GT0: lSelSB, S_GT1: lSelSB,
                                   S_GT5: lSelSB}}}
 
@@ -230,17 +233,33 @@ lWdPlt = 0.75                   # line width in plot
 #               (('Malic_DLDVNE'), T_S_GT):
 #               ('Malic_acid', 'DLDVNES(1)GPPAAR')}
 
-# IC_No_No_SBNY_dGT_No_No
-dPairsPaP = {(('Phenylala_VSS(1)AGL'), T_S_GT): ('Phenylalanine', 'VSS(1)AGLRTESVLQR'),
-             (('Phospho_YSS(1)PS(0.008)S(0.992)P'), T_S_GT): ('Phosphoric_acid', 'YSS(1)PS(0.008)S(0.992)PPPSFYRK'),
-             (('Aspartic_QGTLPTVIE'), T_S_GT): ('Aspartic_acid', 'QGTLPTVIEEDDS(0.016)S(0.977)ET(0.007)'),
-             (('Phenylala_S(0.001)GRT(0.004)S(0.996)E'), T_S_GT): ('Phenylalanine', 'S(0.001)GRT(0.004)S(0.996)EPNS(1)EDEAAGVGK'),
-             (('Ornith_TDSEVTS'), T_S_GT): ('Ornithine', 'TDSEVTSLAAS(0.024)S(0.976)PARS(1)PR'),
-             (('Lys_HPQWQSDDG'), T_S_GT): ('Lysine', 'HPQWQSDDGGDNS(1)EPESPSDSLR'),
-             (('Aspartic_IGS(0.999)S(0.001)E'), T_S_GT): ('Aspartic_acid', 'IGS(0.999)S(0.001)EMLIEGEDVR'),
-             (('Lys_VSS(1)FEAL'), T_S_GT): ('Lysine', 'VSS(1)FEALQPATR'),
-             (('Lys_ETLNRPAAP'), T_S_GT): ('Lysine', 'ETLNRPAAPTNYVAISKEEAASSPVSGAADHQVPAS(1)P'),
-             (('Beta-ala_IGS(0.999)S(0.001)EML'), T_S_GT): ('Beta-alanine', 'IGS(0.999)S(0.001)EMLIEGEDVR')}
+# IC_No_No_SBNY_dGT_No_No_GT0_MPS5Y_GT1_MPS5NY_GT5_MPS5NY
+dPairsPaP = {# GT0 / WT
+             (('Nona_T(0.011)FDELS(0.759)D'), T_S_GT0): ('Nonanoic_acid', 'T(0.011)FDELS(0.759)DT(0.23)EVYEDS(1)D'),
+             (('Citric_DNKEVTF'), T_S_GT0): ('Citric_acids', 'DNKEVTFGDLGS(1)KR'),
+             (('myo-Ino_TFDELS(1)D'), T_S_GT0): ('myo-Inositol', 'TFDELS(1)DTEVYEDS(1)D'),
+             (('Lys_DPS(1)PPPLS'), T_S_GT0): ('Lysine', 'DPS(1)PPPLSSLGK'),
+             (('Sucr_IQEGPEGS(1)L'), T_S_GT0): ('Sucrose', 'IQEGPEGS(1)LQS(1)EMK')}
+
+# IC_No_No_SBNY_dGT_No_No_GT0_MPS5NY_GT1_MPS5Y_GT5_MPS5NY
+dPairsPaP = {# GT1 / PGM
+             (('Aspartic_QGTLPTVIE'), T_S_GT1): ('Aspartic_acid', 'QGTLPTVIEEDDS(0.016)S(0.977)ET(0.007)'),
+             (('Phenylala_S(0.825)RS(0.137)VDE'), T_S_GT1): ('Phenylalanine', 'S(0.825)RS(0.137)VDES(0.039)FANSFSPR'),
+             (('Phenylala_S(0.001)GRT(0.004)S(0.996)E'), T_S_GT1): ('Phenylalanine', 'S(0.001)GRT(0.004)S(0.996)EPNS(1)EDEAAGVGK'),
+             (('Ornith_SYS(1)GSLYR'), T_S_GT1): ('Ornithine', 'SYS(1)GSLYR')}
+
+# IC_No_No_SBNY_dGT_No_No_GT0_MPS5NY_GT1_MPS5NY_GT5_MPS5Y
+dPairsPaP = {# GT5 / SWEET
+             (('Aspartic_IGS(0.999)S(0.001)EML'), T_S_GT5): ('Aspartic_acid', 'IGS(0.999)S(0.001)EMLIEGEDVR'),
+             (('Aspartic_VTLVPPS(0.407)D'), T_S_GT5): ('Aspartic_acid', 'VTLVPPS(0.407)DS(0.593)PELS(0.999)PINT(0.001)PK'),
+             (('Beta-ala_DIS(1)PTAAG'), T_S_GT5): ('Beta-alanine', 'DIS(1)PTAAGLGLPVTGGK'),
+             (('Beta-ala_IGS(0.999)S(0.001)EML'), T_S_GT5): ('Beta-alanine', 'IGS(0.999)S(0.001)EMLIEGEDVR'),
+             (('Docosan_LSRPGS(1)G'), T_S_GT5): ('Docosanoic_acid', 'LSRPGS(1)GS(1)VSGLASQR'),
+             (('Lys_HPQWQSDDG'), T_S_GT5): ('Lysine', 'HPQWQSDDGGDNS(1)EPESPSDSLR'),
+             (('Lys_VSS(1)FEAL'), T_S_GT5): ('Lysine', 'VSS(1)FEALQPATR'),
+             (('Lys_ETLNRPAAP'), T_S_GT5): ('Lysine', 'ETLNRPAAPTNYVAISKEEAASSPVSGAADHQVPAS(1)P'),
+             (('Ornith_TDSEVTSLA'), T_S_GT5): ('Ornithine', 'TDSEVTSLAAS(0.024)S(0.976)PARS(1)PR'),
+             (('Phosphoric_VTLVPPS(0.006)D'), T_S_GT5): ('Phosphoric_acid', 'VTLVPPS(0.407)DS(0.593)PELS(0.999)PINT(0.001)PK')}
 
 # IC10_7p25_No_SBY_dGT10_0p2_No
 # dPairsPaP = {(('Leu_SSFQEDHE'), T_S_GT): ('Leucine', 'SSFQEDHS(1)NIGGPGFSR'),
@@ -272,8 +291,17 @@ sFIn_dGT_P = 'DistGT_Pho'
 sFOutS = 'S_XIOvRep'
 sFOutF = 'F_XIOvRep'
 
+# IC_No_No_SBNY_dGT_No_No_GT0_MPS5Y_GT1_MPS5NY_GT5_MPS5NY
+# sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_MPS5Y_GT1_MPS5NY_GT5_MPS5NY_All_No_No_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+
+# IC_No_No_SBNY_dGT_No_No_GT0_MPS5NY_GT1_MPS5Y_GT5_MPS5NY
+# sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_MPS5NY_GT1_MPS5Y_GT5_MPS5NY_All_No_No_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+
+# IC_No_No_SBNY_dGT_No_No_GT0_MPS5NY_GT1_MPS5NY_GT5_MPS5Y
+sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_MPS5NY_GT1_MPS5NY_GT5_MPS5Y_All_No_No_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+
 # IC_No_No_SBNY_dGT_No_No
-sFIn_PaP = 'F_XIOvRep_IC_IC_All_No_No_MPS5Y_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+# sFIn_PaP = 'F_XIOvRep_IC_IC_All_No_No_MPS5Y_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
 
 # IC_7p25_No_SBY_dGT_No_No
 # sFIn_PaP = 'F_XIOvRep_IC_IC_All_7p25_No_MPS5Y_PSBY_dGTM_dGT_No_No_dGTP_dGT_No_No'
