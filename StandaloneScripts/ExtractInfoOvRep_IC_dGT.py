@@ -146,8 +146,6 @@ S_ICC_PLTR = 'ICCmpPlotter'
 
 S_RMNG_COL1_IC = 'PearsonCorr'
 S_NEW_IDX = 'NewIndex'
-# L_S_NO_GT = L_S_M_P + ['Protein', 'BinCode', 'BinCode2', 'MapMan',
-#                        'Description', 'SelBinCode']
 L_S_NO_GT = L_S_M_P + []
 L_S_ADD_GT = [S_RMNG_COL1_IC, 'SpearmanCorr', 'Pearson_pVal', 'Spearman_pVal',
               'IC_N', 'IC_P', 'IC', 'MetSig5', 'PhoSig5']
@@ -185,18 +183,18 @@ dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
           S_D_GT_P: {S_SRT_BY: dUsedK[S_D_GT_P], S_ORD: S_DSC}}
 
 dThr = {S_IC: {S_GT0: {S_MIN: None, S_MAX: None},
-               S_GT1: {S_MIN: None, S_MAX: None},
-               S_GT5: {S_MIN: None, S_MAX: None}},
+                S_GT1: {S_MIN: None, S_MAX: None},
+                S_GT5: {S_MIN: None, S_MAX: None}},
         S_D_GT_M: {S_MIN: None, S_MAX: None},
         S_D_GT_P: {S_MIN: None, S_MAX: None}}
 # dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
-#                 S_GT1: {S_MIN: None, S_MAX: None},
-#                 S_GT5: {S_MIN: 7.25, S_MAX: None}},
-#         S_D_GT_M: {S_MIN: 0.2, S_MAX: None},
-#         S_D_GT_P: {S_MIN: 0.2, S_MAX: None}}
+#                S_GT1: {S_MIN: 7.25, S_MAX: None},
+#                S_GT5: {S_MIN: 7.25, S_MAX: None}},
+#         S_D_GT_M: {S_MIN: None, S_MAX: None},
+#         S_D_GT_P: {S_MIN: None, S_MAX: None}}
 
-lSelSGM_GT0, lSelSGM_GT1, lSelSGM_GT5 = L_NY, L_NY, L_Y
-lSelSGP_GT0, lSelSGP_GT1, lSelSGP_GT5 = L_NY, L_NY, L_Y
+lSelSGM_GT0, lSelSGM_GT1, lSelSGM_GT5 = L_NY, L_NY, L_NY
+lSelSGP_GT0, lSelSGP_GT1, lSelSGP_GT5 = L_NY, L_NY, L_NY
 lSelSB = L_NY                    # L_NY / L_Y (sel. bins only) / L_N
 dSel = {(S_SG, S_SG_MP): {S_SG_M: {S_GT0: lSelSGM_GT0, S_GT1: lSelSGM_GT1,
                                    S_GT5: lSelSGM_GT5},
@@ -261,6 +259,34 @@ dPairsPaP = {# GT5 / SWEET
              (('Ornith_TDSEVTSLA'), T_S_GT5): ('Ornithine', 'TDSEVTSLAAS(0.024)S(0.976)PARS(1)PR'),
              (('Phosphoric_VTLVPPS(0.006)D'), T_S_GT5): ('Phosphoric_acid', 'VTLVPPS(0.407)DS(0.593)PELS(0.999)PINT(0.001)PK')}
 
+# IC_No_No_dGT_No_No_MPS5NY_PSBNY
+dPairsPaP = {# ConcStrongPos
+             (('Docosan_SLEELS(1)GEA'), T_S_GT0): ('Docosanoic_acid', 'SLEELS(1)GEAEVS(1)HDEK'),
+             (('Val_SLEELS(1)GEA'), T_S_GT0): ('Valine', 'SLEELS(1)GEAEVS(1)HDEK'),
+             (('Val_SDKPLNYS(1)P'), T_S_GT0): ('Valine', 'SDKPLNYS(1)PDPENESGINER'),
+             (('Putres_T(1)AILERR'), T_S_GT0): ('Putrescine', 'T(1)AILERR'),
+             (('Putres_TKDELT(1)EE'), T_S_GT0): ('Putrescine', 'TKDELT(1)EEES(1)LSGKDYLDPPPVK'),
+             (('Nicotin_SDKPLNYS(1)P'), T_S_GT0): ('Nicotinic_acid', 'SDKPLNYS(1)PDPENESGINER'),
+             (('Docosan_SDKPLNYS(1)P'), T_S_GT0): ('Docosanoic_acid', 'SDKPLNYS(1)PDPENESGINER'),
+             (('Val_ALGSFGS(1)F'), T_S_GT0): ('Valine', 'ALGSFGS(1)FGS(0.999)FRS(0.001)FA'),
+             (('Fumar_TKDELT(1)EE'), T_S_GT1): ('Fumaric_acid', 'TKDELT(1)EEES(1)LSGKDYLDPPPVK'),
+             (('Docosan_ALGSFGS(1)F'), T_S_GT1): ('Docosanoic_acid', 'ALGSFGS(1)FGS(0.999)FRS(0.001)FA'),
+             (('Nicotin_ALGSFGS(1)F'), T_S_GT1): ('Nicotinic_acid', 'ALGSFGS(1)FGS(0.999)FRS(0.001)FA'),
+             (('Proline_ALGSFGS(1)F'), T_S_GT1): ('Proline', 'ALGSFGS(1)FGS(0.999)FRS(0.001)FA'),
+             (('Docosan_SLEELS(1)GEA'), T_S_GT1): ('Docosanoic_acid', 'SLEELS(1)GEAEVS(1)HDEK'),
+             (('Hexadecan_TKDELT(1)EE'), T_S_GT5): ('Hexadecanoic_acid', 'TKDELT(1)EEES(1)LSGKDYLDPPPVK'),
+             (('Hexadecan_AYGS(1)VRS(1)Q'), T_S_GT5): ('Hexadecanoic_acid', 'AYGS(1)VRS(1)QLHELHA'),
+             (('Hexadecan_T(1)AILERR'), T_S_GT5): ('Hexadecanoic_acid', 'T(1)AILERR'),
+             (('Aspartic_SLEELS(1)GEA'), T_S_GT5): ('Aspartic_acid', 'SLEELS(1)GEAEVS(1)HDEK'),
+             (('Docosan_YVS(1)PEGS(1)P'), T_S_GT5): ('Docosanoic_acid', 'YVS(1)PEGS(1)PFKIENPK'),
+             (('Docosan_S(0.007)ES(0.993)LGH'), T_S_GT5): ('Docosanoic_acid', 'S(0.007)ES(0.993)LGHRS(1)DVS(1)S(1)PEAK'),
+             (('Octadecan_AYGS(1)VRS(1)Q'), T_S_GT5): ('Octadecanoic_acid', 'AYGS(1)VRS(1)QLHELHA'),
+             (('Putres_T(1)AILERR'), T_S_GT5): ('Putrescine', 'T(1)AILERR'),
+             # ConcZero
+             (('Ala_TFDELS(1)DG'), T_S_GT1): ('Alanine', 'TFDELS(1)DGEVYEDS(1)D'),
+             # ConcStrongNeg
+             (('Docosan_S(0.003)PS(0.997)YKEV'), T_S_GT1): ('Docosanoic_acid', 'S(0.003)PS(0.997)YKEVALAPPGSIAK')}
+
 # IC10_7p25_No_SBY_dGT10_0p2_No
 # dPairsPaP = {(('Leu_SSFQEDHE'), T_S_GT): ('Leucine', 'SSFQEDHS(1)NIGGPGFSR'),
 #              (('Beta-alan_SSFQEDHE'), T_S_GT): ('Beta-alanine', 'SSFQEDHS(1)NIGGPGFSR'),
@@ -298,10 +324,22 @@ sFOutF = 'F_XIOvRep'
 # sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_MPS5NY_GT1_MPS5Y_GT5_MPS5NY_All_No_No_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
 
 # IC_No_No_SBNY_dGT_No_No_GT0_MPS5NY_GT1_MPS5NY_GT5_MPS5Y
-sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_MPS5NY_GT1_MPS5NY_GT5_MPS5Y_All_No_No_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+# sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_MPS5NY_GT1_MPS5NY_GT5_MPS5Y_All_No_No_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+
+# IC_GT0_12p0_No_GT1_11p0_No_GT5_10p0_No_dGT_No_No_MPS5Y_PSBNY
+# sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_12p0_No_GT1_11p0_No_GT5_10p0_No_All_MPS5Y_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+
+# IC_GT0_12p0_No_GT1_11p0_No_GT5_10p0_No_dGT_No_No_MPS5NY_PSBNY
+# sFIn_PaP = 'F_XIOvRep_IC_IC_GT0_12p0_No_GT1_11p0_No_GT5_10p0_No_All_MPS5NY_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+
+# IC_7p25_No_dGT_No_No_MPS5NY_PSBNY
+# sFIn_PaP = 'F_XIOvRep_IC_IC_All_7p25_No_MPS5NY_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
 
 # IC_No_No_SBNY_dGT_No_No
 # sFIn_PaP = 'F_XIOvRep_IC_IC_All_No_No_MPS5Y_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
+
+# IC_No_No_dGT_No_No_MPS5NY_PSBNY
+sFIn_PaP = 'F_XIOvRep_IC_IC_All_No_No_MPS5NY_PSBNY_dGTM_dGT_No_No_dGTP_dGT_No_No'
 
 # IC_7p25_No_SBY_dGT_No_No
 # sFIn_PaP = 'F_XIOvRep_IC_IC_All_7p25_No_MPS5Y_PSBY_dGTM_dGT_No_No_dGTP_dGT_No_No'
