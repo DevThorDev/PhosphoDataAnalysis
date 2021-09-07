@@ -122,8 +122,6 @@ S_SG_MET = 'MetSig5'
 S_SG_PHO = 'PhoSig5'
 L_S_SG_S = [S_SG_M, S_SG_P]
 L_S_SG = [S_SG_MET, S_SG_PHO]
-L_S_SG_MET_GT = [S_USC.join([S_SG_MET, sGT]) for sGT in L_S_GT]
-L_S_SG_PHO_GT = [S_USC.join([S_SG_PHO, sGT]) for sGT in L_S_GT]
 L_S_SG_GT = [S_USC.join([sSg, sGT]) for sGT in L_S_GT for sSg in L_S_SG]
 
 S_SB = 'SB'
@@ -374,10 +372,8 @@ pOutPaP = os.path.join(pBaseOut, sDirOutPaP)
 pOutICP = os.path.join(pBaseOut, sDirOutICP)
 
 # --- derived values ----------------------------------------------------------
-dMapCHdSel = {S_SG: {S_SG_M: {sGT: L_S_SG_MET_GT[k]
-                              for k, sGT in enumerate(L_S_GT)},
-                     S_SG_P: {sGT: L_S_SG_PHO_GT[k]
-                              for k, sGT in enumerate(L_S_GT)}},
+dMapCHdSel = {S_SG: {S_SG_M: {sGT: [S_SG_MET] for sGT in L_S_GT},
+                     S_SG_P: {sGT: [S_SG_PHO] for sGT in L_S_GT}},
               S_SB: {S_SB_P: {sGT: S_USC.join([S_SELECTED, S_PHO[0]])
                               for sGT in L_S_GT}}}
 dComprStr = {S_IC_P: S_IC_P_S,
