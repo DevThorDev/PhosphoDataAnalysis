@@ -1134,7 +1134,7 @@ class ICCmpPlotter(Plotter):
             cAx.set_xticks(xLocG)
             cAx.set_xticklabels(L_S_FT_CHG)
             for cXLbl in cAx.get_xticklabels():
-              cXLbl.set_rotation(self.dPlt['degRotXLbl'])
+                cXLbl.set_rotation(self.dPlt['degRotXLbl'])
             decorateClosePlot(cFig, cAx, self.dPlt, pPltF, S_YLBL_ICC_PLT)
 
 # --- MAIN --------------------------------------------------------------------

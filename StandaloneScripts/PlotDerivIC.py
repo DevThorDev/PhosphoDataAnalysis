@@ -9,9 +9,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # --- CONSTANTS ---------------------------------------------------------------
-S_DASH = '-'
+S_SPACE = ' '
 S_USC = '_'
 S_BAR = '|'
+S_SLASH = '/'
 S_DOT = '.'
 S_CSV = 'csv'
 S_PDF = 'pdf'
@@ -29,25 +30,24 @@ S_3 = '3'
 S_4 = '4'
 S_5 = '5'
 
-S_10 = S_1 + S_0
-S_50 = S_5 + S_0
-S_51 = S_5 + S_1
-
 S_MET = 'Metabolite'
 S_PHO = 'Phosphopeptide'
-L_S_M_P = [S_MET, S_PHO]
 
 S_IC = 'IC'
+S_IC_MEX = '$I_C$'
 S_IC_M = S_IC + '(-)'
 S_IC_P = S_IC + '(+)'
-
-S_SELECTED = 'Selected'
 
 S_GT = 'GT'
 S_GT0 = S_GT + S_0
 S_GT1 = S_GT + S_1
 S_GT5 = S_GT + S_5
 L_S_GT = [S_GT0, S_GT1, S_GT5]
+
+S_NM_GT0 = 'wild type'
+S_NM_GT1 = '$\it{pgm}$ mutant'
+S_NM_GT5 = '$\it{sweet11/12}$ mutant'
+D_S_NM_GT = {S_GT0: S_NM_GT0, S_GT1: S_NM_GT1, S_GT5: S_NM_GT5}
 
 L_S_FT = ['DR', 'DS', 'NR', 'NS']
 L_S_FT_CHG = [L_S_FT[i] + S_BAR + L_S_FT[j] for j in range(len(L_S_FT))
@@ -57,21 +57,22 @@ D_S_FT_CHG = {s: [S_USC.join([t, s]) for t in L_S_FT_CHG] for s in L_S_SPC}
 S_DERIV = 'Deriv'
 S_IC_DERIV = S_IC + S_DERIV
 
-S_CMB_DEV = 'Combined deviation'
-S_CMB_DEV = 'Combined deviation'
+S_CMB_C = 'Combined'
+S_DEV_S = 'deviation'
+S_DEVS_C = 'Deviations'
+S_CMP_S = 'component'
+S_CMB_DEV = S_CMB_C + S_SPACE + S_DEV_S
+S_IC_CMP = S_IC_MEX + S_SPACE + S_CMP_S
 
-S_YLBL_IC_DERIV_PLT = 'Change (xSD) / IC derivation'
-
-S_IC_GT0 = S_USC.join([S_IC, S_GT0])
-S_IC_GT1 = S_USC.join([S_IC, S_GT1])
-S_IC_GT5 = S_USC.join([S_IC, S_GT5])
-L_S_IC_GT = [S_IC_GT0, S_IC_GT1, S_IC_GT5]
+S_YLBL_IC_DERIV_PLT = (S_DEVS_C + S_SPACE + '(xSD)' + S_SPACE + S_SLASH +
+                       S_SPACE + S_IC_CMP)
 
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
 S_ROOT_CL = 'RootClass'
 S_PLTR = 'Plotter'
 S_IC_DERIV_PLTR = S_IC_DERIV + S_PLTR
+
 S_PLT = 'Plot'
 S_NM_IC_DERIV_PLT = S_IC_DERIV + S_PLT
 
@@ -82,9 +83,6 @@ R04 = 4
 doPlotICDrv = True            # True / False
 # dSpecSel = {'S': {'dropNA': True},      # key: column sel.: 'S'hort / 'F'ull
 #             'F': {'dropNA': False}}     # value: data for sel., e.g. dropNA
-
-# --- general input -----------------------------------------------------------
-modDisp = 10000
 
 # --- data specific input -----------------------------------------------------
 dTupIn = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
@@ -104,6 +102,9 @@ lWdPlt = 0.75                   # line width in plot
 # --- graphics parameters / IC derivation plot --------------------------------
 dTupInICDeriv = dTupIn
 nmICDrvPlt = S_NM_IC_DERIV_PLT      # name prefix of the IC derivation plot
+locTitle = 'left'                   # location of the title
+padTitle = 70.                      # padding of the title
+locLegend = 'lower center'          # location of the legend
 wdthBar = 0.2                       # width of single bars
 wdthGrp = 0.75                      # width of bar group
 degRotXLbl = 90                     # degree rotation of x-labels
@@ -131,6 +132,7 @@ dPFInICDrv = {sGT: os.path.join(pInCSV, dSFInICDrv[sGT] + S_DOT + S_CSV)
               for sGT in L_S_GT}
 
 # --- assertions --------------------------------------------------------------
+assert len(L_S_SPC) == 4 and len(D_S_FT_CHG) == 4
 
 # --- INPUT DICTIONARY --------------------------------------------------------
 dInput = {# --- constants
@@ -145,8 +147,6 @@ dInput = {# --- constants
           'R04': R04,
           # --- flow control
           'doPlotICDrv': doPlotICDrv,
-          # --- general input
-          'modDisp': modDisp,
           # --- data specific input
           'dTupIn': dTupIn,
           'maxSLen': maxSLen,
@@ -154,6 +154,9 @@ dInput = {# --- constants
           # --- graphics parameters / IC derivation plot
           'plotOfICDeriv': {'dTupInICDeriv': dTupInICDeriv,
                             'nmICDrvPlt': nmICDrvPlt,
+                            'locTitle': locTitle,
+                            'padTitle': padTitle,
+                            'locLegend': locLegend,
                             'szFontLeg': szFontLeg,
                             'nCharDsp': nCharDsp,
                             'coordAnchorBox': coordAnchorBox,
@@ -170,16 +173,6 @@ dInput = {# --- constants
           'dPFInICDrv': dPFInICDrv}
 
 # --- FUNCTIONS ---------------------------------------------------------------
-
-def decorateClosePlot(cFig, cAx, dPlt, pPltF, sYLbl=''):
-    cAx.set_ylabel(sYLbl)
-    l = cAx.legend(loc='lower center', bbox_to_anchor=dPlt['coordAnchorBox'],
-                   fontsize=dPlt['szFontLeg'])
-    if l is not None:
-        cFig.savefig(pPltF, bbox_extra_artists=(l,), bbox_inches='tight')
-    else:
-        cFig.savefig(pPltF)
-    plt.close()
 
 def printElapsedTimeSim(stT, cT, sPre = 'Time'):
     # calculate and display elapsed time
@@ -289,30 +282,46 @@ class ICDerivPlotter(Plotter):
             sPltF = S_DOT.join([S_USC.join([u] + [s[:mxL] for s in t]), S_PDF])
             self.dPPltF[sID] = (t, os.path.join(self.pDOut, sPltF))
 
+    def createPlot(self, cSer, lILegPlt):
+        nChD, aRg = self.dPlt['nCharDsp'], np.arange(len(L_S_FT_CHG))
+        cFig, cAx = plt.subplots()
+        for k, (sK, lSHd) in enumerate(D_S_FT_CHG.items()):
+            cSerGrp = cSer.loc[lSHd]
+            cSerGrp.index = L_S_FT_CHG
+            xLoc = aRg + (2*k + 1)/(2*len(D_S_FT_CHG))*self.dPlt['wdthGrp']
+            cAx.bar(xLoc - 1/2, height=cSerGrp, width=self.dPlt['wdthBar'],
+                    lw=self.dPlt['lWdPlt'], label=lILegPlt[k][:nChD])
+        cAx.plot([-1/2, len(L_S_FT_CHG) + 1/2], [0, 0],
+                 lw=self.dPlt['lWdPlt'], color='black')
+        cAx.set_xticks(aRg)
+        cAx.set_xticklabels(L_S_FT_CHG)
+        for cXLbl in cAx.get_xticklabels():
+            cXLbl.set_rotation(self.dPlt['degRotXLbl'])
+        return cFig, cAx
+
+    def decorateClosePlot(self, cFig, cAx, sGT, pPltF, sYLbl=''):
+        cAx.set_ylabel(sYLbl)
+        cAx.set_title(D_S_NM_GT[sGT], loc=self.dPlt['locTitle'],
+                      pad=self.dPlt['padTitle'])
+        l = cAx.legend(loc=self.dPlt['locLegend'],
+                       bbox_to_anchor=self.dPlt['coordAnchorBox'],
+                       fontsize=self.dPlt['szFontLeg'])
+        if l is not None:
+            cFig.savefig(pPltF, bbox_extra_artists=(l,), bbox_inches='tight')
+        else:
+            cFig.savefig(pPltF)
+        plt.close()
+
     def plotICDeriv(self):
-        nChD, wdBar = self.dPlt['nCharDsp'], self.dPlt['wdthBar']
         for sID, ((sGT, sMet, sPho), pPltF) in self.dPPltF.items():
             print('Plotting IC derivation', sID, 'for "' + sGT +
                   '" and the pair (' + sMet + ', ' + sPho + ')...')
             d = self.dDfrIn[sGT]
             cSer = d[(d[S_MET] == sMet) & (d[S_PHO] == sPho)].squeeze()
-            # lTDat = [(S_M, sMet), (S_P, sPho), (S_IC_DERIV, S_CMB_DEV)]
-            aRg = np.arange(len(L_S_FT_CHG))
+            lILegPlt = [sMet, sPho, S_CMB_DEV, S_IC_CMP]
             # if not os.path.isfile(pPltF):
-            cFig, cAx = plt.subplots()
-            for k, (sK, lSHd) in enumerate(D_S_FT_CHG.items()):
-                cSerGrp = cSer.loc[lSHd]
-                cSerGrp.index = L_S_FT_CHG
-                xLoc = aRg + (2*k + 1)/(2*len(D_S_FT_CHG))*self.dPlt['wdthGrp']
-                cAx.bar(xLoc - 1/2, height=cSerGrp, width=wdBar,
-                        lw=self.dPlt['lWdPlt'], label=tMP[1][:nChD])
-            cAx.plot([-1/2, len(L_S_FT_CHG) + 1/2], [0, 0],
-                     lw=self.dPlt['lWdPlt'], color='black')
-            cAx.set_xticks(aRg)
-            cAx.set_xticklabels(L_S_FT_CHG)
-            for cXLbl in cAx.get_xticklabels():
-              cXLbl.set_rotation(self.dPlt['degRotXLbl'])
-            decorateClosePlot(cFig, cAx, self.dPlt, pPltF, S_YLBL_IC_DERIV_PLT)
+            cFig, cAx = self.createPlot(cSer, lILegPlt)
+            self.decorateClosePlot(cFig, cAx, sGT, pPltF, S_YLBL_IC_DERIV_PLT)
 
 # --- MAIN --------------------------------------------------------------------
 startTime = time.time()
@@ -325,7 +334,7 @@ if inpDat.doPlotICDrv:
     cPltr.printDDfrInp()
     cPltr.printAttrData()
     cPltr.printObjInfo()
-    # cPltr.plotICDeriv()
+    cPltr.plotICDeriv()
 
 print('-'*80)
 printElapsedTimeSim(startTime, time.time(), 'Total time')
