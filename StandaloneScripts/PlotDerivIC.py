@@ -111,6 +111,8 @@ dTupIn_DevSD = {'A': (S_GT0, 'Alanine', S_FT2 + S_BAR + S_FT1),
                 'E': (S_GT5, 'Putrescine', S_FT2 + S_BAR + S_FT1),
                 'F': (S_GT5, 'Putrescine', S_FT3 + S_BAR + S_FT2)}
 nmPlt_DevSD = S_NM_DEV_SD_PLT       # name prefix of the deviation SD plot
+tFigSz_DevSD = (3., 4.)             # (width, height): figure size [inches]
+dPosFt_DevSD = {0: 0.75, 1: 0.25}   # dictionary of positions of features 0, 1
 symMark_DevSD = 'o'                 # marker symbol
 szMark_DevSD = 25                   # marker size
 axYLim_DevSD = None                 # limits for the y-axis, or None
@@ -125,6 +127,7 @@ dTupIn_ICDrv = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
                 'D': (S_GT5, 'Putrescine', 'S(0.999)FS(0.001)VADFPR'),
                 'E': (S_GT5, 'Fructose', 'TEEDENDDEDHEHKDDKT(0.854)S(0.144)PDS(0.001)IVMVEAK')}
 nmPlt_ICDrv = S_NM_IC_DERIV_PLT     # name prefix of the IC derivation plot
+tFigSz_ICDrv = None                 # (width, height): figure size [inches]
 lWdPlt_ICDrv = 0.75                 # line width in plot
 axYLim_ICDrv = (-11, 11)            # limits for the y-axis, or None
 locTitle_ICDrv = 'left'             # location of the title
@@ -194,6 +197,8 @@ dInput = {# --- constants
           # --- graphics parameters / IC derivation plot
           'plot_DevSD': {'dTupIn': dTupIn_DevSD,
                          'nmPlt': nmPlt_DevSD,
+                         'tFigSz': tFigSz_DevSD,
+                         'dPosFt': dPosFt_DevSD,
                          'symMark': symMark_DevSD,
                          'szMark': szMark_DevSD,
                          'axYLim': axYLim_DevSD,
@@ -203,6 +208,7 @@ dInput = {# --- constants
           # --- graphics parameters / IC derivation plot
           'plot_ICDrv': {'dTupIn': dTupIn_ICDrv,
                          'nmPlt': nmPlt_ICDrv,
+                         'tFigSz': tFigSz_ICDrv,
                          'lWdPlt': lWdPlt_ICDrv,
                          'axYLim': axYLim_ICDrv,
                          'locTitle': locTitle_ICDrv,
@@ -382,14 +388,20 @@ class DevSDPlotter(Plotter):
                                             s.startswith(cFt))]
             cSer = d.loc[sMP, lSC]
             dFt[k] = (cFt, lSC, cSer)
+        if sGT == S_GT0:
+            print('TEMP:', sMP, sGT, sFtChg, '--> dFt:')
+            print(dFt)
         return dFt
 
     def createPlot(self, dFtI):
         cFig, cAx = plt.subplots()
-        for k in reversed(list(dFtI)):
-            cFt, lHdC, cSer = dFtI[k]
-            cAx.scatter([k]*cSer.size, cSer, marker=self.dPlt['symMark'],
-                        s=self.dPlt['szMark'])
+        print('TEMP - initial size (inches):', cFig.get_size_inches())
+        if self.dPlt['tFigSz'] is not None and len(self.dPlt['tFigSz']) == 2:
+            cFig.set_size_inches(self.dPlt['tFigSz'])
+        print('TEMP - new size (inches):', cFig.get_size_inches())
+        for k, (cFt, lHdC, cSer) in dFtI.items():
+            cAx.scatter([self.dPlt['dPosFt'][k]]*cSer.size, cSer,
+                        marker=self.dPlt['symMark'], s=self.dPlt['szMark'])
         # cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
         #          lw=self.dPlt['lWdPlt'], color='black')
         return cFig, cAx
@@ -398,8 +410,8 @@ class DevSDPlotter(Plotter):
         # nChD = self.dPlt['nCharDsp']
         if self.dPlt['axYLim'] is not None:
             cAx.set_ylim(self.dPlt['axYLim'])
-        cAx.set_xticks(np.arange(len(dFtI)))
-        cAx.set_xticklabels([dFtI[k][0] for k in reversed(list(dFtI))])
+        cAx.set_xticks([self.dPlt['dPosFt'][k] for k in dFtI])
+        cAx.set_xticklabels([dFtI[k][0] for k in dFtI])
         if self.dPlt['axYTicks'] is not None:
             cAx.set_yticks(self.dPlt['axYTicks'])
         for cXLbl in cAx.get_xticklabels():
@@ -440,6 +452,8 @@ class ICDerivPlotter(Plotter):
     def createPlot(self, cSer, lILegPlt):
         nChD, aRg = self.dPlt['nCharDsp'], np.arange(len(L_S_FT_CHG))
         cFig, cAx = plt.subplots()
+        if self.dPlt['tFigSz'] is not None and len(self.dPlt['tFigSz']) == 2:
+            cFig.set_size_inches(self.dPlt['tFigSz'])
         for k, (sK, lSHd) in enumerate(D_S_FT_CHG.items()):
             cSerGrp = cSer.loc[lSHd]
             cSerGrp.index = L_S_FT_CHG
