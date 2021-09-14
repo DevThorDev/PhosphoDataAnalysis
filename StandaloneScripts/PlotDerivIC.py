@@ -92,7 +92,7 @@ R04 = 4
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
 doPlot_DevSD = True             # True / False
-doPlot_ICDrv = False             # True / False
+doPlot_ICDrv = True             # True / False
 
 # --- data specific input -----------------------------------------------------
 maxSLen = 20
@@ -112,9 +112,10 @@ dTupIn_DevSD = {'A': (S_GT0, 'Alanine', S_FT2 + S_BAR + S_FT1),
                 'F': (S_GT5, 'Putrescine', S_FT3 + S_BAR + S_FT2)}
 nmPlt_DevSD = S_NM_DEV_SD_PLT       # name prefix of the deviation SD plot
 tFigSz_DevSD = (3., 4.)             # (width, height): figure size [inches]
-dPosFt_DevSD = {0: 0.75, 1: 0.25}   # dictionary of positions of features 0, 1
+dPosFt_DevSD = {0: 0.75, 1: 0.25}   # dictionary of positions of features 0|1
 symMark_DevSD = 'o'                 # marker symbol
 szMark_DevSD = 25                   # marker size
+axXLim_DevSD = (0., 1.)             # limits for the x-axis, or None
 axYLim_DevSD = None                 # limits for the y-axis, or None
 locTitle_DevSD = 'left'             # location of the title
 padTitle_DevSD = 10.                # padding of the title
@@ -129,6 +130,7 @@ dTupIn_ICDrv = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
 nmPlt_ICDrv = S_NM_IC_DERIV_PLT     # name prefix of the IC derivation plot
 tFigSz_ICDrv = None                 # (width, height): figure size [inches]
 lWdPlt_ICDrv = 0.75                 # line width in plot
+axXLim_ICDrv = None                 # limits for the x-axis, or None
 axYLim_ICDrv = (-11, 11)            # limits for the y-axis, or None
 locTitle_ICDrv = 'left'             # location of the title
 padTitle_ICDrv = 70.                # padding of the title
@@ -201,6 +203,7 @@ dInput = {# --- constants
                          'dPosFt': dPosFt_DevSD,
                          'symMark': symMark_DevSD,
                          'szMark': szMark_DevSD,
+                         'axXLim': axXLim_DevSD,
                          'axYLim': axYLim_DevSD,
                          'locTitle': locTitle_DevSD,
                          'padTitle': padTitle_DevSD,
@@ -210,6 +213,7 @@ dInput = {# --- constants
                          'nmPlt': nmPlt_ICDrv,
                          'tFigSz': tFigSz_ICDrv,
                          'lWdPlt': lWdPlt_ICDrv,
+                         'axXLim': axXLim_ICDrv,
                          'axYLim': axYLim_ICDrv,
                          'locTitle': locTitle_ICDrv,
                          'padTitle': padTitle_ICDrv,
@@ -335,8 +339,9 @@ class Plotter(RootClass):
         self.idO = InpD.sPltr
         self.descO = 'Class for plotting'
         self.sSp = self.inpD.sSep
-        self.complDPlt(axYLim)
+        self.dPlt = self.inpD.plot_Gen
         self.dPPltF = {}
+        self.setDummyVal()
         print('Initiated "Plotter" base object.')
 
     def printDPPltF(self):
@@ -345,14 +350,6 @@ class Plotter(RootClass):
             print(tK, ':', pF)
         print('-'*64)
 
-    def complDPlt(self, axYLim):
-        self.dPlt = self.inpD.plot_Gen
-        axYTicks = None               # tick locations of the y-axis, or None
-        if axYLim is not None:
-            assert len(axYLim) >= 2
-            axYTicks = range(-(-axYLim[0]//2*2), axYLim[1]//2*2 + 1, 2)
-        self.dPlt['axYTicks'] = axYTicks
-
     def loadDDfrInp(self, idxC=None):
         # load input DataFrames, and save them in dictionary
         if hasattr(self, 'dPFIn'):
@@ -360,6 +357,40 @@ class Plotter(RootClass):
             for sK in self.dPFIn:
                 self.dDfrIn[sK] = pd.read_csv(self.dPFIn[sK], sep=self.sSp,
                                               index_col=idxC)
+
+    def setDummyVal(self):
+        l = ['szFontLeg', 'nCharDsp', 'coordAnchorBox', 'dTupIn', 'nmPlt',
+             'tFigSz', 'dPosFt', 'symMark', 'szMark', 'lWdPlt', 'axXLim',
+             'axYLim', 'locTitle', 'padTitle', 'locLegend','wdthGrp',
+             'wdthBar', 'degRotXLbl', 'plotVLines', 'wdthVLine', 'clrVLine',
+             'axXTck', 'axYTck', 'lblXTck']
+        for s in l:
+            if s not in self.dPlt:
+                self.dPlt[s] = None
+
+    def iniPlot(self):
+        cFig, cAx = plt.subplots()
+        if self.dPlt['tFigSz'] is not None and len(self.dPlt['tFigSz']) == 2:
+            cFig.set_size_inches(self.dPlt['tFigSz'])
+        return cFig, cAx
+
+    def decoratePlot(self, cAx, sTtl=None, sYLbl=None):
+        if self.dPlt['axYLim'] is not None:
+            cAx.set_ylim(self.dPlt['axYLim'])
+        if self.dPlt['axXTck'] is not None:
+            cAx.set_xticks(self.dPlt['axXTck'])
+            if self.dPlt['lblXTck'] is not None:
+                cAx.set_xticklabels(self.dPlt['lblXTck'])
+            if self.dPlt['degRotXLbl'] is not None:
+                for cXLbl in cAx.get_xticklabels():
+                    cXLbl.set_rotation(self.dPlt['degRotXLbl'])
+        if self.dPlt['axYTck'] is not None:
+            cAx.set_yticks(self.dPlt['axYTck'])
+        if sTtl is not None:
+            cAx.set_title(sTtl, loc=self.dPlt['locTitle'],
+                          pad=self.dPlt['padTitle'])
+        if sYLbl is not None:
+            cAx.set_ylabel(sYLbl)
 
 class DevSDPlotter(Plotter):
     def __init__(self, InpD):
@@ -393,12 +424,17 @@ class DevSDPlotter(Plotter):
             print(dFt)
         return dFt
 
+    def setTicks(self, dFt=None):
+        if self.dPlt['axXLim'] is not None and len(self.dPlt['axXLim']) >= 2:
+            self.dPlt['axXTck'] = [self.dPlt['dPosFt'][k] for k in dFt]
+            self.dPlt['lblXTck'] = [dFt[k][0] for k in dFt]
+        if self.dPlt['axYLim'] is not None and len(self.dPlt['axYLim']) >= 2:
+            self.dPlt['axYTck'] = range(self.dPlt['axYLim'][0] - 1,
+                                        self.dPlt['axYLim'][1] + 2, 1)
+
     def createPlot(self, dFtI):
-        cFig, cAx = plt.subplots()
-        print('TEMP - initial size (inches):', cFig.get_size_inches())
-        if self.dPlt['tFigSz'] is not None and len(self.dPlt['tFigSz']) == 2:
-            cFig.set_size_inches(self.dPlt['tFigSz'])
-        print('TEMP - new size (inches):', cFig.get_size_inches())
+        self.setTicks(dFt=dFtI)
+        cFig, cAx = self.iniPlot()
         for k, (cFt, lHdC, cSer) in dFtI.items():
             cAx.scatter([self.dPlt['dPosFt'][k]]*cSer.size, cSer,
                         marker=self.dPlt['symMark'], s=self.dPlt['szMark'])
@@ -406,28 +442,17 @@ class DevSDPlotter(Plotter):
         #          lw=self.dPlt['lWdPlt'], color='black')
         return cFig, cAx
 
-    def decoratePlot(self, cAx, dFtI, sGT, sMP, sYLbl=''):
-        # nChD = self.dPlt['nCharDsp']
-        if self.dPlt['axYLim'] is not None:
-            cAx.set_ylim(self.dPlt['axYLim'])
-        cAx.set_xticks([self.dPlt['dPosFt'][k] for k in dFtI])
-        cAx.set_xticklabels([dFtI[k][0] for k in dFtI])
-        if self.dPlt['axYTicks'] is not None:
-            cAx.set_yticks(self.dPlt['axYTicks'])
-        for cXLbl in cAx.get_xticklabels():
-            cXLbl.set_rotation(self.dPlt['degRotXLbl'])
-        cAx.set_ylabel(sYLbl)
-        t = sMP + ' (' + D_S_NM_GT[sGT] + ')'
-        cAx.set_title(t, loc=self.dPlt['locTitle'], pad=self.dPlt['padTitle'])
+    def decoratePlot(self, cAx, sGT, sMP='', sYLbl=None):
+        sTtl = sMP + ' (' + D_S_NM_GT[sGT] + ')'
+        super().decoratePlot(cAx, sTtl=sTtl, sYLbl=sYLbl)
 
     def plotDevSD(self):
         for sID, ((sGT, sMP, sFtChg), pPltF) in self.dPPltF.items():
             print('Plotting deviation in multiples of SD', sID, 'for "' + sGT +
                   '", substance ' + sMP + ', feature change', sFtChg, '...')
-            dFtI = self.preProcData(sGT, sMP, sFtChg)
             # if not os.path.isfile(pPltF):
-            cFig, cAx = self.createPlot(dFtI)
-            self.decoratePlot(cAx, dFtI, sGT, sMP, sYLbl=S_YLBL_DEV_SD_PLT)
+            cFig, cAx = self.createPlot(self.preProcData(sGT, sMP, sFtChg))
+            self.decoratePlot(cAx, sGT=sGT, sMP=sMP, sYLbl=S_YLBL_DEV_SD_PLT)
             saveClosePlot(cFig, pPltF)
 
 class ICDerivPlotter(Plotter):
@@ -449,39 +474,35 @@ class ICDerivPlotter(Plotter):
             sPltF = S_DOT.join([S_USC.join([u] + [s[:mxL] for s in t]), S_PDF])
             self.dPPltF[sID] = (t, os.path.join(self.pDOut, sPltF))
 
+    def setTicks(self):
+        axXTck, self.dPlt['lblXTck'] = np.arange(len(L_S_FT_CHG)), L_S_FT_CHG
+        axYLim, axYTck = self.dPlt['axYLim'], None
+        if axYLim is not None and len(axYLim) >= 2:
+            axYTck = range(-(-axYLim[0]//2*2), axYLim[1]//2*2 + 1, 2)
+        self.dPlt['axXTck'], self.dPlt['axYTck'] = axXTck, axYTck
+
     def createPlot(self, cSer, lILegPlt):
-        nChD, aRg = self.dPlt['nCharDsp'], np.arange(len(L_S_FT_CHG))
-        cFig, cAx = plt.subplots()
-        if self.dPlt['tFigSz'] is not None and len(self.dPlt['tFigSz']) == 2:
-            cFig.set_size_inches(self.dPlt['tFigSz'])
+        self.setTicks()
+        nChD, xTck = self.dPlt['nCharDsp'], self.dPlt['axXTck']
+        cFig, cAx = self.iniPlot()
         for k, (sK, lSHd) in enumerate(D_S_FT_CHG.items()):
             cSerGrp = cSer.loc[lSHd]
             cSerGrp.index = L_S_FT_CHG
-            xLoc = (aRg + (2*k + 1)/(2*len(D_S_FT_CHG))*self.dPlt['wdthGrp'] -
+            xLoc = (xTck + (2*k + 1)/(2*len(D_S_FT_CHG))*self.dPlt['wdthGrp'] -
                     1/2 + self.dPlt['wdthBar']/2)
             cAx.bar(xLoc, height=cSerGrp, width=self.dPlt['wdthBar'],
                     lw=self.dPlt['lWdPlt'], label=lILegPlt[k][:nChD])
         cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
                  lw=self.dPlt['lWdPlt'], color='black')
-        return cFig, cAx, aRg
+        return cFig, cAx
 
-    def decoratePlot(self, cAx, sGT, aRg, sYLbl=''):
-        if self.dPlt['axYLim'] is not None:
-            cAx.set_ylim(self.dPlt['axYLim'])
-        cAx.set_xticks(aRg)
-        cAx.set_xticklabels(L_S_FT_CHG)
-        if self.dPlt['axYTicks'] is not None:
-            cAx.set_yticks(self.dPlt['axYTicks'])
-        for cXLbl in cAx.get_xticklabels():
-            cXLbl.set_rotation(self.dPlt['degRotXLbl'])
-        cAx.set_ylabel(sYLbl)
-        cAx.set_title(D_S_NM_GT[sGT], loc=self.dPlt['locTitle'],
-                      pad=self.dPlt['padTitle'])
+    def decoratePlot(self, cAx, sGT, sYLbl=None):
+        super().decoratePlot(cAx, sTtl=D_S_NM_GT[sGT], sYLbl=sYLbl)
         l = cAx.legend(loc=self.dPlt['locLegend'],
                        bbox_to_anchor=self.dPlt['coordAnchorBox'],
                        fontsize=self.dPlt['szFontLeg'])
         if self.dPlt['plotVLines']:
-            yLow, yUp = self.dPlt['axYTicks'][0], self.dPlt['axYTicks'][-1]
+            yLow, yUp = self.dPlt['axYTck'][0], self.dPlt['axYTck'][-1]
             plt.vlines(np.arange(-1/2, len(L_S_FT_CHG) + 1/2), yLow, yUp,
                        lw=self.dPlt['wdthVLine'], colors=self.dPlt['clrVLine'])
         return l
@@ -494,8 +515,8 @@ class ICDerivPlotter(Plotter):
             cSer = d[(d[S_MET] == sMet) & (d[S_PHO] == sPho)].squeeze()
             lILegPlt = [sMet, sPho, S_CMB_DEV, S_IC_CMP]
             # if not os.path.isfile(pPltF):
-            cFig, cAx, aRg = self.createPlot(cSer, lILegPlt)
-            cLeg = self.decoratePlot(cAx, sGT, aRg, sYLbl=S_YLBL_IC_DERIV_PLT)
+            cFig, cAx = self.createPlot(cSer, lILegPlt)
+            cLeg = self.decoratePlot(cAx, sGT=sGT, sYLbl=S_YLBL_IC_DERIV_PLT)
             saveClosePlot(cFig, pPltF, cLeg)
 
 # --- MAIN --------------------------------------------------------------------
