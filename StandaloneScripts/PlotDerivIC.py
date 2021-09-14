@@ -2,7 +2,7 @@
 ###############################################################################
 # --- PlotDerivIC.py ----------------------------------------------------------
 ###############################################################################
-import os, time
+import os, time, math, itertools
 
 import numpy as np
 import pandas as pd
@@ -92,7 +92,7 @@ R04 = 4
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
 doPlot_DevSD = True             # True / False
-doPlot_ICDrv = True             # True / False
+doPlot_ICDrv = False             # True / False
 
 # --- data specific input -----------------------------------------------------
 maxSLen = 20
@@ -111,12 +111,17 @@ dTupIn_DevSD = {'A': (S_GT0, 'Alanine', S_FT2 + S_BAR + S_FT1),
                 'E': (S_GT5, 'Putrescine', S_FT2 + S_BAR + S_FT1),
                 'F': (S_GT5, 'Putrescine', S_FT3 + S_BAR + S_FT2)}
 nmPlt_DevSD = S_NM_DEV_SD_PLT       # name prefix of the deviation SD plot
-tFigSz_DevSD = (3., 4.)             # (width, height): figure size [inches]
-dPosFt_DevSD = {0: 0.75, 1: 0.25}   # dictionary of positions of features 0|1
-symMark_DevSD = 'o'                 # marker symbol
+tFigSz_DevSD = (2., 4.)             # (width, height): figure size [inches]
+symMark_DevSD = 'x'                 # marker symbol
 szMark_DevSD = 25                   # marker size
+mnBarBkHL_DevSD = 0.08              # half-length of black mean bar
+mMnBarClrOffs_DevSD = 0.01          # offset for coloured mean bar
+mnBarBkWdth_DevSD = 3.              # width of black mean bar
+mnBarClrWdth_DevSD = 2.             # width of coloured mean bar
+dPosFt_DevSD = {0: .75, 1: .25}     # dictionary of positions of features 0|1
 axXLim_DevSD = (0., 1.)             # limits for the x-axis, or None
 axYLim_DevSD = None                 # limits for the y-axis, or None
+adaptYLim_DevSD = True              # adapt y-limits using values to plot?
 locTitle_DevSD = 'left'             # location of the title
 padTitle_DevSD = 10.                # padding of the title
 degRotXLbl_DevSD = 90               # degree rotation of x-labels
@@ -200,11 +205,16 @@ dInput = {# --- constants
           'plot_DevSD': {'dTupIn': dTupIn_DevSD,
                          'nmPlt': nmPlt_DevSD,
                          'tFigSz': tFigSz_DevSD,
-                         'dPosFt': dPosFt_DevSD,
                          'symMark': symMark_DevSD,
                          'szMark': szMark_DevSD,
+                         'mnBarBkHL': mnBarBkHL_DevSD,
+                         'mMnBarClrOffs': mMnBarClrOffs_DevSD,
+                         'mnBarBkWdth': mnBarBkWdth_DevSD,
+                         'mnBarClrWdth': mnBarClrWdth_DevSD,
+                         'dPosFt': dPosFt_DevSD,
                          'axXLim': axXLim_DevSD,
                          'axYLim': axYLim_DevSD,
+                         'adaptYLim': adaptYLim_DevSD,
                          'locTitle': locTitle_DevSD,
                          'padTitle': padTitle_DevSD,
                          'degRotXLbl': degRotXLbl_DevSD},
@@ -236,6 +246,25 @@ dInput = {# --- constants
           'dPFIn_ICDrv': dPFIn_ICDrv}
 
 # --- FUNCTIONS ---------------------------------------------------------------
+def flattenIt(cIterable, rmvNaN=True, retArr=False):
+    itFlat = list(itertools.chain.from_iterable(cIterable))
+    if rmvNaN:
+        itFlat = [x for x in itFlat if (x is not None and not np.isnan(x))]
+    if retArr:
+        itFlat = np.array(itFlat)
+    return itFlat
+
+def plotMeanStepsSD(dPlt, cAx, xMid=0., yMn=0., ySD=1., nStp=1.):
+    cAx.plot([xMid - dPlt['mnBarBkHL'], xMid + dPlt['mnBarBkHL']],
+             [yMn]*2, lw=dPlt['mnBarBkWdth'], color='k')
+    cAx.plot([xMid - dPlt['mnBarBkHL'] + dPlt['mMnBarClrOffs'],
+              xMid + dPlt['mnBarBkHL'] - dPlt['mMnBarClrOffs']], [yMn]*2,
+             lw=dPlt['mnBarClrWdth'])
+    cAx.plot([xMid]*2, [yMn, yMn + ySD], lw=dPlt['mnBarBkWdth'], color='k')
+    cAx.plot([xMid]*2, [yMn + dPlt['mMnBarClrOffs'],
+                        yMn + ySD - dPlt['mMnBarClrOffs']],
+             lw=dPlt['mnBarClrWdth'])
+
 def saveClosePlot(cFig, pPltF, l=None):
     if l is not None:
         cFig.savefig(pPltF, bbox_extra_artists=(l,), bbox_inches='tight')
@@ -360,10 +389,11 @@ class Plotter(RootClass):
 
     def setDummyVal(self):
         l = ['szFontLeg', 'nCharDsp', 'coordAnchorBox', 'dTupIn', 'nmPlt',
-             'tFigSz', 'dPosFt', 'symMark', 'szMark', 'lWdPlt', 'axXLim',
-             'axYLim', 'locTitle', 'padTitle', 'locLegend','wdthGrp',
-             'wdthBar', 'degRotXLbl', 'plotVLines', 'wdthVLine', 'clrVLine',
-             'axXTck', 'axYTck', 'lblXTck']
+             'tFigSz', 'dPosFt', 'symMark', 'szMark', 'mnBarBkHL',
+             'mMnBarClrOffs', 'mnBarBkWdth', 'mnBarClrWdth', 'lWdPlt',
+             'axXLim', 'axYLim', 'adaptYLim', 'locTitle', 'padTitle',
+             'locLegend', 'wdthGrp', 'wdthBar', 'degRotXLbl', 'plotVLines',
+             'wdthVLine', 'clrVLine', 'axXTck', 'axYTck', 'lblXTck']
         for s in l:
             if s not in self.dPlt:
                 self.dPlt[s] = None
@@ -375,6 +405,8 @@ class Plotter(RootClass):
         return cFig, cAx
 
     def decoratePlot(self, cAx, sTtl=None, sYLbl=None):
+        if self.dPlt['axXLim'] is not None:
+            cAx.set_xlim(self.dPlt['axXLim'])
         if self.dPlt['axYLim'] is not None:
             cAx.set_ylim(self.dPlt['axYLim'])
         if self.dPlt['axXTck'] is not None:
@@ -391,6 +423,8 @@ class Plotter(RootClass):
                           pad=self.dPlt['padTitle'])
         if sYLbl is not None:
             cAx.set_ylabel(sYLbl)
+        plt.tight_layout()
+        print('TEMP - axXLim =', self.dPlt['axXLim'], '/ axXTck =', self.dPlt['axXTck'])
 
 class DevSDPlotter(Plotter):
     def __init__(self, InpD):
@@ -428,28 +462,34 @@ class DevSDPlotter(Plotter):
         if self.dPlt['axXLim'] is not None and len(self.dPlt['axXLim']) >= 2:
             self.dPlt['axXTck'] = [self.dPlt['dPosFt'][k] for k in dFt]
             self.dPlt['lblXTck'] = [dFt[k][0] for k in dFt]
-        if self.dPlt['axYLim'] is not None and len(self.dPlt['axYLim']) >= 2:
-            self.dPlt['axYTck'] = range(self.dPlt['axYLim'][0] - 1,
-                                        self.dPlt['axYLim'][1] + 2, 1)
+        if self.dPlt['adaptYLim']:
+            lAllV = flattenIt([t[2] for t in dFt.values()])
+            mnV, mxV, cStep = math.floor(min(lAllV)), math.ceil(max(lAllV)), 1
+            print('TEMP - lAllV =', lAllV, '/ (mnV, mxV) =', mnV, mxV)
+            self.dPlt['axYLim'] = (mnV, mxV)
+            self.dPlt['axYTck'] = range(mnV, mxV + 1, cStep)
 
     def createPlot(self, dFtI):
         self.setTicks(dFt=dFtI)
         cFig, cAx = self.iniPlot()
         for k, (cFt, lHdC, cSer) in dFtI.items():
-            cAx.scatter([self.dPlt['dPosFt'][k]]*cSer.size, cSer,
-                        marker=self.dPlt['symMark'], s=self.dPlt['szMark'])
+            lX = [self.dPlt['dPosFt'][k]]*cSer.size
+            cAx.scatter(lX, cSer, marker=self.dPlt['symMark'],
+                        s=self.dPlt['szMark'])
+            plotMeanStepsSD(self.dPlt, cAx, lX[0], np.mean(cSer), np.std(cSer))
         # cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
         #          lw=self.dPlt['lWdPlt'], color='black')
         return cFig, cAx
 
     def decoratePlot(self, cAx, sGT, sMP='', sYLbl=None):
-        sTtl = sMP + ' (' + D_S_NM_GT[sGT] + ')'
+        sTtl = sMP + '\n(' + D_S_NM_GT[sGT] + ')'
         super().decoratePlot(cAx, sTtl=sTtl, sYLbl=sYLbl)
 
     def plotDevSD(self):
         for sID, ((sGT, sMP, sFtChg), pPltF) in self.dPPltF.items():
-            print('Plotting deviation in multiples of SD', sID, 'for "' + sGT +
-                  '", substance ' + sMP + ', feature change', sFtChg, '...')
+            print('Plotting deviation in multiples of SD: "' + str(sID) +
+                  '" for "' + sGT + '", substance ' + sMP + ', feature change',
+                  sFtChg, '...')
             # if not os.path.isfile(pPltF):
             cFig, cAx = self.createPlot(self.preProcData(sGT, sMP, sFtChg))
             self.decoratePlot(cAx, sGT=sGT, sMP=sMP, sYLbl=S_YLBL_DEV_SD_PLT)
