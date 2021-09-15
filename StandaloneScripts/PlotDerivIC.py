@@ -99,6 +99,7 @@ maxSLen = 20
 sSep = ';'
 
 # --- graphics parameters / all plots -----------------------------------------
+clrDef = 'k'                    # default colour
 szFontLeg = 'small'             # font size of legend
 nCharDsp = 60                   # number of chars displayed for legend item
 coordAnchorBox = (0.5, 1.02)    # coordinates of the legend anchor box
@@ -114,10 +115,8 @@ nmPlt_DevSD = S_NM_DEV_SD_PLT       # name prefix of the deviation SD plot
 tFigSz_DevSD = (2., 4.)             # (width, height): figure size [inches]
 symMark_DevSD = 'x'                 # marker symbol
 szMark_DevSD = 25                   # marker size
-mnBarBkHL_DevSD = 0.08              # half-length of black mean bar
-mMnBarClrOffs_DevSD = 0.01          # offset for coloured mean bar
-mnBarBkWdth_DevSD = 3.              # width of black mean bar
-mnBarClrWdth_DevSD = 2.             # width of coloured mean bar
+mnBarLn_DevSD = 0.15                # length of mean bar
+mnBarWd_DevSD = 1.5                 # width of mean bar
 dPosFt_DevSD = {0: .75, 1: .25}     # dictionary of positions of features 0|1
 axXLim_DevSD = (0., 1.)             # limits for the x-axis, or None
 axYLim_DevSD = None                 # limits for the y-axis, or None
@@ -145,7 +144,7 @@ wdthBar_ICDrv = wdthGrp_ICDrv/len(D_S_FT_CHG) - 0.01   # width of single bars
 degRotXLbl_ICDrv = 90               # degree rotation of x-labels
 plotVLines_ICDrv = True             # plot vertical lines between groups?
 wdthVLine_ICDrv = 0.2               # width of vertical line
-clrVLine_ICDrv = 'k'                # colour of vertical line
+clrVLine_ICDrv = clrDef             # colour of vertical line
 
 # --- names and paths of files and dirs ---------------------------------------
 sMs, sPs, s1, s2, s3 = S_METS, S_PHOS, 'Means', 'SDs', 'Deviations'
@@ -198,7 +197,8 @@ dInput = {# --- constants
           'maxSLen': maxSLen,
           'sSep': sSep,
           # --- graphics parameters / all plots
-          'plot_Gen': {'szFontLeg': szFontLeg,
+          'plot_Gen': {'clrDef': clrDef,
+                       'szFontLeg': szFontLeg,
                        'nCharDsp': nCharDsp,
                        'coordAnchorBox': coordAnchorBox},
           # --- graphics parameters / IC derivation plot
@@ -207,10 +207,8 @@ dInput = {# --- constants
                          'tFigSz': tFigSz_DevSD,
                          'symMark': symMark_DevSD,
                          'szMark': szMark_DevSD,
-                         'mnBarBkHL': mnBarBkHL_DevSD,
-                         'mMnBarClrOffs': mMnBarClrOffs_DevSD,
-                         'mnBarBkWdth': mnBarBkWdth_DevSD,
-                         'mnBarClrWdth': mnBarClrWdth_DevSD,
+                         'mnBarLn': mnBarLn_DevSD,
+                         'mnBarWd': mnBarWd_DevSD,
                          'dPosFt': dPosFt_DevSD,
                          'axXLim': axXLim_DevSD,
                          'axYLim': axYLim_DevSD,
@@ -254,16 +252,46 @@ def flattenIt(cIterable, rmvNaN=True, retArr=False):
         itFlat = np.array(itFlat)
     return itFlat
 
-def plotMeanStepsSD(dPlt, cAx, xMid=0., yMn=0., ySD=1., nStp=1.):
-    cAx.plot([xMid - dPlt['mnBarBkHL'], xMid + dPlt['mnBarBkHL']],
-             [yMn]*2, lw=dPlt['mnBarBkWdth'], color='k')
-    cAx.plot([xMid - dPlt['mnBarBkHL'] + dPlt['mMnBarClrOffs'],
-              xMid + dPlt['mnBarBkHL'] - dPlt['mMnBarClrOffs']], [yMn]*2,
-             lw=dPlt['mnBarClrWdth'])
-    cAx.plot([xMid]*2, [yMn, yMn + ySD], lw=dPlt['mnBarBkWdth'], color='k')
-    cAx.plot([xMid]*2, [yMn + dPlt['mMnBarClrOffs'],
-                        yMn + ySD - dPlt['mMnBarClrOffs']],
-             lw=dPlt['mnBarClrWdth'])
+def plotWskH(dPlt, cAx, xMid=0., yB=0., yT=0., side='both'):
+    if side in ['bottom', 'both']:
+        cAx.plot([xMid - 0.1, xMid + 0.1], [yB]*2, lw=1, color=dPlt['clrDef'])
+    if side in ['top', 'both']:
+        cAx.plot([xMid - 0.1, xMid + 0.1], [yT]*2, lw=1, color=dPlt['clrDef'])
+
+def plotWskV(dPlt, cAx, xB=0., xT=0., yMid=0., side='both'):
+    if side in ['left', 'both']:
+        cAx.plot([xB]*2, [yMid - 0.1, yMid + 0.1], lw=1, color=dPlt['clrDef'])
+    if side in ['right', 'both']:
+        cAx.plot([xT]*2, [yMid - 0.1, yMid + 0.1], lw=1, color=dPlt['clrDef'])
+
+def plotClrLn(dPlt, cAx, lX, lY, cLwd, cClr, epsBd=0.4):
+    cAx.plot(lX, lY, lw=cLwd, color=cClr)
+    cAx.plot(lX, lY, lw=max(0, cLwd - 2*epsBd), color=dPlt['clrDef'])
+
+def plotMean(dPlt, cAx, xMid=0., yMn=0., cClr='C0'):
+    lX, lY = [xMid - dPlt['mnBarLn']/2, xMid + dPlt['mnBarLn']/2], [yMn]*2
+    plotClrLn(dPlt, cAx, lX, lY, cLwd=dPlt['mnBarWd'], cClr=cClr)
+    plotWskV(dPlt, cAx, xB=lX[0], xT=lX[1], yMid=yMn)
+
+def getNumSDSteps(othYMn, yMn, ySD):
+    nSDStp, sgnDiff = 0, 0
+    if othYMn > yMn:
+        nSDStp, sgnDiff = math.floor((othYMn - yMn)/ySD), 1
+    elif othYMn < yMn:
+        nSDStp, sgnDiff = math.floor((yMn - othYMn)/ySD), -1
+    return nSDStp, math.copysign(ySD, sgnDiff)
+
+def plotStepsSD(dPlt, cAx, tFtI, othYMn, xMid=0.):
+    yMn, ySD, cClr = tFtI
+    nSDStp, ySDSgn = getNumSDSteps(othYMn, yMn, ySD)
+    lX = [xMid + 0.2]*2
+    for i in range(nSDStp):
+        lY = [yMn + i*ySDSgn, yMn + (i + 1)*ySDSgn]
+        plotClrLn(dPlt, cAx, lX, lY, cLwd=1.5, cClr=cClr)
+        plotWskH(dPlt, cAx, xMid=lX[0], yB=lY[0], yT=lY[1])
+    lY = [yMn + nSDStp*ySDSgn, othYMn]
+    plotClrLn(dPlt, cAx, lX, lY, cLwd=1.5, cClr=cClr)
+    plotWskH(dPlt, cAx, xMid=lX[0], yB=lY[0], yT=lY[1])
 
 def saveClosePlot(cFig, pPltF, l=None):
     if l is not None:
@@ -388,9 +416,9 @@ class Plotter(RootClass):
                                               index_col=idxC)
 
     def setDummyVal(self):
-        l = ['szFontLeg', 'nCharDsp', 'coordAnchorBox', 'dTupIn', 'nmPlt',
-             'tFigSz', 'dPosFt', 'symMark', 'szMark', 'mnBarBkHL',
-             'mMnBarClrOffs', 'mnBarBkWdth', 'mnBarClrWdth', 'lWdPlt',
+        l = ['clrDef', 'szFontLeg', 'nCharDsp', 'coordAnchorBox', 'dTupIn',
+             'nmPlt', 'tFigSz', 'dPosFt', 'symMark', 'szMark', 'mnBarLn',
+             'mnBarWd', 'lWdPlt',
              'axXLim', 'axYLim', 'adaptYLim', 'locTitle', 'padTitle',
              'locLegend', 'wdthGrp', 'wdthBar', 'degRotXLbl', 'plotVLines',
              'wdthVLine', 'clrVLine', 'axXTck', 'axYTck', 'lblXTck']
@@ -424,7 +452,6 @@ class Plotter(RootClass):
         if sYLbl is not None:
             cAx.set_ylabel(sYLbl)
         plt.tight_layout()
-        print('TEMP - axXLim =', self.dPlt['axXLim'], '/ axXTck =', self.dPlt['axXTck'])
 
 class DevSDPlotter(Plotter):
     def __init__(self, InpD):
@@ -451,11 +478,9 @@ class DevSDPlotter(Plotter):
         for k, cFt in enumerate(sFtChg.split(S_BAR)):
             lSC = [s for s in d.columns if (s[-1] in L_S_0_6 and
                                             s.startswith(cFt))]
-            cSer = d.loc[sMP, lSC]
-            dFt[k] = (cFt, lSC, cSer)
-        if sGT == S_GT0:
-            print('TEMP:', sMP, sGT, sFtChg, '--> dFt:')
-            print(dFt)
+            cSer, cC = d.loc[sMP, lSC], 'C' + str(k)
+            dFt[k] = (cFt, lSC, cSer, np.mean(cSer), np.std(cSer, ddof=1), cC)
+        assert len(dFt) == 2
         return dFt
 
     def setTicks(self, dFt=None):
@@ -465,18 +490,19 @@ class DevSDPlotter(Plotter):
         if self.dPlt['adaptYLim']:
             lAllV = flattenIt([t[2] for t in dFt.values()])
             mnV, mxV, cStep = math.floor(min(lAllV)), math.ceil(max(lAllV)), 1
-            print('TEMP - lAllV =', lAllV, '/ (mnV, mxV) =', mnV, mxV)
             self.dPlt['axYLim'] = (mnV, mxV)
             self.dPlt['axYTck'] = range(mnV, mxV + 1, cStep)
 
     def createPlot(self, dFtI):
         self.setTicks(dFt=dFtI)
         cFig, cAx = self.iniPlot()
-        for k, (cFt, lHdC, cSer) in dFtI.items():
+        for k, (cFt, lHdC, cSer, cMn, cSD, cClr) in dFtI.items():
             lX = [self.dPlt['dPosFt'][k]]*cSer.size
             cAx.scatter(lX, cSer, marker=self.dPlt['symMark'],
                         s=self.dPlt['szMark'])
-            plotMeanStepsSD(self.dPlt, cAx, lX[0], np.mean(cSer), np.std(cSer))
+            plotMean(self.dPlt, cAx, lX[0], cMn, cClr=cClr)
+            if k == 1 and cSD > 0:
+                plotStepsSD(self.dPlt, cAx, dFtI[k][3:], dFtI[0][3], lX[0])
         # cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
         #          lw=self.dPlt['lWdPlt'], color='black')
         return cFig, cAx
