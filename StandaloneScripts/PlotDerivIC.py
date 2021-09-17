@@ -16,6 +16,7 @@ S_SLASH = '/'
 S_DOT = '.'
 S_CSV = 'csv'
 S_PDF = 'pdf'
+S_SPSLSP = S_SPACE + S_SLASH + S_SPACE
 
 S_M = 'M'
 S_P = 'P'
@@ -65,6 +66,7 @@ D_S_FT_CHG = {s: [S_USC.join([t, s]) for t in L_S_FT_CHG] for s in L_S_SPC}
 S_DEV_SD = 'DeviationSD'
 S_DERIV = 'Deriv'
 S_IC_DERIV = S_IC + S_DERIV
+S_CMB_TO_IC = 'CombineToIC'
 
 S_CMB_C = 'Combined'
 S_DEV_S = 'deviation'
@@ -73,8 +75,10 @@ S_CMP_S = 'component'
 S_CMB_DEV = S_CMB_C + S_SPACE + S_DEV_S
 S_IC_CMP = S_IC_MEX + S_SPACE + S_CMP_S
 
-S_YLBL_DEV_SD_PLT = 'Difference as multiples of std. dev.'
-S_YLBL_IC_DERIV_PLT = S_DEVS_C + S_SPACE + S_SLASH + S_SPACE + S_IC_CMP
+S_YLBL_DEV_SD_PLT = 'Difference as multiples of standard deviation'
+S_YLBL_IC_DERIV_PLT = S_DEVS_C + S_SPSLSP + S_IC_CMP
+S_YLBL_CMB_TO_IC_PLT = (S_IC_CMP + S_SPSLSP + S_IC_M + S_SPSLSP + S_IC_P +
+                        S_SPSLSP + S_IC)
 
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
@@ -82,17 +86,20 @@ S_ROOT_CL = 'RootClass'
 S_PLTR = 'Plotter'
 S_DEV_SD_PLTR = S_DEV_SD + S_PLTR
 S_IC_DERIV_PLTR = S_IC_DERIV + S_PLTR
+S_CMB_TO_IC_PLTR = S_CMB_TO_IC + S_PLTR
 
 S_PLT = 'Plot'
 S_NM_DEV_SD_PLT = S_1 + S_USC + S_DEV_SD + S_PLT
 S_NM_IC_DERIV_PLT = S_2 + S_USC + S_IC_DERIV + S_PLT
+S_NM_CMB_TO_IC_PLT = S_3 + S_USC + S_CMB_TO_IC + S_PLT
 
 R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
-doPlot_DevSD = True             # True / False
+doPlot_DevSD = False             # True / False
 doPlot_ICDrv = False             # True / False
+doPlot_CmbToIC = True           # True / False
 
 # --- data specific input -----------------------------------------------------
 maxSLen = 20
@@ -102,7 +109,7 @@ sSep = ';'
 clrDef = 'k'                    # default colour
 szFontLeg = 'small'             # font size of legend
 nCharDsp = 60                   # number of chars displayed for legend item
-coordAnchorBox = (0.5, 1.02)    # coordinates of the legend anchor box
+coordAnchorBox = (.5, 1.02)     # coordinates of the legend anchor box
 
 # --- graphics parameters / deviation SD plot ---------------------------------
 dTupIn_DevSD = {'A': (S_GT0, 'Alanine', S_FT2 + S_BAR + S_FT1),
@@ -115,14 +122,24 @@ nmPlt_DevSD = S_NM_DEV_SD_PLT       # name prefix of the deviation SD plot
 tFigSz_DevSD = (2., 4.)             # (width, height): figure size [inches]
 symMark_DevSD = 'x'                 # marker symbol
 szMark_DevSD = 25                   # marker size
-mnBarLn_DevSD = 0.15                # length of mean bar
-mnBarWd_DevSD = 1.5                 # width of mean bar
+lenMnBar_DevSD = .3                 # length of mean bar
+lwdMnBar_DevSD = 1.5                # line width of mean bar
+dltLwdMnBar_DevSD = .5              # delta of width of black line to col. line
+lenWMnBar_DevSD = .05               # length of mean bar whiskers
+lwdWMnBar_DevSD = .6                # line width of mean bar whiskers
+lwdLnSD_DevSD = .8                  # line width of mean bar
+dltLwdLnSD_DevSD = .25              # delta of width of black line to col. line
+lenWLnSD_DevSD = .1                 # length of mean bar whiskers
+lwdWLnSD_DevSD = .4                 # line width of mean bar whiskers
+lstCnLnSD_DevSD = '--'              # line style of connecting line
+lwdCnLnSD_DevSD = .8                # line width of connecting line
 dPosFt_DevSD = {0: .75, 1: .25}     # dictionary of positions of features 0|1
 axXLim_DevSD = (0., 1.)             # limits for the x-axis, or None
 axYLim_DevSD = None                 # limits for the y-axis, or None
 adaptYLim_DevSD = True              # adapt y-limits using values to plot?
-locTitle_DevSD = 'left'             # location of the title
-padTitle_DevSD = 10.                # padding of the title
+dFontTtl_DevSD = {'size': 10}       # font dictionary of the title
+locTtl_DevSD = 'left'               # location of the title
+padTtl_DevSD = 10.                  # padding of the title
 degRotXLbl_DevSD = 90               # degree rotation of x-labels
 
 # --- graphics parameters / IC derivation plot --------------------------------
@@ -133,18 +150,39 @@ dTupIn_ICDrv = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
                 'E': (S_GT5, 'Fructose', 'TEEDENDDEDHEHKDDKT(0.854)S(0.144)PDS(0.001)IVMVEAK')}
 nmPlt_ICDrv = S_NM_IC_DERIV_PLT     # name prefix of the IC derivation plot
 tFigSz_ICDrv = None                 # (width, height): figure size [inches]
-lWdPlt_ICDrv = 0.75                 # line width in plot
+lwdPlt_ICDrv = .75                  # line width in plot
 axXLim_ICDrv = None                 # limits for the x-axis, or None
 axYLim_ICDrv = (-11, 11)            # limits for the y-axis, or None
-locTitle_ICDrv = 'left'             # location of the title
-padTitle_ICDrv = 70.                # padding of the title
+locTtl_ICDrv = 'left'               # location of the title
+padTtl_ICDrv = 70.                  # padding of the title
 locLegend_ICDrv = 'lower center'    # location of the legend
-wdthGrp_ICDrv = 0.8                 # width of bar group
-wdthBar_ICDrv = wdthGrp_ICDrv/len(D_S_FT_CHG) - 0.01   # width of single bars
+wdthGrp_ICDrv = .8                  # width of bar group
+wdthBar_ICDrv = wdthGrp_ICDrv/len(D_S_FT_CHG) - .01    # width of single bars
 degRotXLbl_ICDrv = 90               # degree rotation of x-labels
 plotVLines_ICDrv = True             # plot vertical lines between groups?
-wdthVLine_ICDrv = 0.2               # width of vertical line
+lwdVLine_ICDrv = .2                 # width of vertical line
 clrVLine_ICDrv = clrDef             # colour of vertical line
+
+# --- graphics parameters / combine to IC plot --------------------------------
+dTupIn_CmbToIC = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
+                  'B': (S_GT0, 'Alanine', 'T(0.001)PS(0.996)QRPS(0.003)TSSSSGGFNIGK'),
+                  'C': (S_GT1, 'Glutamic_acid', 'TADS(1)DGES(1)GEIKFEDNNLPPLGEK'),
+                  'D': (S_GT5, 'Putrescine', 'S(0.999)FS(0.001)VADFPR'),
+                  'E': (S_GT5, 'Fructose', 'TEEDENDDEDHEHKDDKT(0.854)S(0.144)PDS(0.001)IVMVEAK')}
+nmPlt_CmbToIC = S_NM_CMB_TO_IC_PLT  # name prefix of the IC derivation plot
+tFigSz_CmbToIC = None               # (width, height): figure size [inches]
+lwdPlt_CmbToIC = .75                # line width in plot
+axXLim_CmbToIC = None               # limits for the x-axis, or None
+axYLim_CmbToIC = (-11, 11)          # limits for the y-axis, or None
+locTtl_CmbToIC = 'left'             # location of the title
+padTtl_CmbToIC = 70.                # padding of the title
+locLegend_CmbToIC = 'lower center'  # location of the legend
+wdthGrp_CmbToIC = .8                # width of bar group
+wdthBar_CmbToIC = wdthGrp_CmbToIC/len(D_S_FT_CHG) - .01    # width of single bars
+degRotXLbl_CmbToIC = 90             # degree rotation of x-labels
+plotVLines_CmbToIC = True           # plot vertical lines between groups?
+lwdVLine_CmbToIC = .2               # width of vertical line
+clrVLine_CmbToIC = clrDef           # colour of vertical line
 
 # --- names and paths of files and dirs ---------------------------------------
 sMs, sPs, s1, s2, s3 = S_METS, S_PHOS, 'Means', 'SDs', 'Deviations'
@@ -157,6 +195,7 @@ dSFIn_ICDrv = {sGT: (S_IC_DERIV + S_USC*2 + s1 + S_USC*2 +
                for sGT in L_S_GT}
 sFOut_DevSD = nmPlt_DevSD
 sFOut_ICDrv = nmPlt_ICDrv
+sFOut_CmbToIC = nmPlt_CmbToIC
 
 sDirInCSV = '41_Inp_ICDeriv'
 sDirOutPDF = '45_OutPDF_ICDeriv'
@@ -187,12 +226,14 @@ dInput = {# --- constants
           'sPltr': S_PLTR,
           'sPltr_DevSD': S_DEV_SD_PLTR,
           'sPltr_ICDrv': S_IC_DERIV_PLTR,
+          'sPltr_CmbToIC': S_CMB_TO_IC_PLTR,
           'sMet': S_MET,
           'sPho': S_PHO,
           'R04': R04,
           # --- flow control
           'doPlot_DevSD': doPlot_DevSD,
           'doPlot_ICDrv': doPlot_ICDrv,
+          'doPlot_CmbToIC': doPlot_CmbToIC,
           # --- data specific input
           'maxSLen': maxSLen,
           'sSep': sSep,
@@ -201,37 +242,64 @@ dInput = {# --- constants
                        'szFontLeg': szFontLeg,
                        'nCharDsp': nCharDsp,
                        'coordAnchorBox': coordAnchorBox},
-          # --- graphics parameters / IC derivation plot
+          # --- graphics parameters / deviation SD plot
           'plot_DevSD': {'dTupIn': dTupIn_DevSD,
                          'nmPlt': nmPlt_DevSD,
                          'tFigSz': tFigSz_DevSD,
                          'symMark': symMark_DevSD,
                          'szMark': szMark_DevSD,
-                         'mnBarLn': mnBarLn_DevSD,
-                         'mnBarWd': mnBarWd_DevSD,
+                         'lenMnBar': lenMnBar_DevSD,
+                         'lenHfMnBar': lenMnBar_DevSD/2.,
+                         'lwdMnBar': lwdMnBar_DevSD,
+                         'dltLwdMnBar': dltLwdMnBar_DevSD,
+                         'lenWMnBar': lenWMnBar_DevSD,
+                         'lwdWMnBar': lwdWMnBar_DevSD,
+                         'lwdLnSD': lwdLnSD_DevSD,
+                         'dltLwdLnSD': dltLwdLnSD_DevSD,
+                         'lenWLnSD': lenWLnSD_DevSD,
+                         'lwdWLnSD': lwdWLnSD_DevSD,
+                         'lstCnLnSD': lstCnLnSD_DevSD,
+                         'lwdCnLnSD': lwdCnLnSD_DevSD,
                          'dPosFt': dPosFt_DevSD,
                          'axXLim': axXLim_DevSD,
                          'axYLim': axYLim_DevSD,
                          'adaptYLim': adaptYLim_DevSD,
-                         'locTitle': locTitle_DevSD,
-                         'padTitle': padTitle_DevSD,
+                         'dFontTtl': dFontTtl_DevSD,
+                         'locTtl': locTtl_DevSD,
+                         'padTtl': padTtl_DevSD,
                          'degRotXLbl': degRotXLbl_DevSD},
           # --- graphics parameters / IC derivation plot
           'plot_ICDrv': {'dTupIn': dTupIn_ICDrv,
                          'nmPlt': nmPlt_ICDrv,
                          'tFigSz': tFigSz_ICDrv,
-                         'lWdPlt': lWdPlt_ICDrv,
+                         'lwdPlt': lwdPlt_ICDrv,
                          'axXLim': axXLim_ICDrv,
                          'axYLim': axYLim_ICDrv,
-                         'locTitle': locTitle_ICDrv,
-                         'padTitle': padTitle_ICDrv,
+                         'locTtl': locTtl_ICDrv,
+                         'padTtl': padTtl_ICDrv,
                          'locLegend': locLegend_ICDrv,
                          'wdthGrp': wdthGrp_ICDrv,
                          'wdthBar': wdthBar_ICDrv,
                          'degRotXLbl': degRotXLbl_ICDrv,
                          'plotVLines': plotVLines_ICDrv,
-                         'wdthVLine': wdthVLine_ICDrv,
+                         'lwdVLine': lwdVLine_ICDrv,
                          'clrVLine': clrVLine_ICDrv},
+          # --- graphics parameters / combine to IC plot
+          'plot_CmbToIC': {'dTupIn': dTupIn_ICDrv,
+                           'nmPlt': nmPlt_CmbToIC,
+                           'tFigSz': tFigSz_CmbToIC,
+                           'lwdPlt': lwdPlt_CmbToIC,
+                           'axXLim': axXLim_CmbToIC,
+                           'axYLim': axYLim_CmbToIC,
+                           'locTtl': locTtl_CmbToIC,
+                           'padTtl': padTtl_CmbToIC,
+                           'locLegend': locLegend_CmbToIC,
+                           'wdthGrp': wdthGrp_CmbToIC,
+                           'wdthBar': wdthBar_CmbToIC,
+                           'degRotXLbl': degRotXLbl_CmbToIC,
+                           'plotVLines': plotVLines_CmbToIC,
+                           'lwdVLine': lwdVLine_CmbToIC,
+                           'clrVLine': clrVLine_CmbToIC},
           # --- names and paths of files and dirs
           'pInCSV': pInCSV,
           'pOutPDF': pOutPDF,
@@ -239,6 +307,7 @@ dInput = {# --- constants
           'dSFIn_ICDrv': dSFIn_ICDrv,
           'sFOut_DevSD': sFOut_DevSD,
           'sFOut_ICDrv': sFOut_ICDrv,
+          'sFOut_CmbToIC': sFOut_CmbToIC,
           # --- further derived values
           'dPFIn_DevSD': dPFIn_DevSD,
           'dPFIn_ICDrv': dPFIn_ICDrv}
@@ -252,46 +321,55 @@ def flattenIt(cIterable, rmvNaN=True, retArr=False):
         itFlat = np.array(itFlat)
     return itFlat
 
-def plotWskH(dPlt, cAx, xMid=0., yB=0., yT=0., side='both'):
-    if side in ['bottom', 'both']:
-        cAx.plot([xMid - 0.1, xMid + 0.1], [yB]*2, lw=1, color=dPlt['clrDef'])
-    if side in ['top', 'both']:
-        cAx.plot([xMid - 0.1, xMid + 0.1], [yT]*2, lw=1, color=dPlt['clrDef'])
+def getL2Val(midV=0., lenLn=1., cDir='both'):
+    l = [midV - lenLn, midV + lenLn]
+    if cDir == 'left':
+        l = [midV - lenLn, midV]
+    elif cDir == 'right':
+        l = [midV, midV + lenLn]
+    return l
 
-def plotWskV(dPlt, cAx, xB=0., xT=0., yMid=0., side='both'):
-    if side in ['left', 'both']:
-        cAx.plot([xB]*2, [yMid - 0.1, yMid + 0.1], lw=1, color=dPlt['clrDef'])
-    if side in ['right', 'both']:
-        cAx.plot([xT]*2, [yMid - 0.1, yMid + 0.1], lw=1, color=dPlt['clrDef'])
+def plotWskH(dPlt, cAx, xMid=0., yB=0., yT=0., lenW=.1, lwdW=.5, cDir='both'):
+    lX = getL2Val(xMid, lenW, cDir=cDir)
+    for cY in [yB, yT]:
+        cAx.plot(lX, [cY]*2, lw=lwdW, color=dPlt['clrDef'])
 
-def plotClrLn(dPlt, cAx, lX, lY, cLwd, cClr, epsBd=0.4):
+def plotWskV(dPlt, cAx, xB=0., xT=0., yMid=0., lenW=.1, lwdW=.5, cDir='both'):
+    lY = getL2Val(yMid, lenW, cDir=cDir)
+    for cX in [xB, xT]:
+        cAx.plot([cX]*2, lY, lw=lwdW, color=dPlt['clrDef'])
+
+def plotClrLn(dPlt, cAx, lX, lY, cLwd, cClr, dltLwd=.5):
     cAx.plot(lX, lY, lw=cLwd, color=cClr)
-    cAx.plot(lX, lY, lw=max(0, cLwd - 2*epsBd), color=dPlt['clrDef'])
+    cAx.plot(lX, lY, lw=max(0, cLwd - 2*dltLwd), color=dPlt['clrDef'])
 
 def plotMean(dPlt, cAx, xMid=0., yMn=0., cClr='C0'):
-    lX, lY = [xMid - dPlt['mnBarLn']/2, xMid + dPlt['mnBarLn']/2], [yMn]*2
-    plotClrLn(dPlt, cAx, lX, lY, cLwd=dPlt['mnBarWd'], cClr=cClr)
-    plotWskV(dPlt, cAx, xB=lX[0], xT=lX[1], yMid=yMn)
+    lX, lY = [xMid - dPlt['lenHfMnBar'], xMid + dPlt['lenHfMnBar']], [yMn]*2
+    plotClrLn(dPlt, cAx, lX, lY, cLwd=dPlt['lwdMnBar'], cClr=cClr,
+              dltLwd=dPlt['dltLwdMnBar'])
+    plotWskV(dPlt, cAx, xB=lX[0], xT=lX[1], yMid=yMn, lenW=dPlt['lenWMnBar'],
+             lwdW=dPlt['lwdWMnBar'])
 
 def getNumSDSteps(othYMn, yMn, ySD):
     nSDStp, sgnDiff = 0, 0
     if othYMn > yMn:
-        nSDStp, sgnDiff = math.floor((othYMn - yMn)/ySD), 1
+        nSDStp, sgnDiff = math.ceil((othYMn - yMn)/ySD), 1
     elif othYMn < yMn:
-        nSDStp, sgnDiff = math.floor((yMn - othYMn)/ySD), -1
+        nSDStp, sgnDiff = math.ceil((yMn - othYMn)/ySD), -1
     return nSDStp, math.copysign(ySD, sgnDiff)
 
-def plotStepsSD(dPlt, cAx, tFtI, othYMn, xMid=0.):
+def plotStepsSD(dPlt, cAx, tFtI, xLn=0., othYMn=0.):
     yMn, ySD, cClr = tFtI
     nSDStp, ySDSgn = getNumSDSteps(othYMn, yMn, ySD)
-    lX = [xMid + 0.2]*2
     for i in range(nSDStp):
         lY = [yMn + i*ySDSgn, yMn + (i + 1)*ySDSgn]
-        plotClrLn(dPlt, cAx, lX, lY, cLwd=1.5, cClr=cClr)
-        plotWskH(dPlt, cAx, xMid=lX[0], yB=lY[0], yT=lY[1])
-    lY = [yMn + nSDStp*ySDSgn, othYMn]
-    plotClrLn(dPlt, cAx, lX, lY, cLwd=1.5, cClr=cClr)
-    plotWskH(dPlt, cAx, xMid=lX[0], yB=lY[0], yT=lY[1])
+        plotClrLn(dPlt, cAx, [xLn]*2, lY, cLwd=dPlt['lwdLnSD'], cClr=cClr,
+                  dltLwd=dPlt['dltLwdLnSD'])
+        plotWskH(dPlt, cAx, xMid=xLn, yB=lY[0], yT=lY[1],
+                 lenW=dPlt['lenWLnSD'], lwdW=dPlt['lwdWLnSD'], cDir='right')
+    lX = [xLn, dPlt['dPosFt'][0] - dPlt['lenHfMnBar']]
+    cAx.plot(lX, [othYMn]*2, ls=dPlt['lstCnLnSD'], lw=dPlt['lwdCnLnSD'],
+             color=dPlt['clrDef'])
 
 def saveClosePlot(cFig, pPltF, l=None):
     if l is not None:
@@ -330,6 +408,7 @@ class BaseClass():
         for cK, cV in d.items():
             print(cK, ':\t', cV)
 
+# .............................................................................
 class InputData(BaseClass):
     def __init__(self, dInp):
         super().__init__()
@@ -344,6 +423,7 @@ class InputData(BaseClass):
             setattr(self, sK, cV)
         print('Set InputData attributes.')
 
+# .............................................................................
 class RootClass(BaseClass):
     def __init__(self, InpD):
         super().__init__()
@@ -390,6 +470,7 @@ class RootClass(BaseClass):
             print('Key', cK, 'not in input DataFrame dictionary!')
             print('Keys of input DataFrame dictionary:', list(self.dDfrIn))
 
+# .............................................................................
 class Plotter(RootClass):
     def __init__(self, InpD, axYLim):
         super().__init__(InpD)
@@ -415,13 +496,23 @@ class Plotter(RootClass):
                 self.dDfrIn[sK] = pd.read_csv(self.dPFIn[sK], sep=self.sSp,
                                               index_col=idxC)
 
+    def getDPPltF(self, sFOut):
+        self.dPPltF, mxL = {}, self.inpD.maxSLen
+        for sID, t in self.dPlt['dTupIn'].items():
+            u = S_USC.join([sFOut, sID])
+            lCmpNmF = [s.replace(S_BAR, S_USC)[:mxL] for s in t]
+            sPltF = S_DOT.join([S_USC.join([u] + lCmpNmF), S_PDF])
+            self.dPPltF[sID] = (t, os.path.join(self.pDOut, sPltF))
+
     def setDummyVal(self):
         l = ['clrDef', 'szFontLeg', 'nCharDsp', 'coordAnchorBox', 'dTupIn',
-             'nmPlt', 'tFigSz', 'dPosFt', 'symMark', 'szMark', 'mnBarLn',
-             'mnBarWd', 'lWdPlt',
-             'axXLim', 'axYLim', 'adaptYLim', 'locTitle', 'padTitle',
-             'locLegend', 'wdthGrp', 'wdthBar', 'degRotXLbl', 'plotVLines',
-             'wdthVLine', 'clrVLine', 'axXTck', 'axYTck', 'lblXTck']
+             'nmPlt', 'tFigSz', 'dPosFt', 'symMark', 'szMark', 'lenMnBar',
+             'lenHfMnBar', 'lwdMnBar', 'dltLwdMnBar', 'lenWMnBar', 'lwdWMnBar',
+             'lwdLnSD', 'dltLwdLnSD', 'lenWLnSD', 'lwdWLnSD', 'lstCnLnSD',
+             'lwdCnLnSD', 'lwdPlt', 'axXLim', 'axYLim', 'adaptYLim',
+             'dFontTtl', 'locTtl', 'padTtl', 'locLegend', 'wdthGrp', 'wdthBar',
+             'degRotXLbl', 'plotVLines', 'lwdVLine', 'clrVLine', 'axXTck',
+             'axYTck', 'lblXTck']
         for s in l:
             if s not in self.dPlt:
                 self.dPlt[s] = None
@@ -447,12 +538,13 @@ class Plotter(RootClass):
         if self.dPlt['axYTck'] is not None:
             cAx.set_yticks(self.dPlt['axYTck'])
         if sTtl is not None:
-            cAx.set_title(sTtl, loc=self.dPlt['locTitle'],
-                          pad=self.dPlt['padTitle'])
+            cAx.set_title(sTtl, fontdict=self.dPlt['dFontTtl'],
+                          loc=self.dPlt['locTtl'], pad=self.dPlt['padTtl'])
         if sYLbl is not None:
             cAx.set_ylabel(sYLbl)
         plt.tight_layout()
 
+# .............................................................................
 class DevSDPlotter(Plotter):
     def __init__(self, InpD):
         super().__init__(InpD, InpD.plot_DevSD['axYLim'])
@@ -461,17 +553,9 @@ class DevSDPlotter(Plotter):
         self.dPFIn = self.inpD.dPFIn_DevSD
         self.pDOut = self.inpD.pOutPDF
         self.dPlt = {**self.dPlt, **self.inpD.plot_DevSD}
-        self.getDPPltF()
+        self.getDPPltF(sFOut=self.inpD.sFOut_DevSD)
         self.loadDDfrInp(idxC=0)
         print('Initiated "DevSDPlotter" base object and loaded input data.')
-
-    def getDPPltF(self):
-        self.dPPltF, mxL = {}, self.inpD.maxSLen
-        for sID, t in self.dPlt['dTupIn'].items():
-            u = S_USC.join([self.inpD.sFOut_DevSD, sID])
-            lCmpNmF = [s.replace(S_BAR, S_USC)[:mxL] for s in t]
-            sPltF = S_DOT.join([S_USC.join([u] + lCmpNmF), S_PDF])
-            self.dPPltF[sID] = (t, os.path.join(self.pDOut, sPltF))
 
     def preProcData(self, sGT, sMP, sFtChg):
         d, dFt = self.dDfrIn[(S_METS, sGT)], {}
@@ -502,9 +586,9 @@ class DevSDPlotter(Plotter):
                         s=self.dPlt['szMark'])
             plotMean(self.dPlt, cAx, lX[0], cMn, cClr=cClr)
             if k == 1 and cSD > 0:
-                plotStepsSD(self.dPlt, cAx, dFtI[k][3:], dFtI[0][3], lX[0])
-        # cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
-        #          lw=self.dPlt['lWdPlt'], color='black')
+                xPLn = lX[0] + self.dPlt['lenHfMnBar']
+                plotStepsSD(self.dPlt, cAx, tFtI=dFtI[k][3:], xLn=xPLn,
+                            othYMn=dFtI[0][3])
         return cFig, cAx
 
     def decoratePlot(self, cAx, sGT, sMP='', sYLbl=None):
@@ -521,6 +605,7 @@ class DevSDPlotter(Plotter):
             self.decoratePlot(cAx, sGT=sGT, sMP=sMP, sYLbl=S_YLBL_DEV_SD_PLT)
             saveClosePlot(cFig, pPltF)
 
+# .............................................................................
 class ICDerivPlotter(Plotter):
     def __init__(self, InpD):
         super().__init__(InpD, InpD.plot_ICDrv['axYLim'])
@@ -529,16 +614,9 @@ class ICDerivPlotter(Plotter):
         self.dPFIn = self.inpD.dPFIn_ICDrv
         self.pDOut = self.inpD.pOutPDF
         self.dPlt = {**self.dPlt, **self.inpD.plot_ICDrv}
-        self.getDPPltF()
+        self.getDPPltF(sFOut=self.inpD.sFOut_ICDrv)
         self.loadDDfrInp()
         print('Initiated "ICDerivPlotter" base object and loaded input data.')
-
-    def getDPPltF(self):
-        self.dPPltF, mxL = {}, self.inpD.maxSLen
-        for sID, t in self.dPlt['dTupIn'].items():
-            u = S_USC.join([self.inpD.sFOut_ICDrv, sID])
-            sPltF = S_DOT.join([S_USC.join([u] + [s[:mxL] for s in t]), S_PDF])
-            self.dPPltF[sID] = (t, os.path.join(self.pDOut, sPltF))
 
     def setTicks(self):
         axXTck, self.dPlt['lblXTck'] = np.arange(len(L_S_FT_CHG)), L_S_FT_CHG
@@ -557,9 +635,9 @@ class ICDerivPlotter(Plotter):
             xLoc = (xTck + (2*k + 1)/(2*len(D_S_FT_CHG))*self.dPlt['wdthGrp'] -
                     1/2 + self.dPlt['wdthBar']/2)
             cAx.bar(xLoc, height=cSerGrp, width=self.dPlt['wdthBar'],
-                    lw=self.dPlt['lWdPlt'], label=lILegPlt[k][:nChD])
+                    lw=self.dPlt['lwdPlt'], label=lILegPlt[k][:nChD])
         cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
-                 lw=self.dPlt['lWdPlt'], color='black')
+                 lw=self.dPlt['lwdPlt'], color='black')
         return cFig, cAx
 
     def decoratePlot(self, cAx, sGT, sYLbl=None):
@@ -570,7 +648,7 @@ class ICDerivPlotter(Plotter):
         if self.dPlt['plotVLines']:
             yLow, yUp = self.dPlt['axYTck'][0], self.dPlt['axYTck'][-1]
             plt.vlines(np.arange(-1/2, len(L_S_FT_CHG) + 1/2), yLow, yUp,
-                       lw=self.dPlt['wdthVLine'], colors=self.dPlt['clrVLine'])
+                       lw=self.dPlt['lwdVLine'], colors=self.dPlt['clrVLine'])
         return l
 
     def plotICDeriv(self):
@@ -585,28 +663,90 @@ class ICDerivPlotter(Plotter):
             cLeg = self.decoratePlot(cAx, sGT=sGT, sYLbl=S_YLBL_IC_DERIV_PLT)
             saveClosePlot(cFig, pPltF, cLeg)
 
+# .............................................................................
+class CmbToICPlotter(Plotter):
+    def __init__(self, InpD, pltrICDrv):
+        super().__init__(InpD, InpD.plot_CmbToIC['axYLim'])
+        self.idO = self.inpD.sPltr_CmbToIC
+        self.descO = 'Concordance index derivation plotter'
+        self.pDOut = self.inpD.pOutPDF
+        self.dPlt = {**self.dPlt, **self.inpD.plot_CmbToIC}
+        self.getDPPltF(sFOut=self.inpD.sFOut_CmbToIC)
+        self.dDfrIn = pltrICDrv.dDfrIn
+        print('Initiated "CmbToICPlotter" base object and obtained data.')
+
+    def setTicks(self):
+        axXTck, self.dPlt['lblXTck'] = np.arange(len(L_S_FT_CHG)), L_S_FT_CHG
+        axYLim, axYTck = self.dPlt['axYLim'], None
+        if axYLim is not None and len(axYLim) >= 2:
+            axYTck = range(-(-axYLim[0]//2*2), axYLim[1]//2*2 + 1, 2)
+        self.dPlt['axXTck'], self.dPlt['axYTck'] = axXTck, axYTck
+
+    def createPlot(self, cSer, lILegPlt):
+        self.setTicks()
+        nChD, xTck = self.dPlt['nCharDsp'], self.dPlt['axXTck']
+        cFig, cAx = self.iniPlot()
+        for k, (sK, lSHd) in enumerate(D_S_FT_CHG.items()):
+            cSerGrp = cSer.loc[lSHd]
+            cSerGrp.index = L_S_FT_CHG
+            xLoc = (xTck + (2*k + 1)/(2*len(D_S_FT_CHG))*self.dPlt['wdthGrp'] -
+                    1/2 + self.dPlt['wdthBar']/2)
+            cAx.bar(xLoc, height=cSerGrp, width=self.dPlt['wdthBar'],
+                    lw=self.dPlt['lwdPlt'], label=lILegPlt[k][:nChD])
+        cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
+                 lw=self.dPlt['lwdPlt'], color='black')
+        return cFig, cAx
+
+    def decoratePlot(self, cAx, sGT, sYLbl=None):
+        super().decoratePlot(cAx, sTtl=D_S_NM_GT[sGT], sYLbl=sYLbl)
+        l = cAx.legend(loc=self.dPlt['locLegend'],
+                       bbox_to_anchor=self.dPlt['coordAnchorBox'],
+                       fontsize=self.dPlt['szFontLeg'])
+        if self.dPlt['plotVLines']:
+            yLow, yUp = self.dPlt['axYTck'][0], self.dPlt['axYTck'][-1]
+            plt.vlines(np.arange(-1/2, len(L_S_FT_CHG) + 1/2), yLow, yUp,
+                       lw=self.dPlt['lwdVLine'], colors=self.dPlt['clrVLine'])
+        return l
+
+    def plotCmbToIC(self):
+        for sID, ((sGT, sMet, sPho), pPltF) in self.dPPltF.items():
+            print('Plotting combining components to IC', sID, 'for "' + sGT +
+                  '" and the pair (' + sMet + ', ' + sPho + ')...')
+            d = self.dDfrIn[sGT]
+            cSer = d[(d[S_MET] == sMet) & (d[S_PHO] == sPho)].squeeze()
+            lILegPlt = [sMet, sPho, S_CMB_DEV, S_IC_CMP]
+            # if not os.path.isfile(pPltF):
+            cFig, cAx = self.createPlot(cSer, lILegPlt)
+            cLeg = self.decoratePlot(cAx, sGT=sGT, sYLbl=S_YLBL_CMB_TO_IC_PLT)
+            saveClosePlot(cFig, pPltF, cLeg)
+
 # --- MAIN --------------------------------------------------------------------
 startTime = time.time()
 print('+'*25 + ' START', time.ctime(startTime), '+'*25)
 
 inpDat = InputData(dInput)
 if inpDat.doPlot_DevSD:
-    cPltr = DevSDPlotter(inpDat)
-    cPltr.printIDDesc()
-    # cPltr.printDDfrInp(lIdxCol=[1, 2, 3, 5, 10, 20, 40])
-    # cPltr.printDfrInp((S_METS, S_GT0), printCol=True)
-    # cPltr.printDfrInp((S_METS, S_GT1), printCol=True)
-    # cPltr.printDfrInp((S_METS, S_GT5), printCol=True)
-    # cPltr.printDfrInp((S_PHOS, S_GT0), printCol=True)
-    # cPltr.printDfrInp((S_PHOS, S_GT1), printCol=True)
-    # cPltr.printDfrInp((S_PHOS, S_GT5), printCol=True)
-    # cPltr.printAttrData()
-    # cPltr.printObjInfo()
-    cPltr.plotDevSD()
+    cPltrDevSD = DevSDPlotter(inpDat)
+    cPltrDevSD.printIDDesc()
+    # cPltrDevSD.printDDfrInp(lIdxCol=[1, 2, 3, 5, 10, 20, 40])
+    # cPltrDevSD.printDfrInp((S_METS, S_GT0), printCol=True)
+    # cPltrDevSD.printDfrInp((S_METS, S_GT1), printCol=True)
+    # cPltrDevSD.printDfrInp((S_METS, S_GT5), printCol=True)
+    # cPltrDevSD.printDfrInp((S_PHOS, S_GT0), printCol=True)
+    # cPltrDevSD.printDfrInp((S_PHOS, S_GT1), printCol=True)
+    # cPltrDevSD.printDfrInp((S_PHOS, S_GT5), printCol=True)
+    # cPltrDevSD.printAttrData()
+    # cPltrDevSD.printObjInfo()
+    cPltrDevSD.plotDevSD()
+if inpDat.doPlot_ICDrv or inpDat.doPlot_CmbToIC:
+    cPltrICDrv = ICDerivPlotter(inpDat)
 if inpDat.doPlot_ICDrv:
-    cPltr = ICDerivPlotter(inpDat)
-    cPltr.printIDDesc()
-    cPltr.plotICDeriv()
+    cPltrICDrv.printIDDesc()
+    cPltrICDrv.plotICDeriv()
+if inpDat.doPlot_CmbToIC:
+    cPltrCmbToIC = CmbToICPlotter(inpDat, cPltrICDrv)
+    cPltrCmbToIC.printIDDesc()
+    cPltrCmbToIC.plotCmbToIC()
 
 print('-'*80)
 printElapsedTimeSim(startTime, time.time(), 'Total time')
