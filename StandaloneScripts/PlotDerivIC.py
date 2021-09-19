@@ -188,7 +188,7 @@ clrVLine_CmbToIC = clrDef           # colour of vertical line
 sMs, sPs, s1, s2, s3 = S_METS, S_PHOS, 'Means', 'SDs', 'Deviations'
 dSFIn_Ms = {(sMs, sGT): S_USC.join([sMs, s1, s2, s3, sGT]) for sGT in L_S_GT}
 dSFIn_Ps = {(sPs, sGT): S_USC.join([sPs, s1, s2, s3, sGT]) for sGT in L_S_GT}
-dSFIn_DevSD = {**dSFIn_Ms, **dSFIn_Ps}
+dSFIn_DevSD = dSFIn_Ms | dSFIn_Ps
 s1, s2, s3, s4, s5, s6 = 'Corr', 'BinOp', 'MetD', 'PhoD', 'DvSD', 'AllD'
 dSFIn_ICDrv = {sGT: (S_IC_DERIV + S_USC*2 + s1 + S_USC*2 +
                      S_USC.join([s2, s3, s5, sGT, s6, s4, s5, sGT, s6]))
@@ -552,7 +552,7 @@ class DevSDPlotter(Plotter):
         self.descO = 'Deviations (as multiples of feature SD) plotter'
         self.dPFIn = self.inpD.dPFIn_DevSD
         self.pDOut = self.inpD.pOutPDF
-        self.dPlt = {**self.dPlt, **self.inpD.plot_DevSD}
+        self.dPlt = self.dPlt | self.inpD.plot_DevSD
         self.getDPPltF(sFOut=self.inpD.sFOut_DevSD)
         self.loadDDfrInp(idxC=0)
         print('Initiated "DevSDPlotter" base object and loaded input data.')
@@ -613,7 +613,7 @@ class ICDerivPlotter(Plotter):
         self.descO = 'Concordance index derivation plotter'
         self.dPFIn = self.inpD.dPFIn_ICDrv
         self.pDOut = self.inpD.pOutPDF
-        self.dPlt = {**self.dPlt, **self.inpD.plot_ICDrv}
+        self.dPlt = self.dPlt | self.inpD.plot_ICDrv
         self.getDPPltF(sFOut=self.inpD.sFOut_ICDrv)
         self.loadDDfrInp()
         print('Initiated "ICDerivPlotter" base object and loaded input data.')
@@ -670,7 +670,7 @@ class CmbToICPlotter(Plotter):
         self.idO = self.inpD.sPltr_CmbToIC
         self.descO = 'Concordance index derivation plotter'
         self.pDOut = self.inpD.pOutPDF
-        self.dPlt = {**self.dPlt, **self.inpD.plot_CmbToIC}
+        self.dPlt = self.dPlt | self.inpD.plot_CmbToIC
         self.getDPPltF(sFOut=self.inpD.sFOut_CmbToIC)
         self.dDfrIn = pltrICDrv.dDfrIn
         print('Initiated "CmbToICPlotter" base object and obtained data.')
