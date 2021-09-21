@@ -42,6 +42,7 @@ S_IC = 'IC'
 S_IC_MEX = '$I_C$'
 S_IC_M = S_IC + '(-)'
 S_IC_P = S_IC + '(+)'
+L_S_IC_ALL = [S_IC_M, S_IC_P, S_IC]
 S_IC_M_MEX = '$I_{C(-)}$'
 S_IC_P_MEX = '$I_{C(+)}$'
 S_IC_ALL_MEX = S_IC_M_MEX + S_SPSLSP + S_IC_P_MEX + S_SPSLSP + S_IC_MEX
@@ -67,6 +68,14 @@ L_S_FT_CHG = [L_S_FT[i] + S_BAR + L_S_FT[j] for j in range(len(L_S_FT))
               for i in range(len(L_S_FT)) if i != j]
 D_S_FT_CHG = {s: [S_USC.join([t, s]) for t in L_S_FT_CHG] for s in L_S_SPC}
 
+S_CLR0 = S_C + S_0
+S_CLR1 = S_C + S_1
+S_CLR2 = S_C + S_2
+S_CLR3 = S_C + S_3
+S_CLR4 = S_C + S_4
+S_CLR5 = S_C + S_5
+L_S_CLR = [S_CLR0, S_CLR1, S_CLR2, S_CLR3, S_CLR4, S_CLR5]
+
 S_DEV_SD = 'DeviationSD'
 S_DERIV = 'Deriv'
 S_IC_DERIV = S_IC + S_DERIV
@@ -82,7 +91,6 @@ S_IC_CMP = S_IC_MEX + S_SPACE + S_CMP_S
 S_YLBL_DEV_SD_PLT = 'Difference as multiples of standard deviation'
 S_YLBL_IC_DERIV_PLT = S_DEVS_C + S_SPSLSP + S_IC_CMP
 S_YLBL1_CMB_TO_IC_PLT = S_IC_CMP
-S_YLBL2_CMB_TO_IC_PLT = S_IC_ALL_MEX
 
 S_BASE_CL = 'BaseClass'
 S_INP_DATA = 'InputData'
@@ -98,12 +106,17 @@ NM_IC_DERIV_PLT = S_2 + S_USC + S_IC_DERIV + S_PLT
 NM_CMB_TO_IC_PLT1 = S_3 + S_USC + S_1 + S_USC + S_CMB_TO_IC + S_PLT
 NM_CMB_TO_IC_PLT2 = S_3 + S_USC + S_2 + S_USC + S_CMB_TO_IC + S_PLT
 
+STY_LN_SOL = '-'
+STY_LN_DSH = '--'
+STY_LN_DDS = '-.'
+
+EPS = .01
 R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
-doPlot_DevSD = False             # True / False
-doPlot_ICDrv = False             # True / False
+doPlot_DevSD = True             # True / False
+doPlot_ICDrv = True             # True / False
 doPlot_CmbToIC = True           # True / False
 
 # --- data specific input -----------------------------------------------------
@@ -136,13 +149,16 @@ lwdLnSD_DevSD = .8                  # line width of mean bar
 dltLwdLnSD_DevSD = .25              # delta of width of black line to col. line
 lenWLnSD_DevSD = .1                 # length of mean bar whiskers
 lwdWLnSD_DevSD = .4                 # line width of mean bar whiskers
-lstCnLnSD_DevSD = '--'              # line style of connecting line
+lstCnLnSD_DevSD = STY_LN_DSH        # line style of connecting line
 lwdCnLnSD_DevSD = .8                # line width of connecting line
 dPosFt_DevSD = {0: .75, 1: .25}     # dictionary of positions of features 0|1
 axXLim_DevSD = (0., 1.)             # limits for the x-axis, or None
 axYLim_DevSD = None                 # limits for the y-axis, or None
 adaptYLim_DevSD = True              # adapt y-limits using values to plot?
+sXLbl_DevSD = None                  # x-label string, or None
+sYLbl_DevSD = S_YLBL_DEV_SD_PLT     # y-label string, or None
 lblXTck_DevSD = None                # labels of x-ticks
+stepYTck_DevSD = 1                  # step distance for y-ticks, or None
 dFontTtl_DevSD = {'size': 10}       # font dictionary of the title
 locTtl_DevSD = 'left'               # location of the title
 padTtl_DevSD = 10.                  # padding of the title
@@ -157,14 +173,18 @@ dTupIn_ICDrv = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
 nmPlt_ICDrv = NM_IC_DERIV_PLT       # name prefix of the IC derivation plot
 tFigSz_ICDrv = None                 # (width, height): figure size [inches]
 lwdPlt_ICDrv = .75                  # line width in plot
+lClr_ICDrv  = L_S_CLR[:len(L_S_SPC)]    # list of colours for barplot
 axXLim_ICDrv = None                 # limits for the x-axis, or None
 axYLim_ICDrv = (-11, 11)            # limits for the y-axis, or None
 locTtl_ICDrv = 'left'               # location of the title
 padTtl_ICDrv = 70.                  # padding of the title
 locLegend_ICDrv = 'lower center'    # location of the legend
 wdthGrp_ICDrv = .8                  # width of bar group
-wdthBar_ICDrv = wdthGrp_ICDrv/len(D_S_FT_CHG) - .01    # width of single bars
+wdthBar_ICDrv = wdthGrp_ICDrv/len(D_S_FT_CHG) - EPS    # width of single bars
+sXLbl_ICDrv = None                  # x-label string, or None
+sYLbl_ICDrv = S_YLBL_IC_DERIV_PLT   # y-label string, or None
 lblXTck_ICDrv = L_S_FT_CHG          # labels of x-ticks
+stepYTck_ICDrv = 2                  # step distance for y-ticks, or None
 degRotXLbl_ICDrv = 90               # degree rotation of x-labels
 plotVLines_ICDrv = True             # plot vertical lines between groups?
 lwdVLine_ICDrv = .2                 # width of vertical line
@@ -173,8 +193,12 @@ clrVLine_ICDrv = clrDef             # colour of vertical line
 # --- graphics parameters / combine to IC plot B(ase) -------------------------
 dTupIn_CmbToIC = dTupIn_ICDrv
 lwdPlt_CmbToIC = .75                # line width in plot
+dClr_CmbToIC = {S_IC_M: (.839, .459, .157, .75),    # colour dictionary
+                S_IC_P: (.839, .153, .471, .75),
+                S_IC: S_CLR3}
 locTtl_CmbToIC = 'left'             # location of the title
 padTtl_CmbToIC = 10.                # padding of the title
+sXLbl_CmbToIC = None                # x-label string, or None
 lblXTck_CmbToIC = None              # labels of x-ticks
 degRotXLbl_CmbToIC = 90             # degree rotation of x-labels
 lwdVLine_CmbToIC = .2               # width of vertical line
@@ -185,17 +209,21 @@ nmPlt_CmbToIC1 = NM_CMB_TO_IC_PLT1  # name prefix of the IC derivation plot 1
 tFigSz_CmbToIC1 = (4., 4.)          # (width, height): figure size [inches]
 axXLim_CmbToIC1 = None              # limits for the x-axis, or None
 axYLim_CmbToIC1 = (-2, 2)           # limits for the y-axis, or None
-wdthBar_CmbToIC1 = .6 - .01         # width of bars
+sYLbl_CmbToIC1 = S_YLBL1_CMB_TO_IC_PLT    # y-label string, or None
+wdthBar_CmbToIC1 = .6 - EPS         # width of bars
 lblXTck_CmbToIC1 = L_S_FT_CHG       # labels of x-ticks
+stepYTck_CmbToIC1 = .5              # step distance for y-ticks, or None
 plotVLines_CmbToIC1 = True          # plot vertical lines between groups?
 
 # --- graphics parameters / combine to IC plot 2 ------------------------------
 nmPlt_CmbToIC2 = NM_CMB_TO_IC_PLT2  # name prefix of the IC derivation plot 2
-tFigSz_CmbToIC2 = (3., 4.)          # (width, height): figure size [inches]
+tFigSz_CmbToIC2 = (2., 4.)          # (width, height): figure size [inches]
 axXLim_CmbToIC2 = None              # limits for the x-axis, or None
 axYLim_CmbToIC2 = None              # limits for the y-axis, or None
-wdthBar_CmbToIC2 = .6 - .01         # width of bars
+sYLbl_CmbToIC2 = None               # y-label string, or None
+wdthBar_CmbToIC2 = .6 - EPS         # width of bars
 lblXTck_CmbToIC2 = L_S_IC_ALL_MEX   # labels of x-ticks
+stepYTck_CmbToIC2 = None            # step distance for y-ticks, or None
 plotVLines_CmbToIC2 = True          # plot vertical lines between groups?
 
 # --- names and paths of files and dirs ---------------------------------------
@@ -278,7 +306,10 @@ dInput = {# --- constants
                          'dPosFt': dPosFt_DevSD,
                          'axXLim': axXLim_DevSD,
                          'axYLim': axYLim_DevSD,
+                         'sXLbl': sXLbl_DevSD,
+                         'sYLbl': sYLbl_DevSD,
                          'lblXTck': lblXTck_DevSD,
+                         'stepYTck': stepYTck_DevSD,
                          'adaptYLim': adaptYLim_DevSD,
                          'dFontTtl': dFontTtl_DevSD,
                          'locTtl': locTtl_DevSD,
@@ -289,6 +320,7 @@ dInput = {# --- constants
                          'nmPlt': nmPlt_ICDrv,
                          'tFigSz': tFigSz_ICDrv,
                          'lwdPlt': lwdPlt_ICDrv,
+                         'lClr': lClr_ICDrv,
                          'axXLim': axXLim_ICDrv,
                          'axYLim': axYLim_ICDrv,
                          'locTtl': locTtl_ICDrv,
@@ -296,7 +328,10 @@ dInput = {# --- constants
                          'locLegend': locLegend_ICDrv,
                          'wdthGrp': wdthGrp_ICDrv,
                          'wdthBar': wdthBar_ICDrv,
+                         'sXLbl': sXLbl_ICDrv,
+                         'sYLbl': sYLbl_ICDrv,
                          'lblXTck': lblXTck_ICDrv,
+                         'stepYTck': stepYTck_ICDrv,
                          'degRotXLbl': degRotXLbl_ICDrv,
                          'plotVLines': plotVLines_ICDrv,
                          'lwdVLine': lwdVLine_ICDrv,
@@ -304,8 +339,10 @@ dInput = {# --- constants
           # --- graphics parameters / combine to IC plot B(ase)
           'plotB_CmbToIC': {'dTupIn': dTupIn_ICDrv,
                             'lwdPlt': lwdPlt_CmbToIC,
+                            'dClr': dClr_CmbToIC,
                             'locTtl': locTtl_CmbToIC,
                             'padTtl': padTtl_CmbToIC,
+                            'sXLbl': sXLbl_CmbToIC,
                             'lblXTck': lblXTck_CmbToIC,
                             'degRotXLbl': degRotXLbl_CmbToIC,
                             'lwdVLine': lwdVLine_CmbToIC,
@@ -315,16 +352,20 @@ dInput = {# --- constants
                             'tFigSz': tFigSz_CmbToIC1,
                             'axXLim': axXLim_CmbToIC1,
                             'axYLim': axYLim_CmbToIC1,
+                            'sYLbl': sYLbl_CmbToIC1,
                             'wdthBar': wdthBar_CmbToIC1,
                             'lblXTck': lblXTck_CmbToIC1,
+                            'stepYTck': stepYTck_CmbToIC1,
                             'plotVLines': plotVLines_CmbToIC1},
           # --- graphics parameters / combine to IC plot 2
           'plot2_CmbToIC': {'nmPlt': nmPlt_CmbToIC2,
                             'tFigSz': tFigSz_CmbToIC2,
                             'axXLim': axXLim_CmbToIC2,
                             'axYLim': axYLim_CmbToIC2,
+                            'sYLbl': sYLbl_CmbToIC2,
                             'wdthBar': wdthBar_CmbToIC2,
                             'lblXTck': lblXTck_CmbToIC2,
+                            'stepYTck': stepYTck_CmbToIC2,
                             'plotVLines': plotVLines_CmbToIC2},
           # --- names and paths of files and dirs
           'pInCSV': pInCSV,
@@ -374,7 +415,7 @@ def plotClrLn(dPlt, cAx, lX, lY, cLwd, cClr, dltLwd=.5):
     cAx.plot(lX, lY, lw=cLwd, color=cClr)
     cAx.plot(lX, lY, lw=max(0, cLwd - 2*dltLwd), color=dPlt['clrDef'])
 
-def plotMean(dPlt, cAx, xMid=0., yMn=0., cClr='C0'):
+def plotMean(dPlt, cAx, xMid=0., yMn=0., cClr=S_CLR0):
     lX, lY = [xMid - dPlt['lenHfMnBar'], xMid + dPlt['lenHfMnBar']], [yMn]*2
     plotClrLn(dPlt, cAx, lX, lY, cLwd=dPlt['lwdMnBar'], cClr=cClr,
               dltLwd=dPlt['dltLwdMnBar'])
@@ -402,22 +443,35 @@ def plotStepsSD(dPlt, cAx, tFtI, xLn=0., othYMn=0.):
     cAx.plot(lX, [othYMn]*2, ls=dPlt['lstCnLnSD'], lw=dPlt['lwdCnLnSD'],
              color=dPlt['clrDef'])
 
-def getSerCmbToIC(cSer):
-    serIC = pd.Series([0.]*cSer.size, index=cSer.index)
-    serICm, serICp = serIC.copy(), serIC.copy()
-    dSer = {S_IC_M: serICm, S_IC_P: serICp, S_IC: serIC}
+def getLClr(dClr, cSer):
+    serClr = pd.Series(dClr[S_IC], index=cSer.index)
     for sI, x in cSer.items():
         if x < 0:
-            dSer[S_IC_M].at[sI] = x
+            serClr.at[sI] = dClr[S_IC_M]
         elif x > 0:
-            dSer[S_IC_P].at[sI] = x
-    if cSer.size > 0:
-        dSer[S_IC].iat[0] = dSer[S_IC_M].sum()
-        if cSer.size > 1:
-            dSer[S_IC].iat[1] = dSer[S_IC_P].sum()
-    lSer = [[dSer[S_IC_M].at[s], dSer[S_IC_P].at[s], dSer[S_IC].at[s]]
-            for s in cSer.index]
-    return dSer, lSer
+            serClr.at[sI] = dClr[S_IC_P]
+    return serClr.to_list()
+
+def getDfrsDatClr(dClr, cSer):
+    dfrDat = pd.DataFrame(0., index=cSer.index, columns=L_S_IC_ALL)
+    arrClr = np.array([[dClr[sIC] for sIC in L_S_IC_ALL]
+                       for _ in range(cSer.index.size)], dtype=object)
+    dfrClr = pd.DataFrame(arrClr, index=cSer.index, columns=L_S_IC_ALL)
+    for k, (sI, x) in enumerate(cSer.items()):
+        if x < 0:
+            dfrDat.at[sI, S_IC_M] = x
+        elif x > 0:
+            dfrDat.at[sI, S_IC_P] = x
+        if k < len(L_S_IC_ALL):
+            dfrClr.at[sI, S_IC] = dClr[L_S_IC_ALL[k]]
+    xICm, xICp = dfrDat.loc[:, S_IC_M].sum(), dfrDat.loc[:, S_IC_P].sum()
+    if cSer.index.size > 0:
+        dfrDat.at[cSer.index[0], S_IC] = xICm
+        if cSer.index.size > 1:
+            dfrDat.at[cSer.index[1], S_IC] = xICp
+            if cSer.index.size > 2:
+                dfrDat.at[cSer.index[2], S_IC] = xICm + xICp
+    return dfrDat, dfrClr
 
 def saveClosePlot(cFig, pPltF, l=None):
     if l is not None:
@@ -558,13 +612,13 @@ class Plotter(RootClass):
 
     def setDummyVal(self):
         l = ['clrDef', 'szFontLeg', 'nCharDsp', 'coordAnchorBox', 'dTupIn',
-             'nmPlt', 'tFigSz', 'dPosFt', 'symMark', 'szMark', 'lenMnBar',
-             'lenHfMnBar', 'lwdMnBar', 'dltLwdMnBar', 'lenWMnBar', 'lwdWMnBar',
-             'lwdLnSD', 'dltLwdLnSD', 'lenWLnSD', 'lwdWLnSD', 'lstCnLnSD',
-             'lwdCnLnSD', 'lwdPlt', 'axXLim', 'axYLim', 'adaptYLim',
-             'dFontTtl', 'locTtl', 'padTtl', 'locLegend', 'wdthGrp', 'wdthBar',
-             'degRotXLbl', 'plotVLines', 'lwdVLine', 'clrVLine', 'axXTck',
-             'axYTck', 'lblXTck']
+             'nmPlt', 'tFigSz', 'symMark', 'szMark', 'lenMnBar', 'lenHfMnBar',
+             'lwdMnBar', 'dltLwdMnBar', 'lenWMnBar', 'lwdWMnBar', 'lwdLnSD',
+             'dltLwdLnSD', 'lenWLnSD', 'lwdWLnSD', 'lstCnLnSD', 'lwdCnLnSD',
+             'dPosFt', 'axXLim', 'axYLim', 'sXLbl', 'sYLbl', 'lblXTck',
+             'stepYTck', 'adaptYLim', 'dFontTtl', 'locTtl', 'padTtl',
+             'degRotXLbl', 'lwdPlt', 'lClr', 'locLegend', 'wdthGrp', 'wdthBar',
+             'plotVLines', 'lwdVLine', 'clrVLine', 'dClr', 'axXTck', 'axYTck']
         for s in l:
             if s not in self.dPlt:
                 self.dPlt[s] = None
@@ -575,7 +629,7 @@ class Plotter(RootClass):
             cFig.set_size_inches(dPlt['tFigSz'])
         return cFig, cAx
 
-    def decoratePlot(self, dPlt, cAx, sTtl=None, sYLbl=None):
+    def decoratePlot(self, dPlt, cAx, sTtl=None):
         if dPlt['axXLim'] is not None:
             cAx.set_xlim(dPlt['axXLim'])
         if dPlt['axYLim'] is not None:
@@ -592,8 +646,10 @@ class Plotter(RootClass):
         if sTtl is not None:
             cAx.set_title(sTtl, fontdict=dPlt['dFontTtl'], loc=dPlt['locTtl'],
                           pad=dPlt['padTtl'])
-        if sYLbl is not None:
-            cAx.set_ylabel(sYLbl)
+        if dPlt['sXLbl'] is not None:
+            cAx.set_xlabel(dPlt['sXLbl'])
+        if dPlt['sYLbl'] is not None:
+            cAx.set_ylabel(dPlt['sYLbl'])
         plt.tight_layout()
 
 # .............................................................................
@@ -614,7 +670,7 @@ class DevSDPlotter(Plotter):
         for k, cFt in enumerate(sFtChg.split(S_BAR)):
             lSC = [s for s in d.columns if (s[-1] in L_S_0_6 and
                                             s.startswith(cFt))]
-            cSer, cC = d.loc[sMP, lSC], 'C' + str(k)
+            cSer, cC = d.loc[sMP, lSC], S_C + str(k)
             dFt[k] = (cFt, lSC, cSer, np.mean(cSer), np.std(cSer, ddof=1), cC)
         assert len(dFt) == 2
         return dFt
@@ -625,9 +681,9 @@ class DevSDPlotter(Plotter):
             self.dPlt['lblXTck'] = [dFt[k][0] for k in dFt]
         if self.dPlt['adaptYLim']:
             lAllV = flattenIt([t[2] for t in dFt.values()])
-            mnV, mxV, cStep = math.floor(min(lAllV)), math.ceil(max(lAllV)), 1
-            self.dPlt['axYLim'] = (mnV, mxV)
-            self.dPlt['axYTck'] = range(mnV, mxV + 1, cStep)
+            mn, mx = math.floor(min(lAllV)), math.ceil(max(lAllV))
+            self.dPlt['axYLim'] = (mn, mx)
+            self.dPlt['axYTck'] = np.arange(mn, mx + 1, self.dPlt['stepYTck'])
 
     def createPlot(self, dFtI):
         self.setTicks(dFt=dFtI)
@@ -643,9 +699,9 @@ class DevSDPlotter(Plotter):
                             othYMn=dFtI[0][3])
         return cFig, cAx
 
-    def decoratePlot(self, cAx, sGT, sMP='', sYLbl=None):
+    def decoratePlot(self, cAx, sGT, sMP=''):
         sTtl = sMP + '\n(' + D_NM_GT[sGT] + ')'
-        super().decoratePlot(self.dPlt, cAx, sTtl=sTtl, sYLbl=sYLbl)
+        super().decoratePlot(self.dPlt, cAx, sTtl=sTtl)
 
     def plotDevSD(self):
         for sID, ((sGT, sMP, sFtChg), pPltF) in self.dPPltF.items():
@@ -654,7 +710,7 @@ class DevSDPlotter(Plotter):
                   sFtChg, '...')
             # if not os.path.isfile(pPltF):
             cFig, cAx = self.createPlot(self.preProcData(sGT, sMP, sFtChg))
-            self.decoratePlot(cAx, sGT=sGT, sMP=sMP, sYLbl=S_YLBL_DEV_SD_PLT)
+            self.decoratePlot(cAx, sGT=sGT, sMP=sMP)
             saveClosePlot(cFig, pPltF)
 
 # .............................................................................
@@ -674,7 +730,8 @@ class ICDerivPlotter(Plotter):
         axYLim = self.dPlt['axYLim']
         axXTck, axYTck = np.arange(len(self.dPlt['lblXTck'])), None
         if axYLim is not None and len(axYLim) >= 2:
-            axYTck = range(-(-axYLim[0]//2*2), axYLim[1]//2*2 + 1, 2)
+            axYTck = np.arange(-(-axYLim[0]//2*2), axYLim[1]//2*2 + 1,
+                               self.dPlt['stepYTck'])
         self.dPlt['axXTck'], self.dPlt['axYTck'] = axXTck, axYTck
 
     def createPlot(self, cSer, lILegPlt):
@@ -687,13 +744,14 @@ class ICDerivPlotter(Plotter):
             xLoc = (xTck + (2*k + 1)/(2*len(D_S_FT_CHG))*self.dPlt['wdthGrp'] -
                     1/2 + self.dPlt['wdthBar']/2)
             cAx.bar(xLoc, height=cSerGrp, width=self.dPlt['wdthBar'],
-                    lw=self.dPlt['lwdPlt'], label=lILegPlt[k][:nChD])
-        cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
-                 lw=self.dPlt['lwdPlt'], color='black')
+                    lw=self.dPlt['lwdPlt'], color=self.dPlt['lClr'][k],
+                    label=lILegPlt[k][:nChD])
+        cAx.plot([-1/2, cSerGrp.index.size - 1/2], [0, 0],
+                 lw=self.dPlt['lwdPlt'], color=self.dPlt['clrDef'])
         return cFig, cAx
 
-    def decoratePlot(self, cAx, sGT, sYLbl=None):
-        super().decoratePlot(self.dPlt, cAx, sTtl=D_NM_GT[sGT], sYLbl=sYLbl)
+    def decoratePlot(self, cAx, sGT):
+        super().decoratePlot(self.dPlt, cAx, sTtl=D_NM_GT[sGT])
         l = cAx.legend(loc=self.dPlt['locLegend'],
                        bbox_to_anchor=self.dPlt['coordAnchorBox'],
                        fontsize=self.dPlt['szFontLeg'])
@@ -711,7 +769,7 @@ class ICDerivPlotter(Plotter):
             lILegPlt = [sMet, sPho, S_CMB_DEV, S_IC_CMP]
             # if not os.path.isfile(pPltF):
             cFig, cAx = self.createPlot(cSer, lILegPlt)
-            cLeg = self.decoratePlot(cAx, sGT=sGT, sYLbl=S_YLBL_IC_DERIV_PLT)
+            cLeg = self.decoratePlot(cAx, sGT=sGT)
             saveClosePlot(cFig, pPltF, cLeg)
 
 # .............................................................................
@@ -724,12 +782,6 @@ class CmbToICPlotter(Plotter):
         self.dPltB = self.dPlt | self.inpD.plotB_CmbToIC
         self.dPlt1 = self.dPltB | self.inpD.plot1_CmbToIC
         self.dPlt2 = self.dPltB | self.inpD.plot2_CmbToIC
-        print('TEMP - self.dPltB keys with values not None:')
-        print([(cK, ':', cV) for cK, cV in self.dPltB.items() if cV is not None])
-        print('TEMP - self.dPlt1 keys with values not None:')
-        print([(cK, ':', cV) for cK, cV in self.dPlt1.items() if cV is not None])
-        print('TEMP - self.dPlt2 keys with values not None:')
-        print([(cK, ':', cV) for cK, cV in self.dPlt2.items() if cV is not None])
         self.dPPltF1 = self.getDPPltF(self.dPlt1, self.inpD.sF1Out_CmbToIC)
         self.dPPltF2 = self.getDPPltF(self.dPlt2, self.inpD.sF2Out_CmbToIC)
         self.dDfrIn = pltrICDrv.dDfrIn
@@ -739,45 +791,50 @@ class CmbToICPlotter(Plotter):
         axYLim = dPlt['axYLim']
         axXTck, axYTck = np.arange(len(dPlt['lblXTck'])), None
         if axYLim is not None and len(axYLim) >= 2:
-            axYTck = range(-(-axYLim[0]//2*2), axYLim[1]//2*2 + 1, 2)
+            axYTck = np.arange(-(-axYLim[0]//2*2), axYLim[1]//2*2 + 1,
+                               dPlt['stepYTck'])
         dPlt['axXTck'], dPlt['axYTck'] = axXTck, axYTck
 
     def createPlot1(self, cSer):
+        assert cSer.size == len(L_S_FT_CHG)
+        cSer.index = L_S_FT_CHG
         self.setTicks(self.dPlt1)
         cFig, cAx = self.iniPlot(self.dPlt1)
-        cSer.index = L_S_FT_CHG
-        # xLoc = self.dPlt1['axXTck'] - self.dPlt1['wdthBar']/2
         cAx.bar(self.dPlt1['axXTck'], height=cSer, width=self.dPlt1['wdthBar'],
-                lw=self.dPlt1['lwdPlt'], label=S_IC_CMP, color='C3')
-        cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
-                 lw=self.dPlt1['lwdPlt'], color='black')
+                lw=self.dPltB['lwdPlt'], ec=self.dPlt['clrDef'],
+                label=S_IC_CMP, color=getLClr(self.dPltB['dClr'], cSer))
+        cAx.plot([-1/2, cSer.index.size - 1/2], [0, 0],
+                 lw=self.dPltB['lwdPlt'], color=self.dPlt['clrDef'])
         return cFig, cAx
 
-    def createPlot2(self, cSer):
-        self.setTicks(self.dPlt2)
-        cFig, cAx = self.iniPlot(self.dPlt2)
-        cSer.index = L_S_FT_CHG
-        dSer, lSer = getSerCmbToIC(cSer)
-        prSer = None
-        for pltSer in lSer:
-            cAx.bar(self.dPlt2['axXTck'], height=pltSer,
-                    width=self.dPlt2['wdthBar'], bottom=prSer,
-                    lw=self.dPlt2['lwdPlt'], label=list(dSer), color='C3')
-            prSer = pltSer
-        # cAx.plot([-1/2, len(L_S_FT_CHG) - 1/2], [0, 0],
-        #          lw=self.dPlt2['lwdPlt'], color='black')
-        return cFig, cAx
-
-    def decoratePlot1(self, cAx, sGT, sYLbl=None):
-        super().decoratePlot(self.dPlt1, cAx, sTtl=D_NM_GT[sGT], sYLbl=sYLbl)
+    def decoratePlot1(self, cAx, sGT):
+        super().decoratePlot(self.dPlt1, cAx, sTtl=D_NM_GT[sGT])
         if self.dPlt1['plotVLines']:
             yL, yU = self.dPlt1['axYTck'][0], self.dPlt1['axYTck'][-1]
             plt.vlines(np.arange(-1/2, len(self.dPlt1['axXTck']) + 1/2),
                        yL, yU, lw=self.dPlt1['lwdVLine'],
                        colors=self.dPlt1['clrVLine'])
 
-    def decoratePlot2(self, cAx, sGT, sYLbl=None):
-        super().decoratePlot(self.dPlt2, cAx, sTtl=D_NM_GT[sGT], sYLbl=sYLbl)
+    def createPlot2(self, cSer):
+        assert cSer.size == len(L_S_FT_CHG)
+        cSer.index = L_S_FT_CHG
+        dfrDat, dfrClr = getDfrsDatClr(self.dPltB['dClr'], cSer)
+        baseSerD = pd.Series([0.]*dfrDat.columns.size, index=dfrDat.columns)
+        self.setTicks(self.dPlt2)
+        cFig, cAx = self.iniPlot(self.dPlt2)
+        for cIdx, pltSerD in dfrDat.iterrows():
+            cAx.bar(self.dPlt2['axXTck'], height=pltSerD,
+                    width=self.dPlt2['wdthBar'], bottom=baseSerD,
+                    lw=self.dPltB['lwdPlt'], ec=self.dPlt['clrDef'],
+                    label=dfrDat.columns, color=dfrClr.loc[cIdx, :].to_list())
+            baseSerD = baseSerD.add(pltSerD)
+            baseSerD.at[S_IC] = 0.
+        cAx.plot([-1/2, baseSerD.index.size - 1/2], [0, 0],
+                 lw=self.dPltB['lwdPlt'], color=self.dPlt['clrDef'])
+        return cFig, cAx
+
+    def decoratePlot2(self, cAx, sGT):
+        super().decoratePlot(self.dPlt2, cAx, sTtl=D_NM_GT[sGT])
         if self.dPlt2['plotVLines']:
             yL, yU = cAx.get_ylim()
             plt.vlines(np.arange(-1/2, len(self.dPlt2['axXTck']) + 1/2),
@@ -792,13 +849,13 @@ class CmbToICPlotter(Plotter):
             cSer = getSerData(self.dDfrIn, sGT, sMet, sPho)
             # if not os.path.isfile(pPltF):
             cFig, cAx = self.createPlot1(cSer.loc[D_S_FT_CHG[S_C]])
-            self.decoratePlot1(cAx, sGT=sGT, sYLbl=S_YLBL1_CMB_TO_IC_PLT)
+            self.decoratePlot1(cAx, sGT=sGT)
             saveClosePlot(cFig, pPltF)
         # plot 2 - combine to IC(-), IC(+), IC plot
         for sID, ((sGT, sMet, sPho), pPltF) in self.dPPltF2.items():
             cSer = getSerData(self.dDfrIn, sGT, sMet, sPho)
             cFig, cAx = self.createPlot2(cSer.loc[D_S_FT_CHG[S_C]])
-            self.decoratePlot2(cAx, sGT=sGT, sYLbl=S_YLBL2_CMB_TO_IC_PLT)
+            self.decoratePlot2(cAx, sGT=sGT)
             saveClosePlot(cFig, pPltF)
 
 # --- MAIN --------------------------------------------------------------------
@@ -809,14 +866,7 @@ inpDat = InputData(dInput)
 if inpDat.doPlot_DevSD:
     cPltrDevSD = DevSDPlotter(inpDat)
     cPltrDevSD.printIDDesc()
-    cPltrDevSD.printDPPltF()
-    # cPltrDevSD.printDDfrInp(lIdxCol=[1, 2, 3, 5, 10, 20, 40])
-    # cPltrDevSD.printDfrInp((S_METS, S_GT0), printCol=True)
-    # cPltrDevSD.printDfrInp((S_METS, S_GT1), printCol=True)
-    # cPltrDevSD.printDfrInp((S_METS, S_GT5), printCol=True)
-    # cPltrDevSD.printDfrInp((S_PHOS, S_GT0), printCol=True)
-    # cPltrDevSD.printDfrInp((S_PHOS, S_GT1), printCol=True)
-    # cPltrDevSD.printDfrInp((S_PHOS, S_GT5), printCol=True)
+    # cPltrDevSD.printDPPltF()
     # cPltrDevSD.printAttrData()
     # cPltrDevSD.printObjInfo()
     cPltrDevSD.plotDevSD()
@@ -828,7 +878,7 @@ if inpDat.doPlot_ICDrv:
 if inpDat.doPlot_CmbToIC:
     cPltrCmbToIC = CmbToICPlotter(inpDat, cPltrICDrv)
     cPltrCmbToIC.printIDDesc()
-    cPltrCmbToIC.printDPPltF()
+    # cPltrCmbToIC.printDPPltF()
     cPltrCmbToIC.plotCmbToIC()
 
 print('-'*80)
