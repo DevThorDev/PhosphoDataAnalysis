@@ -135,9 +135,10 @@ dTupIn_DevSD = {'A': (S_GT0, 'Alanine', S_FT2 + S_BAR + S_FT1),
                 'C': (S_GT1, 'Docosanoic_acid', S_FT4 + S_BAR + S_FT1),
                 'D': (S_GT1, 'Docosanoic_acid', S_FT1 + S_BAR + S_FT4),
                 'E': (S_GT5, 'Putrescine', S_FT2 + S_BAR + S_FT1),
-                'F': (S_GT5, 'Putrescine', S_FT3 + S_BAR + S_FT2)}
+                'F': (S_GT5, 'Putrescine', S_FT3 + S_BAR + S_FT2),
+                'X_S': (S_GT5, 'Sucrose', S_FT2 + S_BAR + S_FT1)}
 nmPlt_DevSD = NM_DEV_SD_PLT         # name prefix of the deviation SD plot
-tFigSz_DevSD = (2., 4.)             # (width, height): figure size [inches]
+tFigSz_DevSD = (2., 5.)             # (width, height): figure size [inches]
 symMark_DevSD = 'x'                 # marker symbol
 szMark_DevSD = 25                   # marker size
 lenMnBar_DevSD = .3                 # length of mean bar
@@ -159,6 +160,7 @@ sXLbl_DevSD = None                  # x-label string, or None
 sYLbl_DevSD = S_YLBL_DEV_SD_PLT     # y-label string, or None
 lblXTck_DevSD = None                # labels of x-ticks
 stepYTck_DevSD = 1                  # step distance for y-ticks, or None
+plotTtl_DevSD = True                # add title to plot?
 dFontTtl_DevSD = {'size': 10}       # font dictionary of the title
 locTtl_DevSD = 'left'               # location of the title
 padTtl_DevSD = 10.                  # padding of the title
@@ -169,13 +171,17 @@ dTupIn_ICDrv = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
                 'B': (S_GT0, 'Alanine', 'T(0.001)PS(0.996)QRPS(0.003)TSSSSGGFNIGK'),
                 'C': (S_GT1, 'Glutamic_acid', 'TADS(1)DGES(1)GEIKFEDNNLPPLGEK'),
                 'D': (S_GT5, 'Putrescine', 'S(0.999)FS(0.001)VADFPR'),
-                'E': (S_GT5, 'Fructose', 'TEEDENDDEDHEHKDDKT(0.854)S(0.144)PDS(0.001)IVMVEAK')}
+                'E': (S_GT5, 'Fructose', 'TEEDENDDEDHEHKDDKT(0.854)S(0.144)PDS(0.001)IVMVEAK'),
+                'X_S1': (S_GT5, 'Sucrose', 'S(1)DLQTPLVRPK'),
+                'X_S2': (S_GT5, 'Sucrose', 'NFANS(1)FGRK')}
 nmPlt_ICDrv = NM_IC_DERIV_PLT       # name prefix of the IC derivation plot
-tFigSz_ICDrv = None                 # (width, height): figure size [inches]
+tFigSz_ICDrv = (6., 4.)             # (width, height): figure size [inches]
 lwdPlt_ICDrv = .75                  # line width in plot
 lClr_ICDrv  = L_S_CLR[:len(L_S_SPC)]    # list of colours for barplot
 axXLim_ICDrv = None                 # limits for the x-axis, or None
 axYLim_ICDrv = (-11, 11)            # limits for the y-axis, or None
+plotTtl_ICDrv = False               # add title to plot?
+dFontTtl_ICDrv = {'size': 10}       # font dictionary of the title
 locTtl_ICDrv = 'left'               # location of the title
 padTtl_ICDrv = 70.                  # padding of the title
 locLegend_ICDrv = 'lower center'    # location of the legend
@@ -193,9 +199,10 @@ clrVLine_ICDrv = clrDef             # colour of vertical line
 # --- graphics parameters / combine to IC plot B(ase) -------------------------
 dTupIn_CmbToIC = dTupIn_ICDrv
 lwdPlt_CmbToIC = .75                # line width in plot
-dClr_CmbToIC = {S_IC_M: (.839, .459, .157, .75),    # colour dictionary
+dClr_CmbToIC = {S_IC_M: (.557, .153, .706, .75),    # colour dictionary
                 S_IC_P: (.839, .153, .471, .75),
                 S_IC: S_CLR3}
+dFontTtl_CmbToIC = {'size': 12}     # font dictionary of the title
 locTtl_CmbToIC = 'left'             # location of the title
 padTtl_CmbToIC = 10.                # padding of the title
 sXLbl_CmbToIC = None                # x-label string, or None
@@ -206,9 +213,10 @@ clrVLine_CmbToIC = clrDef           # colour of vertical line
 
 # --- graphics parameters / combine to IC plot 1 ------------------------------
 nmPlt_CmbToIC1 = NM_CMB_TO_IC_PLT1  # name prefix of the IC derivation plot 1
-tFigSz_CmbToIC1 = (4., 4.)          # (width, height): figure size [inches]
+tFigSz_CmbToIC1 = (5., 4.)          # (width, height): figure size [inches]
 axXLim_CmbToIC1 = None              # limits for the x-axis, or None
 axYLim_CmbToIC1 = (-2, 2)           # limits for the y-axis, or None
+plotTtl_CmbToIC1 = False             # add title to plot?
 sYLbl_CmbToIC1 = S_YLBL1_CMB_TO_IC_PLT    # y-label string, or None
 wdthBar_CmbToIC1 = .6 - EPS         # width of bars
 lblXTck_CmbToIC1 = L_S_FT_CHG       # labels of x-ticks
@@ -217,9 +225,12 @@ plotVLines_CmbToIC1 = True          # plot vertical lines between groups?
 
 # --- graphics parameters / combine to IC plot 2 ------------------------------
 nmPlt_CmbToIC2 = NM_CMB_TO_IC_PLT2  # name prefix of the IC derivation plot 2
-tFigSz_CmbToIC2 = (2., 4.)          # (width, height): figure size [inches]
+tFigSz_CmbToIC2 = (3., 4.)          # (width, height): figure size [inches]
+lwdBarIC_CmbToIC2 = 1.5             # line width of final IC bar
+hatBarIC_CmbToIC2 = 'xx'            # hatch of final IC bar
 axXLim_CmbToIC2 = None              # limits for the x-axis, or None
 axYLim_CmbToIC2 = None              # limits for the y-axis, or None
+plotTtl_CmbToIC2 = False            # add title to plot?
 sYLbl_CmbToIC2 = None               # y-label string, or None
 wdthBar_CmbToIC2 = .6 - EPS         # width of bars
 lblXTck_CmbToIC2 = L_S_IC_ALL_MEX   # labels of x-ticks
@@ -311,6 +322,7 @@ dInput = {# --- constants
                          'lblXTck': lblXTck_DevSD,
                          'stepYTck': stepYTck_DevSD,
                          'adaptYLim': adaptYLim_DevSD,
+                         'plotTtl': plotTtl_DevSD,
                          'dFontTtl': dFontTtl_DevSD,
                          'locTtl': locTtl_DevSD,
                          'padTtl': padTtl_DevSD,
@@ -323,6 +335,8 @@ dInput = {# --- constants
                          'lClr': lClr_ICDrv,
                          'axXLim': axXLim_ICDrv,
                          'axYLim': axYLim_ICDrv,
+                         'plotTtl': plotTtl_ICDrv,
+                         'dFontTtl': dFontTtl_ICDrv,
                          'locTtl': locTtl_ICDrv,
                          'padTtl': padTtl_ICDrv,
                          'locLegend': locLegend_ICDrv,
@@ -340,6 +354,7 @@ dInput = {# --- constants
           'plotB_CmbToIC': {'dTupIn': dTupIn_ICDrv,
                             'lwdPlt': lwdPlt_CmbToIC,
                             'dClr': dClr_CmbToIC,
+                            'dFontTtl': dFontTtl_CmbToIC,
                             'locTtl': locTtl_CmbToIC,
                             'padTtl': padTtl_CmbToIC,
                             'sXLbl': sXLbl_CmbToIC,
@@ -352,6 +367,7 @@ dInput = {# --- constants
                             'tFigSz': tFigSz_CmbToIC1,
                             'axXLim': axXLim_CmbToIC1,
                             'axYLim': axYLim_CmbToIC1,
+                            'plotTtl': plotTtl_CmbToIC1,
                             'sYLbl': sYLbl_CmbToIC1,
                             'wdthBar': wdthBar_CmbToIC1,
                             'lblXTck': lblXTck_CmbToIC1,
@@ -360,8 +376,11 @@ dInput = {# --- constants
           # --- graphics parameters / combine to IC plot 2
           'plot2_CmbToIC': {'nmPlt': nmPlt_CmbToIC2,
                             'tFigSz': tFigSz_CmbToIC2,
+                            'lwdBarIC': lwdBarIC_CmbToIC2,
+                            'hatBarIC': hatBarIC_CmbToIC2,
                             'axXLim': axXLim_CmbToIC2,
                             'axYLim': axYLim_CmbToIC2,
+                            'plotTtl': plotTtl_CmbToIC2,
                             'sYLbl': sYLbl_CmbToIC2,
                             'wdthBar': wdthBar_CmbToIC2,
                             'lblXTck': lblXTck_CmbToIC2,
@@ -616,9 +635,10 @@ class Plotter(RootClass):
              'lwdMnBar', 'dltLwdMnBar', 'lenWMnBar', 'lwdWMnBar', 'lwdLnSD',
              'dltLwdLnSD', 'lenWLnSD', 'lwdWLnSD', 'lstCnLnSD', 'lwdCnLnSD',
              'dPosFt', 'axXLim', 'axYLim', 'sXLbl', 'sYLbl', 'lblXTck',
-             'stepYTck', 'adaptYLim', 'dFontTtl', 'locTtl', 'padTtl',
-             'degRotXLbl', 'lwdPlt', 'lClr', 'locLegend', 'wdthGrp', 'wdthBar',
-             'plotVLines', 'lwdVLine', 'clrVLine', 'dClr', 'axXTck', 'axYTck']
+             'stepYTck', 'adaptYLim', 'plotTtl', 'dFontTtl', 'locTtl',
+             'padTtl', 'degRotXLbl', 'lwdPlt', 'lClr', 'locLegend', 'wdthGrp',
+             'wdthBar', 'plotVLines', 'lwdVLine', 'clrVLine', 'dClr',
+             'lwdBarIC', 'hatBarIC', 'axXTck', 'axYTck']
         for s in l:
             if s not in self.dPlt:
                 self.dPlt[s] = None
@@ -643,7 +663,7 @@ class Plotter(RootClass):
                     cXLbl.set_rotation(dPlt['degRotXLbl'])
         if dPlt['axYTck'] is not None:
             cAx.set_yticks(dPlt['axYTck'])
-        if sTtl is not None:
+        if sTtl is not None and dPlt['plotTtl']:
             cAx.set_title(sTtl, fontdict=dPlt['dFontTtl'], loc=dPlt['locTtl'],
                           pad=dPlt['padTtl'])
         if dPlt['sXLbl'] is not None:
@@ -700,7 +720,8 @@ class DevSDPlotter(Plotter):
         return cFig, cAx
 
     def decoratePlot(self, cAx, sGT, sMP=''):
-        sTtl = sMP + '\n(' + D_NM_GT[sGT] + ')'
+        # sTtl = sMP + '\n(' + D_NM_GT[sGT] + ')'
+        sTtl = sMP
         super().decoratePlot(self.dPlt, cAx, sTtl=sTtl)
 
     def plotDevSD(self):
@@ -829,6 +850,11 @@ class CmbToICPlotter(Plotter):
                     label=dfrDat.columns, color=dfrClr.loc[cIdx, :].to_list())
             baseSerD = baseSerD.add(pltSerD)
             baseSerD.at[S_IC] = 0.
+        # plot wide black edges of the final IC bar (index of IC = 2)
+        yIC, clrIC = dfrDat.iloc[2, :].at[S_IC], dfrClr.iloc[2, :].at[S_IC]
+        cAx.bar(self.dPlt2['axXTck'][-1], height=yIC,
+                width=self.dPlt2['wdthBar'],  lw=self.dPlt2['lwdBarIC'],
+                ec=self.dPlt['clrDef'], fc=clrIC, hatch=self.dPlt2['hatBarIC'])
         cAx.plot([-1/2, baseSerD.index.size - 1/2], [0, 0],
                  lw=self.dPltB['lwdPlt'], color=self.dPlt['clrDef'])
         return cFig, cAx
