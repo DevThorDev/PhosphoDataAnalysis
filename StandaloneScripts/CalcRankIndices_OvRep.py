@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # --- CalcRankIndices_OvRep.py ------------------------------------------------
+# Calculate the rank indices for the over-representation of an entity
+# (e.g. a metabolite or a bin) in a table sorted according to a numeric column
 ###############################################################################
 import os, time
 

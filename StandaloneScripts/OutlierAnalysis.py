@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # --- OutlierAnalysis.py ------------------------------------------------------
+# Classification of outliers via median absolute deviation (MAD) and
+# inter-quartile range (IQR)
 ###############################################################################
 import os
 

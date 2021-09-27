@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # --- CalcStats.py ------------------------------------------------------------
+# Calculate some simple statistics, and the p-value of the Kruskal-Wallis test
+# for all metabolites and phosphopeptides, and all genotypes
 ###############################################################################
 import os, time, itertools
 

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # --- CalcOverRepFromCSV.py ---------------------------------------------------
+# Calculate the over-representation profile of an entity (e.g. a metabolite
+# or a bin) in a table sorted according to a numeric column
 ###############################################################################
 import os, time
 
