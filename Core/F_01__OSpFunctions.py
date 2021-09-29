@@ -2,6 +2,7 @@
 ###############################################################################
 # --- F_01__OSpFunctions.py ---------------------------------------------------
 ###############################################################################
+import Core.C_00__GenConstants as GC
 import Core.F_00__GenFunctions as GF
 
 # --- Functions (general) -----------------------------------------------------
@@ -16,5 +17,16 @@ def getDMap(lODat):
                     GF.addToDictL(dMap, cHd, cNmR1)
     # dMap (e.g.): {'DR_WT': ['DR_WT_1', 'DR_WT_2',...], 'DS_WT':...}
     return dMap
+
+# --- Functions (O_83__OverRep) -----------------------------------------------
+def getGT(tGT, dNmGT=GC.D_NM_GT, iPos=0):
+    assert type(tGT) == tuple
+    if GF.elEqual(tGT):
+        if tGT[0] in dNmGT:
+            return dNmGT[tGT[0]][iPos]
+    else:
+        if tGT[0] in dNmGT and GF.elEqual([sGT in dNmGT for sGT in tGT]):
+            return GC.S_USC.join([dNmGT[sGT][iPos] for sGT in tGT])
+    return None
 
 ###############################################################################

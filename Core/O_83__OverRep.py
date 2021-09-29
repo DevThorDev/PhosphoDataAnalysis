@@ -94,8 +94,8 @@ class OverRep(DataBaseClass):
                 self.dOIn[cA] = getattr(self, cA)
 
     def plotProfiles(self, dfrR, k = 0, tpPr = 'PD'):
-        d = TF.selDataThr(self.dITp, dfrR, self.dSort, k)
-        PF.plotProfile(self.dITp, d, self.lPRF[k], k, tpPr = tpPr)
+        d, thr = TF.selDataThr(self.dITp, dfrR, self.dSort, k)
+        PF.plotProfile(self.dITp, d, thr, self.tGT, self.lPRF[k], k, tpPr=tpPr)
 
     def plotOnlyIfCalc(self, tpPr = 'PD'):
         lCalc = [False]*len(self.lPRF)

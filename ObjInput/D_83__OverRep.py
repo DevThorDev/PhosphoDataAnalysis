@@ -6,6 +6,7 @@ import Core.C_00__GenConstants as GC
 
 # --- general -----------------------------------------------------------------
 sNmSpec = GC.S_OV_REP_L
+dNmGT = GC.D_NM_GT
 
 # --- data specific (general) -------------------------------------------------
 cSep = ';'
@@ -54,10 +55,11 @@ lElCCR = None
 # --- dictionaries containing profile-type specific input ---------------------
 lTpX = [GC.S_PD, GC.S_BO]
 lTpY = [GC.S_N_OCC, GC.S_OVER_REP, GC.S_UNDER_REP]
-lSXAx = ['Top $\it{n}$ of the most frequent phosphopeptides',
-          'Top $\it{n}$ of the strongest positive interactions']
-lSXAx_rev = ['Top $\it{n}$ of the least frequent phosphopeptides',
-             'Top $\it{n}$ of the strongest negative interactions']
+# lSXAx = ['Top $\it{n}$ of the most frequent phosphopeptides',
+#           'Top $\it{n}$ of the strongest positive interactions']
+# lSXAx_rev = ['Top $\it{n}$ of the least frequent phosphopeptides',
+#              'Top $\it{n}$ of the strongest negative interactions']
+lSXAx, lSXAx_rev = ['$\it{n}$', '$\it{n}$'], ['$\it{n}$', '$\it{n}$']
 lSYAx = [GC.S_Y_N_OCC, GC.S_Y_P_VAL, GC.S_Y_P_VAL]
 lNDigRndYAx = [0, GC.R06, GC.R06]
 lDoPYAx = [False, True, True]
@@ -77,6 +79,7 @@ szFontLeg = 'small'     # font size of legend
 iIncr = 1               # increase of file number
 jIncr = 10              # number of entities (e.g. metabolites) per plot
 coordAnchorBox = (1.1, 0.5)         # coordinates of the legend anchor box
+posTxtXY = ()
 dClrSpec = {'1.1': (0.12, 0.47, 0.71),
             '1.2': (1.0, 0.5, 0.05),
             '1.3': (0.17, 0.63, 0.17),
@@ -235,6 +238,7 @@ assert (len(lSYAx) == len(lTpY) and len(lNDigRndYAx) == len(lTpY) and
 # --- create input dictionary -------------------------------------------------
 dIO = {# --- general
        'sNmSpec': sNmSpec,
+       'dNmGT': dNmGT,
        # --- data specific (general)
        'cSep': cSep,
        'sMCorrectL': sMCorrectL,

@@ -10,23 +10,30 @@ NM_GT2 = 'GT2'
 NM_GT3 = 'GT3'
 NM_GT4 = 'GT4'
 NM_GT5 = 'GT5'
+L_NM_GT = [NM_GT0, NM_GT1, NM_GT2, NM_GT3, NM_GT4, NM_GT5]
 
 NM_FT1 = 'FT1'
 NM_FT2 = 'FT2'
 NM_FT3 = 'FT3'
 NM_FT4 = 'FT4'
+L_NM_FT = [NM_FT1, NM_FT2, NM_FT3, NM_FT4]
 
-T_NM_GT0 = (NM_GT0, 'WT', 'wild type')
-T_NM_GT1 = (NM_GT1, 'PGM', 'PGM mutant')
-T_NM_GT2 = (NM_GT2, 'SIRK1', 'SIRK1 mutant')
-T_NM_GT3 = (NM_GT3, 'SIRK1-PGM', 'PGM/SIRK1 double mutant')
-T_NM_GT4 = (NM_GT4, 'SIRK1-SWEET', 'SIRK1/SWEET double mutant')
-T_NM_GT5 = (NM_GT5, 'SWEET', 'SWEET mutant')
+T_NM_GT0 = (NM_GT0, 'WT', 'wild type', 'wt')
+T_NM_GT1 = (NM_GT1, 'PGM', 'PGM mutant', 'pgm')
+T_NM_GT2 = (NM_GT2, 'SIRK1', 'SIRK1 mutant', 'sirk1')
+T_NM_GT3 = (NM_GT3, 'SIRK1-PGM', 'PGM/SIRK1 double mutant', 'pgm|sirk1')
+T_NM_GT4 = (NM_GT4, 'SIRK1-SWEET', 'SIRK1/SWEET double mutant',
+            'pgm|sweet11/12')
+T_NM_GT5 = (NM_GT5, 'SWEET', 'SWEET mutant', 'sweet11/12')
+L_T_NM_GT = [T_NM_GT0, T_NM_GT1, T_NM_GT2, T_NM_GT3, T_NM_GT4, T_NM_GT5]
+D_NM_GT = {nmGT: L_T_NM_GT[k] for k, nmGT in enumerate(L_NM_GT)}
 
-T_NM_FT1 = (NM_FT1, 'DR', 'day root')
-T_NM_FT2 = (NM_FT2, 'DS', 'day shoot')
-T_NM_FT3 = (NM_FT3, 'NR', 'night root')
-T_NM_FT4 = (NM_FT4, 'NS', 'night shoot')
+T_NM_FT1 = (NM_FT1, 'DR', 'day root', 'dr')
+T_NM_FT2 = (NM_FT2, 'DS', 'day shoot', 'ds')
+T_NM_FT3 = (NM_FT3, 'NR', 'night root', 'nr')
+T_NM_FT4 = (NM_FT4, 'NS', 'night shoot', 'ns')
+L_T_NM_FT = [T_NM_FT1, T_NM_FT2, T_NM_FT3, T_NM_FT4]
+D_NM_FT = {nmFt: L_T_NM_FT[k] for k, nmFt in enumerate(L_NM_FT)}
 
 NM_ALL_GT = 'AllGT'
 NM_ALL_FT = 'AllFt'
@@ -139,6 +146,8 @@ NM_NUM_CLUST = 'numClust'
 NM_FILTER = 'Filter'
 
 # --- other strings -----------------------------------------------------------
+S_USC = '_'
+
 S_PROT = 'Protein'
 S_BIN_C_G = 'BinCode'
 S_BIN_C_3 = 'BinCode3'
@@ -178,7 +187,7 @@ S_N_OCC = 'NOcc'
 S_OVER_REP = 'ORp'
 S_UNDER_REP = 'URp'
 S_Y_N_OCC = 'Number of occurrences ($\it{k}$)'
-S_Y_P_VAL = '$-\log_{10}$(p-value)'
+S_Y_P_VAL = 'over-representation score\n' + '-' + '$\log_{10}$' + '(p-value)'
 
 # --- constants for special plots ---------------------------------------------
 L_BIN_C_2 = ['1.1', '1.2', '1.3', '2.1', '2.2', '3.1', '3.2', '3.4', '3.5',

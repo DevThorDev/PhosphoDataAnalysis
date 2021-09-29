@@ -117,8 +117,8 @@ R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
-doPlot_DevSD = True             # True / False
-doPlot_ICDrv = True             # True / False
+doPlot_DevSD = False             # True / False
+doPlot_ICDrv = False             # True / False
 doPlot_CmbToIC = True           # True / False
 
 # --- data specific input -----------------------------------------------------
@@ -138,11 +138,11 @@ dTupIn_DevSD = {'A': (S_GT0, 'Alanine', S_FT2 + S_BAR + S_FT1),
                 'D': (S_GT1, 'Docosanoic_acid', S_FT1 + S_BAR + S_FT4),
                 'E': (S_GT5, 'Putrescine', S_FT2 + S_BAR + S_FT1),
                 'F': (S_GT5, 'Putrescine', S_FT3 + S_BAR + S_FT2),
-                
+
                 'N': (S_GT0, 'Docosanoic_acid', S_FT4 + S_BAR + S_FT3),
                 'O': (S_GT1, 'Alanine', S_FT4 + S_BAR + S_FT1),
                 'P': (S_GT1, 'Docosanoic_acid', S_FT4 + S_BAR + S_FT1),
-                
+
                 'X_S': (S_GT5, 'Sucrose', S_FT2 + S_BAR + S_FT1)}
 
 nmPlt_DevSD = NM_DEV_SD_PLT         # name prefix of the deviation SD plot
@@ -180,13 +180,22 @@ dTupIn_ICDrv = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
                 'C': (S_GT1, 'Glutamic_acid', 'TADS(1)DGES(1)GEIKFEDNNLPPLGEK'),
                 'D': (S_GT5, 'Putrescine', 'S(0.999)FS(0.001)VADFPR'),
                 'E': (S_GT5, 'Fructose', 'TEEDENDDEDHEHKDDKT(0.854)S(0.144)PDS(0.001)IVMVEAK'),
-                
+
                 'N': (S_GT0, 'Docosanoic_acid', 'SLEELS(1)GEAEVS(1)HDEK'),
                 'O': (S_GT1, 'Alanine', 'TFDELS(1)DGEVYEDS(1)D'),
                 'P': (S_GT1, 'Docosanoic_acid', 'S(0.003)PS(0.997)YKEVALAPPGSIAK'),
-                
+
                 'X_S1': (S_GT5, 'Sucrose', 'S(1)DLQTPLVRPK'),
-                'X_S2': (S_GT5, 'Sucrose', 'NFANS(1)FGRK')}
+                'X_S2': (S_GT5, 'Sucrose', 'NFANS(1)FGRK'),
+
+                'Y_GT0_1': (S_GT0, 'Nonanoic_acid', 'T(0.011)FDELS(0.759)DT(0.23)EVYEDS(1)D'),
+                'Y_GT0_2': (S_GT0, 'myo-Inositol', 'TFDELS(1)DTEVYEDS(1)D'),
+                'Y_GT1_1': (S_GT1, 'Phenylalanine', 'S(0.825)RS(0.137)VDES(0.039)FANSFSPR'),
+                'Y_GT1_2': (S_GT1, 'Phenylalanine', 'S(0.001)GRT(0.004)S(0.996)EPNS(1)EDEAAGVGK'),
+                'Y_GT5_1': (S_GT5, 'Aspartic_acid', 'IGS(0.999)S(0.001)EMLIEGEDVR'),
+                'Y_GT5_2': (S_GT5, 'Beta-alanine', 'DIS(1)PTAAGLGLPVTGGK'),
+                'Y_GT5_3': (S_GT5, 'Docosanoic_acid', 'LSRPGS(1)GS(1)VSGLASQR'),
+                'Y_GT5_4': (S_GT5, 'Ornithine', 'TDSEVTSLAAS(0.024)S(0.976)PARS(1)PR')}
 
 nmPlt_ICDrv = NM_IC_DERIV_PLT       # name prefix of the IC derivation plot
 tFigSz_ICDrv = (6., 4.)             # (width, height): figure size [inches]
@@ -240,7 +249,8 @@ plotVLines_CmbToIC1 = True          # plot vertical lines between groups?
 
 # --- graphics parameters / combine to IC plot 2 ------------------------------
 nmPlt_CmbToIC2 = NM_CMB_TO_IC_PLT2  # name prefix of the IC derivation plot 2
-tFigSz_CmbToIC2 = (3., 4.)          # (width, height): figure size [inches]
+# tFigSz_CmbToIC2 = (3., 4.)          # (width, height): figure size [inches]
+tFigSz_CmbToIC2 = (1.5, 1.5)        # (width, height): figure size [inches]
 lwdBarIC_CmbToIC2 = 1.5             # line width of final IC bar
 hatBarIC_CmbToIC2 = 'xx'            # hatch of final IC bar
 alphaClr_CmbToIC2 = .8              # alpha of colours defined via tuples
@@ -841,12 +851,13 @@ class CmbToICPlotter(Plotter):
         self.dDfrIn = pltrICDrv.dDfrIn
         print('Initiated "CmbToICPlotter" base object and obtained data.')
 
-    def setTicks(self, dPlt):
-        axYLim = dPlt['axYLim']
+    def setTicks(self, dPlt, serD=None):
+        if serD is not None:                # adapt y-limits
+            self.dPlt['axYLim'] = (math.floor(min(serD)), math.ceil(max(serD)))
+        axYLim, stpYTck = dPlt['axYLim'], dPlt['stepYTck']
         axXTck, axYTck = np.arange(len(dPlt['lblXTck'])), None
-        if axYLim is not None and len(axYLim) >= 2:
-            axYTck = np.arange(-(-axYLim[0]//2*2), axYLim[1]//2*2 + 1,
-                               dPlt['stepYTck'])
+        if axYLim is not None and len(axYLim) >= 2 and stpYTck is not None:
+            axYTck = np.arange(-(-axYLim[0]//2*2), axYLim[1]//2*2 + 1, stpYTck)
         dPlt['axXTck'], dPlt['axYTck'] = axXTck, axYTck
 
     def createPlot1(self, cSer):
@@ -876,7 +887,7 @@ class CmbToICPlotter(Plotter):
         dAlpha = {'S': self.dPlt2['alphaClr'], 'L': self.dPlt2['alphaClrLow']}
         dfrDat, dfrClr = getDfrsDatClr(self.dPltB['dClr'], dAlpha, cSer)
         baseSerD = pd.Series([0.]*dfrDat.columns.size, index=dfrDat.columns)
-        self.setTicks(self.dPlt2)
+        self.setTicks(self.dPlt2, dfrDat.iloc[:, 2])
         cFig, cAx = self.iniPlot(self.dPlt2)
         for cIdx, pltSerD in dfrDat.iterrows():
             cAx.bar(self.dPlt2['axXTck'], height=pltSerD,
@@ -892,6 +903,8 @@ class CmbToICPlotter(Plotter):
                 ec=self.dPlt['clrDef'], fc=clrIC, hatch=self.dPlt2['hatBarIC'])
         cAx.plot([-1/2, baseSerD.index.size - 1/2], [0, 0],
                  lw=self.dPltB['lwdPlt'], color=self.dPlt['clrDef'])
+        if self.dPlt['axYLim'] is not None and len(self.dPlt['axYLim']) == 2:
+            plt.ylim(self.dPlt['axYLim'])
         return cFig, cAx
 
     def decoratePlot2(self, cAx, sGT):

@@ -661,6 +661,6 @@ def selDataThr(dITp, cDfr, dSrt, k = 0):
             dfrSelD.loc[:, sC] = cSer
     dfrSelD = dfrSelD.dropna(axis = 1, how = 'all')
     srtMd, srtDg = dSrt[GC.S_COL]['Srt']
-    return GF.reIndexSpec(dfrSelD, srtMd, srtDg)
+    return GF.reIndexSpec(dfrSelD, srtMd, srtDg), cThr
 
 ###############################################################################

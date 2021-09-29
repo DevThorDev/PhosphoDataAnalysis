@@ -7,6 +7,7 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import AnchoredText
 import statsmodels.formula.api as smf
 import statsmodels.graphics.regressionplots as regplt
 
@@ -28,6 +29,42 @@ def pltXYAxis(dfr, nmCX = None, nmCY = None, pltAxXY = (True, True)):
             plt.plot([0, 0], [minY, maxY], lw = 0.75, color = 'k')
         else:
             plt.plot([0, 0], [minDfr, maxDfr], lw = 0.75, color = 'k')
+
+# def pltHalfAx(dPlt, cDfr, xBase=None, yBase=None, pltAxX=True, pltAxY=True):
+#     cX, cY, maxY = 0., 0., cDfr.stack().max()
+#     if xBase is not None:
+#         cX = xBase
+#     if yBase is not None:
+#         cY, minY = yBase, yBase
+#     else:
+#         minY = min(0, cDfr.stack().min())
+#     if pltAxX:
+#         plt.plot([0, cDfr.shape[0] - 1], [cY, cY], ls='--', lw=0.75,
+#                  color='k')
+#     if pltAxY:
+#         print('TEMP - xBase:', xBase, '- yBase:', yBase, '- cX', cX,
+#               '- cY:', cY)
+#         plt.plot([cX, cX], [minY, maxY], lw=0.75, color='k')
+
+def pltHalfAx(dPlt, cDfr, xBase=None, yBase=None, pltAxX=True, pltAxY=True):
+    minDfr, maxDfr = cDfr.stack().min(), cDfr.stack().max()
+    if pltAxX:
+        plt.plot([0, cDfr.shape[0] - 1], [minDfr, minDfr], ls='--', lw=0.75,
+                 color='k')
+    if pltAxY:
+        plt.plot([0., 0.], [minDfr, maxDfr], lw=0.75, color='k')
+
+def pltAnchoredTxt(cAx, s=''):
+    # cAnTxt = AnchoredText(s, frameon=False, borderpad=0, pad=0.1, loc=1,
+    #                       bbox_to_anchor=[1.19, 1],
+    #                       bbox_transform=plt.gca().transAxes,
+    #                       prop={'color': 'k','fontsize': 10,
+    #                             'fontfamily': 'Georgia'})
+    cAnTxt = AnchoredText(s, frameon=False, borderpad=0, pad=0.1, loc=1,
+                          bbox_to_anchor=[1.19, 1],
+                          bbox_transform=plt.gca().transAxes,
+                          prop={'color': 'k', 'style': 'italic'})
+    cAx.add_artist(cAnTxt)
 
 def decorateSavePlot(pF, dfr = pd.DataFrame(), sTtl = None, xLbl = None,
                      yLbl = None, xLim = None, yLim = None, nmCX = None,
@@ -300,7 +337,7 @@ def pltClCent(dITp, dIPlt, cTrD, dClDfr, pF, lClr = None,
             plt.close()
 
 # --- Functions (O_83__OverRep) -----------------------------------------------
-def plotProfile(dITp, cDfr, pF, k = 0, tpPr = 'PD'):
+def plotProfile(dITp, cDfr, thrD, tGT, pF, k = 0, tpPr = 'PD'):
     i, j = 0, 0
     while j < len(cDfr.columns):
         d = cDfr.iloc[:, j:(j + dITp['jIncr'])]
@@ -321,6 +358,8 @@ def plotProfile(dITp, cDfr, pF, k = 0, tpPr = 'PD'):
             l = cAx.legend(loc = 'center',
                            bbox_to_anchor = dITp['coordAnchorBox'],
                            fontsize = dITp['szFontLeg'])
+            pltAnchoredTxt(cAx, s=SF.getGT(tGT, dNmGT=dITp['dNmGT'], iPos=3))
+            pltHalfAx({}, d, yBase=thrD, pltAxX=True, pltAxY=True)
             if l is not None:
                 cFig.savefig(pFN, bbox_extra_artists = (l,),
                              bbox_inches = 'tight')
