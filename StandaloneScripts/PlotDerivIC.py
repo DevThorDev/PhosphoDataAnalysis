@@ -127,7 +127,7 @@ sSep = ';'
 clrDef = 'k'                    # default colour
 szFontLeg = 'small'             # font size of legend
 nCharDsp = 60                   # number of chars displayed for legend item
-coordAnchorBox = (.5, 1.02)     # coordinates of the legend anchor box
+posLegXY = (.5, 1.02)           # coordinates of the legend anchor box
 
 # --- graphics parameters / deviation SD plot ---------------------------------
 dTupIn_DevSD = {'A': (S_GT0, 'Alanine', S_FT2 + S_BAR + S_FT1),
@@ -295,7 +295,7 @@ dInput = {# --- constants
           'plot_Gen': {'clrDef': clrDef,
                        'szFontLeg': szFontLeg,
                        'nCharDsp': nCharDsp,
-                       'coordAnchorBox': coordAnchorBox},
+                       'posLegXY': posLegXY},
           # --- graphics parameters / deviation SD plot
           'plot_DevSD': {'dTupIn': dTupIn_DevSD,
                          'nmPlt': nmPlt_DevSD,
@@ -630,7 +630,7 @@ class Plotter(RootClass):
         return dPPltF
 
     def setDummyVal(self):
-        l = ['clrDef', 'szFontLeg', 'nCharDsp', 'coordAnchorBox', 'dTupIn',
+        l = ['clrDef', 'szFontLeg', 'nCharDsp', 'posLegXY', 'dTupIn',
              'nmPlt', 'tFigSz', 'symMark', 'szMark', 'lenMnBar', 'lenHfMnBar',
              'lwdMnBar', 'dltLwdMnBar', 'lenWMnBar', 'lwdWMnBar', 'lwdLnSD',
              'dltLwdLnSD', 'lenWLnSD', 'lwdWLnSD', 'lstCnLnSD', 'lwdCnLnSD',
@@ -774,7 +774,7 @@ class ICDerivPlotter(Plotter):
     def decoratePlot(self, cAx, sGT):
         super().decoratePlot(self.dPlt, cAx, sTtl=D_NM_GT[sGT])
         l = cAx.legend(loc=self.dPlt['locLegend'],
-                       bbox_to_anchor=self.dPlt['coordAnchorBox'],
+                       bbox_to_anchor=self.dPlt['posLegXY'],
                        fontsize=self.dPlt['szFontLeg'])
         if self.dPlt['plotVLines']:
             yL, yU = self.dPlt['axYTck'][0], self.dPlt['axYTck'][-1]

@@ -79,7 +79,7 @@ lClr_ClCent = [(0.9, 0., 0.), (0.8, 0.4, 0.), (0.6, 0.6, 0.),
                (0.75, 0.75, 0.75), (1., 0.4, 0.4), (1., 0.7, 0.),
                (1., 1., 0.), (0.3, 1., 0.3), (0., 1., 1.),
                (0.5, 0.5, 1.), (1., 0., 1.)]
-coordAnchorBox = (1.1, 0.5)         # coordinates of the legend anchor box
+posLegXY = (1.1, 0.5)   # coordinates of the legend anchor box
 
 # --- derived values ----------------------------------------------------------
 nmCt, nmLbl, nmCtr = tCNmRes[0], tCNmRes[1], tCNmRes[2]
@@ -150,7 +150,7 @@ dIO = {# --- general
                       'wdthLn': wdthLn_ClCent,
                       'colLns': colLns_ClCent,
                       'lClr': lClr_ClCent,
-                      'coordAnchorBox': coordAnchorBox},
+                      'posLegXY': posLegXY},
        # --- derived values
        'nmCt': nmCt,
        'nmLbl': nmLbl,

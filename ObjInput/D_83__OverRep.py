@@ -78,8 +78,26 @@ sComp = '>='            # comparison string (value with threshold)
 szFontLeg = 'small'     # font size of legend
 iIncr = 1               # increase of file number
 jIncr = 10              # number of entities (e.g. metabolites) per plot
-coordAnchorBox = (1.1, 0.5)         # coordinates of the legend anchor box
-posTxtXY = ()
+posLegXY = (1.1, 0.5)   # coordinates of the legend anchor box
+posTxtXY = (0.98, 0.98) # coordinates of the text anchor box
+locTxtXY = 'upper right'    # position of the text anchor box
+padTxt = 0.1            # padding as fraction of the fontsize
+borderPadTxt = 0.05     # padding between offsetbox frame and bbox_to_anchor
+dPropTxt = {GC.NM_GT0: {'color': 'k', 'fontsize': 12, 'fontstyle': 'normal'},
+            GC.NM_GT1: {'color': 'k', 'fontsize': 12, 'fontstyle': 'italic'},
+            GC.NM_GT2: {'color': 'k', 'fontsize': 12, 'fontstyle': 'italic'},
+            GC.NM_GT3: {'color': 'k', 'fontsize': 12, 'fontstyle': 'italic'},
+            GC.NM_GT4: {'color': 'k', 'fontsize': 12, 'fontstyle': 'italic'},
+            GC.NM_GT5: {'color': 'k', 'fontsize': 12, 'fontstyle': 'italic'}}
+drawFrame = False       # draw a frame around the text box?
+lnWdthX = 0.75          # line width of the x-halfaxis
+lnWdthY = 0.75          # line width of the y-halfaxis
+lnStyX = '--'           # line style of the x-halfaxis
+lnStyY = '-'            # line style of the y-halfaxis
+lnClrX = 'k'            # line colour of the x-halfaxis
+lnClrY = 'k'            # line colour of the y-halfaxis
+offsMinY = -0.05        # y-halfaxis offset to be added to the minimum y-value
+
 dClrSpec = {'1.1': (0.12, 0.47, 0.71),
             '1.2': (1.0, 0.5, 0.05),
             '1.3': (0.17, 0.63, 0.17),
@@ -279,7 +297,20 @@ dIO = {# --- general
        'szFontLeg': szFontLeg,
        'iIncr': iIncr,
        'jIncr': jIncr,
-       'coordAnchorBox': coordAnchorBox,
+       'posLegXY': posLegXY,
+       'posTxtXY': posTxtXY,
+       'locTxtXY': locTxtXY,
+       'padTxt': padTxt,
+       'borderPadTxt': borderPadTxt,
+       'dPropTxt': dPropTxt,
+       'drawFrame': drawFrame,
+       'lnWdthX': lnWdthX,
+       'lnWdthY': lnWdthY,
+       'lnStyX': lnStyX,
+       'lnStyY': lnStyY,
+       'lnClrX': lnClrX,
+       'lnClrY': lnClrY,
+       'offsMinY': offsMinY,
        'dClrSpec': dClrSpec,
        'dClrBinC': dClrBinC}
 

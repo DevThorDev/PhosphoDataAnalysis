@@ -11,6 +11,7 @@ from matplotlib.offsetbox import AnchoredText
 import statsmodels.formula.api as smf
 import statsmodels.graphics.regressionplots as regplt
 
+import Core.C_00__GenConstants as GC
 import Core.F_00__GenFunctions as GF
 import Core.F_01__OSpFunctions as SF
 
@@ -30,40 +31,24 @@ def pltXYAxis(dfr, nmCX = None, nmCY = None, pltAxXY = (True, True)):
         else:
             plt.plot([0, 0], [minDfr, maxDfr], lw = 0.75, color = 'k')
 
-# def pltHalfAx(dPlt, cDfr, xBase=None, yBase=None, pltAxX=True, pltAxY=True):
-#     cX, cY, maxY = 0., 0., cDfr.stack().max()
-#     if xBase is not None:
-#         cX = xBase
-#     if yBase is not None:
-#         cY, minY = yBase, yBase
-#     else:
-#         minY = min(0, cDfr.stack().min())
-#     if pltAxX:
-#         plt.plot([0, cDfr.shape[0] - 1], [cY, cY], ls='--', lw=0.75,
-#                  color='k')
-#     if pltAxY:
-#         print('TEMP - xBase:', xBase, '- yBase:', yBase, '- cX', cX,
-#               '- cY:', cY)
-#         plt.plot([cX, cX], [minY, maxY], lw=0.75, color='k')
-
-def pltHalfAx(dPlt, cDfr, xBase=None, yBase=None, pltAxX=True, pltAxY=True):
-    minDfr, maxDfr = cDfr.stack().min(), cDfr.stack().max()
+def pltHalfAx(dPlt, cDfr, yBase=None, pltAxX=True, pltAxY=True):
     if pltAxX:
-        plt.plot([0, cDfr.shape[0] - 1], [minDfr, minDfr], ls='--', lw=0.75,
-                 color='k')
+        plt.plot([0, cDfr.shape[0] - 1], [yBase, yBase], lw=dPlt['lnWdthX'],
+                 ls=dPlt['lnStyX'], color=dPlt['lnClrX'])
     if pltAxY:
-        plt.plot([0., 0.], [minDfr, maxDfr], lw=0.75, color='k')
+        minY, maxY = cDfr.stack().min(), cDfr.stack().max()
+        if yBase is not None:
+            minY = yBase + dPlt['offsMinY']
+        plt.plot([0., 0.], [minY, maxY], lw=dPlt['lnWdthY'],
+                 ls=dPlt['lnStyY'], color=dPlt['lnClrY'])
 
-def pltAnchoredTxt(cAx, s=''):
-    # cAnTxt = AnchoredText(s, frameon=False, borderpad=0, pad=0.1, loc=1,
-    #                       bbox_to_anchor=[1.19, 1],
-    #                       bbox_transform=plt.gca().transAxes,
-    #                       prop={'color': 'k','fontsize': 10,
-    #                             'fontfamily': 'Georgia'})
-    cAnTxt = AnchoredText(s, frameon=False, borderpad=0, pad=0.1, loc=1,
-                          bbox_to_anchor=[1.19, 1],
+def pltAnchoredTxt(dPlt, cAx, sTxt='', cGT=GC.NM_GT0):
+    dProp = dPlt['dPropTxt'][cGT]
+    cAnTxt = AnchoredText(sTxt, bbox_to_anchor=dPlt['posTxtXY'],
                           bbox_transform=plt.gca().transAxes,
-                          prop={'color': 'k', 'style': 'italic'})
+                          loc=dPlt['locTxtXY'], pad=dPlt['padTxt'],
+                          borderpad=dPlt['borderPadTxt'],
+                          prop=dProp, frameon=dPlt['drawFrame'])
     cAx.add_artist(cAnTxt)
 
 def decorateSavePlot(pF, dfr = pd.DataFrame(), sTtl = None, xLbl = None,
@@ -319,7 +304,6 @@ def pltClCent(dITp, dIPlt, cTrD, dClDfr, pF, lClr = None,
     wdthLn, lClr, pltAxXY = dIPlt['wdthLn'], dIPlt['lClr'], (True, False)
     xLim = (dIPlt['xLimB'], dIPlt['xLimT'])
     yLim = (dIPlt['yLimB'], dIPlt['yLimT'])
-    coordAnchorBox = dIPlt['coordAnchorBox']
     for cNCl, cDfr in dClDfr.items():
         sCPre = dITp['nmPlt_ClCent'] + '__' + str(cNCl) + 'Cl__'
         pFN = GF.adaptPF4Plot(pF, dITp['pRelPltF'], sPre = sCPre)
@@ -331,7 +315,7 @@ def pltClCent(dITp, dIPlt, cTrD, dClDfr, pF, lClr = None,
                 cAx.plot(cDfr.iloc[:, k], marker = tpMark, ms = szMark,
                          mew = ewMark, mec = ecM, mfc = fcM, ls = styLn,
                          lw = wdthLn, color = cClr, label = cDfr.columns[k])
-            l = cAx.legend(loc = 'center', bbox_to_anchor = coordAnchorBox)
+            l = cAx.legend(loc = 'center', bbox_to_anchor = dIPlt['posLegXY'])
             decorateSaveFigLegOut(pFN, cFig, cDfr, sTtl, xLbl, yLbl, xLim,
                                   yLim, cLeg = l, pltAxXY = pltAxXY)
             plt.close()
@@ -355,11 +339,11 @@ def plotProfile(dITp, cDfr, thrD, tGT, pF, k = 0, tpPr = 'PD'):
                     cAx.plot(d.loc[:, sC], lw = 0.75, label = sC)
             cAx.set_xlabel(dITp['dTpX'][tpPr])
             cAx.set_ylabel(dITp['dTpY'][dITp['lTpY'][k]][0])
-            l = cAx.legend(loc = 'center',
-                           bbox_to_anchor = dITp['coordAnchorBox'],
+            l = cAx.legend(loc = 'center', bbox_to_anchor = dITp['posLegXY'],
                            fontsize = dITp['szFontLeg'])
-            pltAnchoredTxt(cAx, s=SF.getGT(tGT, dNmGT=dITp['dNmGT'], iPos=3))
-            pltHalfAx({}, d, yBase=thrD, pltAxX=True, pltAxY=True)
+            pltHalfAx(dITp, d, yBase=thrD, pltAxX=True, pltAxY=True)
+            sGT, sNmGT = SF.getGT(tGT, dITp['dNmGT'], iPos=3)
+            pltAnchoredTxt(dITp, cAx, sTxt=sNmGT, cGT=sGT)
             if l is not None:
                 cFig.savefig(pFN, bbox_extra_artists = (l,),
                              bbox_inches = 'tight')

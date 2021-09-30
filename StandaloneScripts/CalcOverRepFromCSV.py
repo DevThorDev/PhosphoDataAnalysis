@@ -108,7 +108,7 @@ sComp = '>='            # comparison string (value with threshold)
 szFontLeg = 'small'     # font size of legend
 iIncr = 1               # increase of file number
 jIncr = 10              # number of entities (e.g. metabolites) per plot
-coordAnchorBox = (1.1, 0.5)         # coordinates of the legend anchor box
+posLegXY = (1.1, 0.5)   # coordinates of the legend anchor box
 
 lWdPlt = 0.75
 dClrBinC = {'2.1': (0.12, 0.47, 0.71),
@@ -178,7 +178,7 @@ dInput = {# --- constants
           'szFontLeg': szFontLeg,
           'iIncr': iIncr,
           'jIncr': jIncr,
-          'coordAnchorBox': coordAnchorBox,
+          'posLegXY': posLegXY,
           'lWdPlt': lWdPlt,
           'dClrBinC': dClrBinC}
 
@@ -381,8 +381,7 @@ def plotProfile(inpD, cDfr, pF, k=0, tpPr=S_IDIST):
                     cAx.plot(d.loc[:, sC], lw=inpD.lWdPlt, label=sC)
             cAx.set_xlabel(inpD.dTpX[tpPr])
             cAx.set_ylabel(inpD.dTpY[inpD.lTpY[k]][0])
-            l = cAx.legend(loc='center',
-                           bbox_to_anchor=inpD.coordAnchorBox,
+            l = cAx.legend(loc='center', bbox_to_anchor=inpD.posLegXY,
                            fontsize=inpD.szFontLeg)
             if l is not None:
                 cFig.savefig(pFN, bbox_extra_artists=(l,),

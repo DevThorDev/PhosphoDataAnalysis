@@ -208,7 +208,7 @@ sSep = ';'
 # --- graphics parameters / all plots -----------------------------------------
 szFontLeg = 'small'             # font size of legend
 nCharDsp = 60                   # number of chars displayed for legend item
-coordAnchorBox = (0.5, 1.02)    # coordinates of the legend anchor box
+posLegXY = (0.5, 1.02)          # coordinates of the legend anchor box
 lWdPlt = 1.                     # line width in plot
 
 # --- graphics parameters / pattern plot --------------------------------------
@@ -440,7 +440,7 @@ dInput = {# --- constants
                              'tFigSz': tFigSzPaP,
                              'szFontLeg': szFontLeg,
                              'nCharDsp': nCharDsp,
-                             'coordAnchorBox': coordAnchorBox,
+                             'posLegXY': posLegXY,
                              'lWdPlt': lWdPlt},
           # --- graphics parameters / IC component plot
           'plotOfICCmp': {'dPairs': dPairsICP,
@@ -448,7 +448,7 @@ dInput = {# --- constants
                           'tFigSz': tFigSzICP,
                           'szFontLeg': szFontLeg,
                           'nCharDsp': nCharDsp,
-                          'coordAnchorBox': coordAnchorBox,
+                          'posLegXY': posLegXY,
                           'lWdPlt': lWdPlt,
                           'wdthBar': wdthBar,
                           'wdthGrp': wdthGrp,
@@ -643,7 +643,7 @@ def saveDfrRes(dfrRes, dDat, pFOut, sSep, dSel=None, dMap=None, dropNA=True):
 
 def decorateClosePlot(cFig, cAx, dPlt, pPltF, sYLbl=''):
     cAx.set_ylabel(sYLbl)
-    l = cAx.legend(loc='lower center', bbox_to_anchor=dPlt['coordAnchorBox'],
+    l = cAx.legend(loc='lower center', bbox_to_anchor=dPlt['posLegXY'],
                    fontsize=dPlt['szFontLeg'])
     if l is not None:
         cFig.savefig(pPltF, bbox_extra_artists=(l,), bbox_inches='tight')
