@@ -157,9 +157,9 @@ R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
-doInfoExtr = False               # True / False
+doInfoExtr = True               # True / False
 doPlotPat = True                # True / False
-doPlotICC = False               # True / False
+doPlotICC = True                # True / False
 dSpecSel = {'S': {'dropNA': True},      # key: column sel.: 'S'hort / 'F'ull
             'F': {'dropNA': False}}     # value: data for sel., e.g. dropNA
 
@@ -364,10 +364,10 @@ sDirOutICP = sDirOutPaP
 
 pBaseIn = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
                        '04_SysBio_DataAnalysis', '15_Figures',
-                       'B_Pattern_ICComp')
+                       'B__Pattern_ICComp')
 # pBaseOut = os.path.join('..', '..', '..', '25_Papers', '01_FirstAuthor',
 #                         '04_SysBio_DataAnalysis', '15_Figures',
-#                         'B_Pattern_ICComp')
+#                         'B__Pattern_ICComp')
 pBaseOut = os.path.join('..', '..', '..', '..', '..', '..', 'W')
 pInCSV = os.path.join(pBaseIn, sDirInCSV)
 pOutCSV = os.path.join(pBaseOut, sDirOutCSV)

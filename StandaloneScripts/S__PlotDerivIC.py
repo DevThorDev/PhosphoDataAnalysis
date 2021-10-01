@@ -117,8 +117,8 @@ R04 = 4
 
 # --- INPUT -------------------------------------------------------------------
 # --- flow control ------------------------------------------------------------
-doPlot_DevSD = False             # True / False
-doPlot_ICDrv = False             # True / False
+doPlot_DevSD = True             # True / False
+doPlot_ICDrv = True             # True / False
 doPlot_CmbToIC = True           # True / False
 
 # --- data specific input -----------------------------------------------------

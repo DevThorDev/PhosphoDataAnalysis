@@ -44,16 +44,6 @@ R04 = 4
 S_MD = 'MetD'
 S_PD = 'PhoD'
 
-# --- TEMP INPUT --------------------------------------------------------------
-# lSCol = ['Atlantic', 'Indian']
-# lSRow = ['Whales', 'Sharks']
-# arrDatF = [[100 - 9, 9], [3330*58 - 100 - 58 + 9, 58 - 9]]
-# arrDatF = [[1, 9], [11, 3]]
-# arrDatF = [[0, 10], [12, 2]]
-# arrDatF = [[8., 2], [1, 5.]]
-# arrDatF = [[8000., 2000], [1000, 5000.]]
-# lAltFisher = ['less', 'greater']    # 'two-sided', 'less', 'greater'
-
 # --- INPUT -------------------------------------------------------------------
 cAttr = S_MD         # S_MD / S_PD
 cGTAttr1 = NM_GT0       # NM_GT0 / NM_GT1 / NM_GT2 / NM_GT3 / NM_GT4 / NM_GT5
@@ -187,7 +177,7 @@ def chi2ContPd(pdDfr, doCorr = True):
     return chi2Cont(pdDfr.values, doCorr = doCorr)
 
 def printElapsedTimeSim(stT, cT, sPre = 'Time'):
-    # calculate and display elapsed time 
+    # calculate and display elapsed time
     elT = round(cT - stT, R04)
     print(sPre, 'elapsed:', elT, 'seconds, this is', round(elT/60, R04),
           'minutes or', round(elT/3600, R04), 'hours or',
