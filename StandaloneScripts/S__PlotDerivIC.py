@@ -19,6 +19,7 @@ S_DOT = '.'
 S_CSV = 'csv'
 S_PDF = 'pdf'
 S_SPSLSP = S_SPACE + S_SLASH + S_SPACE
+S_SPANDSP = S_SPACE + 'and' + S_SPACE
 
 S_M = 'M'
 S_P = 'P'
@@ -85,12 +86,14 @@ S_CMB_TO_IC = 'CombineToIC'
 
 S_CMB_C = 'Combined'
 S_DEV_S = 'deviation'
-S_DEVS_C = 'Deviations between features'
+S_FEAT_S = 'feature'
+S_FEATS_S = S_FEAT_S + 's'
+S_DEVS_C = 'Deviations between' + S_SPACE + S_FEATS_S
 S_CMP_S = 'component'
-S_CMB_DEV = S_CMB_C + S_SPACE + S_DEV_S
+S_CMB_DEV = S_CMB_C + S_SPACE + S_FEAT_S + S_SPACE + S_DEV_S
 S_IC_CMP = S_IC_MEX + S_SPACE + S_CMP_S
 
-S_YLBL_DEV_SD_PLT = 'Difference as multiples of standard deviation'
+S_YLBL_DEV_SD_PLT = 'Single measurements and feature means for features'
 S_YLBL_IC_DERIV_PLT = S_DEVS_C + S_SPSLSP + S_IC_CMP
 S_YLBL1_CMB_TO_IC_PLT = S_IC_CMP
 
@@ -150,16 +153,16 @@ tFigSz_DevSD = (2., 5.)             # (width, height): figure size [inches]
 symMark_DevSD = 'x'                 # marker symbol
 szMark_DevSD = 25                   # marker size
 lenMnBar_DevSD = .3                 # length of mean bar
-lwdMnBar_DevSD = 1.5                # line width of mean bar
-dltLwdMnBar_DevSD = .5              # delta of width of black line to col. line
+lwdMnBar_DevSD = 3.                 # line width of mean bar
+dltLwdMnBar_DevSD = -2.             # delta of width of black line to col. line
 lenWMnBar_DevSD = .05               # length of mean bar whiskers
 lwdWMnBar_DevSD = .6                # line width of mean bar whiskers
-lwdLnSD_DevSD = .8                  # line width of mean bar
-dltLwdLnSD_DevSD = .25              # delta of width of black line to col. line
+lwdLnSD_DevSD = 1.5                 # line width of SD line
+dltLwdLnSD_DevSD = -.75             # delta of width of black line to col. line
 lenWLnSD_DevSD = .1                 # length of mean bar whiskers
-lwdWLnSD_DevSD = .4                 # line width of mean bar whiskers
+lwdWLnSD_DevSD = .5                 # line width of mean bar whiskers
 lstCnLnSD_DevSD = STY_LN_DSH        # line style of connecting line
-lwdCnLnSD_DevSD = .8                # line width of connecting line
+lwdCnLnSD_DevSD = 1.                # line width of connecting line
 dPosFt_DevSD = {0: .75, 1: .25}     # dictionary of positions of features 0|1
 axXLim_DevSD = (0., 1.)             # limits for the x-axis, or None
 axYLim_DevSD = None                 # limits for the y-axis, or None
@@ -462,9 +465,9 @@ def plotWskV(dPlt, cAx, xB=0., xT=0., yMid=0., lenW=.1, lwdW=.5, cDir='both'):
     for cX in [xB, xT]:
         cAx.plot([cX]*2, lY, lw=lwdW, color=dPlt['clrDef'])
 
-def plotClrLn(dPlt, cAx, lX, lY, cLwd, cClr, dltLwd=.5):
+def plotClrLn(dPlt, cAx, lX, lY, cLwd, cClr, dltLwd=-.5):
     cAx.plot(lX, lY, lw=cLwd, color=cClr)
-    cAx.plot(lX, lY, lw=max(0, cLwd - 2*dltLwd), color=dPlt['clrDef'])
+    cAx.plot(lX, lY, lw=max(0, cLwd + dltLwd), color=dPlt['clrDef'])
 
 def plotMean(dPlt, cAx, xMid=0., yMn=0., cClr=S_CLR0):
     lX, lY = [xMid - dPlt['lenHfMnBar'], xMid + dPlt['lenHfMnBar']], [yMn]*2
@@ -692,7 +695,7 @@ class Plotter(RootClass):
             cFig.set_size_inches(dPlt['tFigSz'])
         return cFig, cAx
 
-    def decoratePlot(self, dPlt, cAx, sTtl=None):
+    def decoratePlot(self, dPlt, cAx, sTtl=None, sXLbl=None, sYLbl=None):
         if dPlt['axXLim'] is not None:
             cAx.set_xlim(dPlt['axXLim'])
         if dPlt['axYLim'] is not None:
@@ -709,9 +712,13 @@ class Plotter(RootClass):
         if sTtl is not None and dPlt['plotTtl']:
             cAx.set_title(sTtl, fontdict=dPlt['dFontTtl'], loc=dPlt['locTtl'],
                           pad=dPlt['padTtl'])
-        if dPlt['sXLbl'] is not None:
+        if sXLbl is not None:
+            cAx.set_xlabel(sXLbl)
+        elif sXLbl is None and dPlt['sXLbl'] is not None:
             cAx.set_xlabel(dPlt['sXLbl'])
-        if dPlt['sYLbl'] is not None:
+        if sYLbl is not None:
+            cAx.set_ylabel(sYLbl)
+        elif sYLbl is None and dPlt['sYLbl'] is not None:
             cAx.set_ylabel(dPlt['sYLbl'])
         plt.tight_layout()
 
@@ -762,10 +769,12 @@ class DevSDPlotter(Plotter):
                             othYMn=dFtI[0][3])
         return cFig, cAx
 
-    def decoratePlot(self, cAx, sGT, sMP=''):
+    def decoratePlot(self, cAx, sGT, sMP='', sFtCh=None):
         # sTtl = sMP + '\n(' + D_NM_GT[sGT] + ')'
-        sTtl = sMP
-        super().decoratePlot(self.dPlt, cAx, sTtl=sTtl)
+        sTtl, sY = sMP, None
+        if sFtCh is not None:
+            sY = self.dPlt['sYLbl'] + S_SPACE + sFtCh.replace(S_BAR, S_SPANDSP)
+        super().decoratePlot(self.dPlt, cAx, sTtl=sTtl, sYLbl=sY)
 
     def plotDevSD(self):
         for sID, ((sGT, sMP, sFtChg), pPltF) in self.dPPltF.items():
@@ -774,7 +783,7 @@ class DevSDPlotter(Plotter):
                   sFtChg, '...')
             # if not os.path.isfile(pPltF):
             cFig, cAx = self.createPlot(self.preProcData(sGT, sMP, sFtChg))
-            self.decoratePlot(cAx, sGT=sGT, sMP=sMP)
+            self.decoratePlot(cAx, sGT=sGT, sMP=sMP, sFtCh=sFtChg)
             saveClosePlot(cFig, pPltF)
 
 # .............................................................................
