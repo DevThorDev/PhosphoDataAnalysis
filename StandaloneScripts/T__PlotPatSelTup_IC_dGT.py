@@ -210,6 +210,7 @@ szFontLeg = 'small'             # font size of legend
 nCharDsp = 60                   # number of chars displayed for legend item
 posLegXY = (0.5, 1.02)          # coordinates of the legend anchor box
 lWdPlt = 1.                     # line width in plot
+clrDef = 'k'                    # default colour
 
 # --- graphics parameters / pattern plot --------------------------------------
 # dPairsPaP = {(('Leu_STTTTV'), T_S_GT):
@@ -302,6 +303,8 @@ dPairsPaP = {# ConcStrongPos
 
 nmPltPaP = S_NM_PAT_PLT         # name prefix of the pattern plot
 tFigSzPaP = (3., 4.)            # (width, height): figure size [inches]
+lWdPltPatPaP = 1.5              # line width of pattern in pattern plot
+lWdPltXAxPaP = .5               # line width of x-axis in pattern plot
 
 # --- graphics parameters / IC component plot ---------------------------------
 dPairsICP = dPairsPaP           # dictionary of metabolite-phosphopeptide pairs
@@ -441,7 +444,9 @@ dInput = {# --- constants
                              'szFontLeg': szFontLeg,
                              'nCharDsp': nCharDsp,
                              'posLegXY': posLegXY,
-                             'lWdPlt': lWdPlt},
+                             'lWdPltPat': lWdPltPatPaP,
+                             'lWdPltXAx': lWdPltXAxPaP,
+                             'clrDef': clrDef},
           # --- graphics parameters / IC component plot
           'plotOfICCmp': {'dPairs': dPairsICP,
                           'nmPlt': nmPltICP,
@@ -452,7 +457,8 @@ dInput = {# --- constants
                           'lWdPlt': lWdPlt,
                           'wdthBar': wdthBar,
                           'wdthGrp': wdthGrp,
-                          'degRotXLbl': degRotXLbl},
+                          'degRotXLbl': degRotXLbl,
+                          'clrDef': clrDef},
           # --- names and paths of files and dirs
           'pInCSV': pInCSV,
           'pOutCSV': pOutCSV,
@@ -1096,6 +1102,7 @@ class PatternPlotter(Plotter):
 
     def plotPatterns(self):
         d, nChD = self.dfrIn, self.dPlt['nCharDsp']
+        serXAx = pd.Series([0.]*len(L_S_FT), index=L_S_FT)
         for ((s1, sGT), ((sM, sP), pPltF)) in self.dPPltF.items():
             print('Plotting pattern for "' + s1 + '" and', sGT, '...')
             cSer = d[(d[S_MET] == sM) & (d[S_PHO] == sP)].squeeze()
@@ -1105,7 +1112,9 @@ class PatternPlotter(Plotter):
             for tMP in lTDat:
                 cPa = cSer.loc[D_HD_C_PA[tMP[0]][sGT]]
                 cPa.index = L_S_FT
-                cAx.plot(cPa, lw=self.dPlt['lWdPlt'], label=tMP[1][:nChD])
+                cAx.plot(cPa, lw=self.dPlt['lWdPltPat'], label=tMP[1][:nChD])
+            cAx.plot(serXAx, lw=self.dPlt['lWdPltXAx'],
+                     color=self.dPlt['clrDef'])
             decorateClosePlot(cFig, cAx, self.dPlt, pPltF, S_YLBL_PAT_PLT)
 
 class ICCmpPlotter(Plotter):
@@ -1144,7 +1153,7 @@ class ICCmpPlotter(Plotter):
                 cAx.bar(xLoc - 1/2, height=cICC, width=wdBar,
                         lw=self.dPlt['lWdPlt'], label=tMP[1][:nChD])
             cAx.plot([-1/2, len(L_S_FT_CHG) + 1/2], [0, 0],
-                     lw=self.dPlt['lWdPlt'], color='black')
+                     lw=self.dPlt['lWdPlt'], color=self.dPlt['clrDef'])
             cAx.set_xticks(xLocG)
             cAx.set_xticklabels(L_S_FT_CHG)
             for cXLbl in cAx.get_xticklabels():
