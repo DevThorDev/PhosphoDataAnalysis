@@ -197,7 +197,7 @@ class BinaryOps(DataBaseClass):
                 self.lOD[1].dITp['sNmSpec'] in self.dIG['lSBasDLTf']):
                 PF.pltHist1C(self.dITp, self.dOIn, self.dfrRCrDv,
                              self.pFCrDvAllD)
-                PF.pltSCorr(self.dIG, self.dITp, self.dOIn, self.dfrRCrDv,
+                PF.pltSCorr(self.dITp, self.dOIn, self.dfrRCrDv,
                             self.pFCrDvAllD, self.lOD)
         if doMeans:
             cT = self.calcCrDv(nmMn)

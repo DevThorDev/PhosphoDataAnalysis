@@ -146,6 +146,16 @@ histAlpha = 0.4         # alpha for histogram
 histXLim = (-1, 1)      # x-limits for histogram
 corrLim = (-1, 1)       # lower and upper limit for correlation
 compToNormDist = True   # compare to normal distribution?
+lMSy4Ft = ['o', 'x', '+', 'D']
+lMEW4Ft = [2., 2., 2., 2.]
+lMEC4Ft = [(0.8, 0.2, 0.2), (0.2, 0.8, 0.2), (0.4, 0., 0.), (0., 0.4, 0.)]
+lMFC4Ft = ['none', 'none', 'none', 'none']
+lMSz4Ft = [7, 7, 10, 6]
+dMarker = {'Symbol': lMSy4Ft,
+           'EdgeWidth': lMEW4Ft,
+           'EdgeClr': lMEC4Ft,
+           'FaceClr': lMFC4Ft,
+           'Size': lMSz4Ft}
 
 # --- derived values ----------------------------------------------------------
 lSAvCorrV = [sAv + sNeg + sCorrV, sAv + sPos + sCorrV]
@@ -175,6 +185,9 @@ for t, bWt in lCalcTACD:
     assert len(t) == 2
     assert ((t[0] == GC.S_MET_D and t[1] in [GC.S_PHO_D] + GC.L_S_PHO_CL) or
             (t[0] in [GC.S_PHO_D] + GC.L_S_PHO_CL and t[1] == GC.S_MET_D))
+
+for l in dMarker.values():
+    assert len(l) == len(GC.L_NM_FT)
 
 # --- create input dictionary -------------------------------------------------
 dIO = {# --- general and names
@@ -235,6 +248,7 @@ dIO = {# --- general and names
        'histXLim': histXLim,
        'corrLim': corrLim,
        'cmpND': compToNormDist,
+       'dMarker': dMarker,
        # --- derived values
        'lSAvCorrV': lSAvCorrV,
        'lSAvSpearV': lSAvSpearV,

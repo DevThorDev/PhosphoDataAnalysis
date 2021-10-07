@@ -188,7 +188,6 @@ dFNmComp = {nmID: '',           # 0 (name of ID)
             nmFilter: ''}       # 6 (name of the data filter (or 'AllD'))
 
 # --- Input: Colours ----------------------------------------------------------
-lClr4Cat = [(0.8, 0.2, 0.2), (0.2, 0.8, 0.2), (0.3, 0., 0.), (0., 0.3, 0.)]
 lClrMax = [(0.9, 0., 0.), (0.8, 0.4, 0.), (0.6, 0.6, 0.), (0., 0.8, 0.),
            (0., 0.4, 0.4), (0., 0., 0.9), (0.5, 0., 0.5), (0.25, 0.25, 0.25),
            (0.5, 0.5, 0.5), (0.75, 0.75, 0.75), (1., 0.4, 0.4), (1., 0.7, 0.),
@@ -362,7 +361,6 @@ dictInpG = {# --- Input: Flow control
             'nmFilter': nmFilter,
             'dFNmComp': dFNmComp,
             # --- Input: Colours
-            'lClr4Cat': lClr4Cat,
             'lClrMax': lClrMax,
             'lClrRGB4': lClrRGB4,
             'lClrSpec': lClrSpec,

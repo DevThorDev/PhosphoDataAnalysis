@@ -231,7 +231,7 @@ def getTitlePltSCorr(dITp, cDfr, i):
     sT += ' / ' + dITp['sSpearTtl'] + ' = '
     return sT + str(round(cDfr.loc[i, dITp['sSpearV']], 3))
 
-def SUB_pltSCorr(dfr1, dfr2, pF, lOD, nmC1, nmC2, cFml, sTtl, lClr, lSXY):
+def SUB_pltSCorr(dfr1, dfr2, pF, lOD, nmC1, nmC2, cFml, sTtl, dMark, lSXY):
     # create a DataFrame for fitting, and fit the regression line
     serX, serY = dfr1.loc[:, nmC1], dfr2.loc[:, nmC2]
     fitDfr = pd.DataFrame([serX, serY], index = lSXY).T
@@ -252,15 +252,18 @@ def SUB_pltSCorr(dfr1, dfr2, pF, lOD, nmC1, nmC2, cFml, sTtl, lClr, lSXY):
     except:
         print('Cannot set y-limits for series', list(serY))
     for i, (cHd, lNmR) in enumerate(SF.getDMap(lOD).items()):
+        sLg = cHd.split(GC.S_USC)[0]
         serX, serY = dfr1.loc[lNmR, nmC1], dfr2.loc[lNmR, nmC2]
-        cAx.plot(serX, serY, ls = '', marker = 'x', mec = lClr[i], label = cHd)
+        cAx.plot(serX, serY, ls='', marker=dMark['Symbol'][i],
+                 mew=dMark['EdgeWidth'][i], mec=dMark['EdgeClr'][i],
+                 mfc=dMark['FaceClr'][i], ms=dMark['Size'][i], label=sLg)
     cAx.legend(loc = 'best')
     cAx.set_xlabel(nmC1)
     cAx.set_ylabel(nmC2)
     cFig.savefig(pF)
     plt.close()
 
-def pltSCorr(dIG, dITp, dOIn, cDfr, pF, lODat):
+def pltSCorr(dITp, dOIn, cDfr, pF, lODat):
     if dOIn['tGT'] in dITp['dPltSCorr']:
         if dITp['dPltSCorr'][dOIn['tGT']]:
             lowBd, upBd = dITp['dSCorrBnd'][dOIn['tGT']][:2]
@@ -278,7 +281,7 @@ def pltSCorr(dIG, dITp, dOIn, cDfr, pF, lODat):
                     pFN = GF.adaptPF4Plot(pF, dITp['pRelPltF'], sPost = sNCr)
                     if not os.path.isfile(pFN):
                         SUB_pltSCorr(dfrO1, dfrO2, pFN, lODat, nmO1C, nmO2C,
-                                     cFml, sTtl, dIG['lClr4Cat'], [sX, sY])
+                                     cFml, sTtl, dITp['dMarker'], [sX, sY])
 
 # --- Functions (O_82__Clustering) --------------------------------------------
 def plt1DDatS(dITp, dIPlt, cDfr, pF, tInf, nmCX, pltAxXY = (True, True)):
