@@ -37,14 +37,14 @@ class BinaryOps(DataBaseClass):
                                 'Tr': [OD.sFNmTr for OD in self.lOD],
                                 'Dv': [OD.sFNmDv for OD in self.lOD]})
         print('Initiated "BinaryOps" base object.')
-        
+
     def printObjInfo(self):
         super().printObjInfo()
         print('List of type indices of data:', self.lITp)
         print('Tuple of data IDs:', self.tID)
         print('Tuple of genotypes:', self.tGT)
         print('Tuple of features:', self.tFt)
-    
+
     def extHeader(self, sSep = '_'):
         for OD in self.lOD:
             self.dITp['lSHeadRes'] += OD.cDfrDvT.columns.to_list()
@@ -56,7 +56,7 @@ class BinaryOps(DataBaseClass):
         for cThr in (list(reversed([-x for x in self.dITp['lPosCIBnd']])) +
                      self.dITp['lPosCIBnd']):
             self.dITp['lSHeadRes'] += [self.dITp['sOccCI'] + sSep + str(cThr)]
-    
+
     def updateDITp(self, sSep = '_'):
         self.dITp['tCNmRes'] = (self.dITp['sCt'], self.tID[0], self.tID[1])
         self.dITp['nmObj1'], self.dITp['nmObj2'] = self.dITp['tCNmRes'][1:3]
@@ -73,7 +73,7 @@ class BinaryOps(DataBaseClass):
         for cA in lA:
             if hasattr(self, cA):
                 self.dOIn[cA] = getattr(self, cA)
-    
+
     def importBasicData(self, lSHdR, sMn = ''):
         lDfrDvT, lDfrAIC, lenHdB = [], [], len(self.dITp['tCNmRes'])
         if not self.isClRD:         # otherwise, no dev. data exists
@@ -184,10 +184,12 @@ class BinaryOps(DataBaseClass):
                                 'Tr': [OD.sFNmTr for OD in self.lOD],
                                 'Dv': [OD.sFNmDv for OD in self.lOD]})
         return lPRF
-    
+
     def doCorrDev(self, doAllD = True, doMeans = True):
         self.lPFTACDAllD, self.lPFTACDMn, nmMn = [], [], self.dIG['nmMeans']
         self.updateDOIn()
+        tSCorr = (self.dITp['dPltSCorr'], self.dITp['dSCorrBnd'], True)
+        tCorrI = (self.dITp['dPltCorrI'], self.dITp['dCorrIBnd'], False)
         if doAllD:
             cT = self.calcCrDv()
             self.dfrRCrDv, self.dRCrDv, lDfrAIC, self.pFCrDvAllD = cT
@@ -197,8 +199,9 @@ class BinaryOps(DataBaseClass):
                 self.lOD[1].dITp['sNmSpec'] in self.dIG['lSBasDLTf']):
                 PF.pltHist1C(self.dITp, self.dOIn, self.dfrRCrDv,
                              self.pFCrDvAllD)
-                PF.pltSCorr(self.dITp, self.dOIn, self.dfrRCrDv,
-                            self.pFCrDvAllD, self.lOD)
+                for tPlt in [tSCorr, tCorrI]:
+                    PF.pltCorr(self.dITp, self.dOIn, self.dfrRCrDv,
+                               self.pFCrDvAllD, self.lOD, tPltI=tPlt)
         if doMeans:
             cT = self.calcCrDv(nmMn)
             self.dfrRCrDvMn, self.dRCrDvMn, lDfrAIC, self.pFCrDvMn = cT

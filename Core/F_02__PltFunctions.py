@@ -226,12 +226,12 @@ def pltHist1C(dITp, dOIn, cDfr, pF, useMns = False):
         decorateSavePlot(pF, sTtl = sTtl, xLbl = nmCr, xLim = xLm)
         plt.close()
 
-def getTitlePltSCorr(dITp, cDfr, i):
+def getTitlePltCorr(dITp, cDfr, i):
     sT = dITp['sCorrTtl'] + ' = ' + str(round(cDfr.loc[i, dITp['sCorrV']], 3))
     sT += ' / ' + dITp['sSpearTtl'] + ' = '
     return sT + str(round(cDfr.loc[i, dITp['sSpearV']], 3))
 
-def SUB_pltSCorr(dfr1, dfr2, pF, lOD, nmC1, nmC2, cFml, sTtl, dMark, lSXY):
+def SUB_pltCorr(dfr1, dfr2, pF, lOD, nmC1, nmC2, cFml, sTtl, dMark, lSXY):
     # create a DataFrame for fitting, and fit the regression line
     serX, serY = dfr1.loc[:, nmC1], dfr2.loc[:, nmC2]
     fitDfr = pd.DataFrame([serX, serY], index = lSXY).T
@@ -263,25 +263,52 @@ def SUB_pltSCorr(dfr1, dfr2, pF, lOD, nmC1, nmC2, cFml, sTtl, dMark, lSXY):
     cFig.savefig(pF)
     plt.close()
 
-def pltSCorr(dITp, dOIn, cDfr, pF, lODat):
-    if dOIn['tGT'] in dITp['dPltSCorr']:
-        if dITp['dPltSCorr'][dOIn['tGT']]:
-            lowBd, upBd = dITp['dSCorrBnd'][dOIn['tGT']][:2]
-            assert lowBd <= upBd and len(lODat) >= 2
-            nmCr, nmO1, nmO2 = dITp['sCorrV'], dITp['nmObj1'], dITp['nmObj2']
-            dfrO1, dfrO2, sX, sY = lODat[0].cDfr, lODat[1].cDfr, 'X', 'Y'
-            cFml = sY + ' ~ ' + sX
-            if nmCr in cDfr.columns:
-                selDfr = cDfr[(cDfr[nmCr] <= lowBd) | (cDfr[nmCr] >= upBd)]
-                for i, cRD in selDfr.iterrows():
-                    nmO1C, nmO2C = selDfr.loc[i, nmO1], selDfr.loc[i, nmO2]
-                    sTtl = getTitlePltSCorr(dITp, selDfr, i)
-                    sNCr = '__' + '0'*(7 - len(str(i + 1))) + str(i + 1)
-                    # sNCr = '__' + '0'
-                    pFN = GF.adaptPF4Plot(pF, dITp['pRelPltF'], sPost = sNCr)
-                    if not os.path.isfile(pFN):
-                        SUB_pltSCorr(dfrO1, dfrO2, pFN, lODat, nmO1C, nmO2C,
-                                     cFml, sTtl, dITp['dMarker'], [sX, sY])
+def getSelDfr(cDfr, nmCr, lBd, uBd, outBd=False):
+    if lBd is not None:
+        if uBd is not None:
+            if outBd:
+                selDfr = cDfr[(cDfr[nmCr] <= lBd) | (cDfr[nmCr] >= uBd)]
+            else:
+                selDfr = cDfr[(cDfr[nmCr] >= lBd) & (cDfr[nmCr] <= uBd)]
+        else:
+            if outBd:
+                selDfr = cDfr[(cDfr[nmCr] <= lBd)]
+            else:
+                selDfr = cDfr[(cDfr[nmCr] >= lBd)]
+    else:
+        if uBd is not None:
+            if outBd:
+                selDfr = cDfr[(cDfr[nmCr] >= uBd)]
+            else:
+                selDfr = cDfr[(cDfr[nmCr] <= uBd)]
+        else:
+            selDfr = cDfr
+    return selDfr
+
+def prepPltCorr(dITp, cDfr, pF, lODat, lBd, uBd, outBd=False):
+    assert len(lODat) >= 2
+    if lBd is not None and uBd is not None:
+        assert lBd <= uBd
+    nmCr, nmO1, nmO2 = dITp['sCorrV'], dITp['nmObj1'], dITp['nmObj2']
+    dfrO1, dfrO2, sX, sY = lODat[0].cDfr, lODat[1].cDfr, 'X', 'Y'
+    selDfr, cFml = cDfr, sY + ' ~ ' + sX
+    if nmCr in cDfr.columns:
+        selDfr = getSelDfr(cDfr, nmCr, lBd=lBd, uBd=uBd, outBd=outBd)
+        for i, cRD in selDfr.iterrows():
+            nmO1C, nmO2C = selDfr.loc[i, nmO1], selDfr.loc[i, nmO2]
+            sTtl = getTitlePltCorr(dITp, selDfr, i)
+            sNCr = '__' + '0'*(7 - len(str(i + 1))) + str(i + 1)
+            pFN = GF.adaptPF4Plot(pF, dITp['pRelPltF'], sPost = sNCr)
+            if not os.path.isfile(pFN):
+                SUB_pltCorr(dfrO1, dfrO2, pFN, lODat, nmO1C, nmO2C, cFml, sTtl,
+                            dITp['dMarker'], [sX, sY])
+
+def pltCorr(dITp, dOIn, cDfr, pF, lODat, tPltI):
+    dPltCorr, dCorrBnd, bBd = tPltI
+    if dOIn['tGT'] in dPltCorr:
+        if dPltCorr[dOIn['tGT']]:
+            lowBd, upBd = dCorrBnd[dOIn['tGT']][:2]
+            prepPltCorr(dITp, cDfr, pF, lODat, lBd=lowBd, uBd=upBd, outBd=bBd)
 
 # --- Functions (O_82__Clustering) --------------------------------------------
 def plt1DDatS(dITp, dIPlt, cDfr, pF, tInf, nmCX, pltAxXY = (True, True)):

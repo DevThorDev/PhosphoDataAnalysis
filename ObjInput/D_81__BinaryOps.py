@@ -40,6 +40,13 @@ dPltSCorr = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): True,    # plot strongest corr.
              (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): True,
              (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): True}
 
+dPltCorrI = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): True,    # plot corr. in def. I
+             (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): True,
+             (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): True,
+             (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): True,
+             (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): True,
+             (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): True}
+
 # dSCorrBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (-0.94, 0.93),    # (lowB, upB)
 #              (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): (-0.96, 0.94),
 #              (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): (-0.94, 0.95),
@@ -52,6 +59,12 @@ dSCorrBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (-0.99, 0.7),    # (lowB, upB)
              (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): (-0.99, 0.9),
              (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): (-0.99, 0.9),
              (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): (-0.99, 0.8)}
+dCorrIBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (0.06, 0.07),    # I (lowB, upB)
+             (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): (None, None),
+             (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): (None, None),
+             (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): (None, None),
+             (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): (None, None),
+             (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): (None, None)}
 
 # --- deviations between features ---------------------------------------------
 dPosCIBnd = {'C1': (1., 0.25),    # positive concordance index bound (x SD)
@@ -179,6 +192,8 @@ lCIWts = [t[1] for t in dPosCIBnd.values()]
 # --- assertions --------------------------------------------------------------
 for tGT, tSCorrBnd in dSCorrBnd.items():
     assert len(tGT) >= 2 and len(tSCorrBnd) >= 2
+for tGT, tCorrIBnd in dCorrIBnd.items():
+    assert len(tGT) >= 2 and len(tCorrIBnd) >= 2
 
 for t, bWt in lCalcTACD:
     assert type(bWt) == bool
@@ -218,7 +233,9 @@ dIO = {# --- general and names
        'dSCIX': dSCIX,
        # --- correlation
        'dPltSCorr': dPltSCorr,
+       'dPltCorrI': dPltCorrI,
        'dSCorrBnd': dSCorrBnd,
+       'dCorrIBnd': dCorrIBnd,
        # --- deviations between features
        'dPosCIBnd': dPosCIBnd,
        'dWtDv': dWtDv,

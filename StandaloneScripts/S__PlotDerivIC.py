@@ -198,7 +198,10 @@ dTupIn_ICDrv = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
                 'Y_GT5_1': (S_GT5, 'Aspartic_acid', 'IGS(0.999)S(0.001)EMLIEGEDVR'),
                 'Y_GT5_2': (S_GT5, 'Beta-alanine', 'DIS(1)PTAAGLGLPVTGGK'),
                 'Y_GT5_3': (S_GT5, 'Docosanoic_acid', 'LSRPGS(1)GS(1)VSGLASQR'),
-                'Y_GT5_4': (S_GT5, 'Ornithine', 'TDSEVTSLAAS(0.024)S(0.976)PARS(1)PR')}
+                'Y_GT5_4': (S_GT5, 'Ornithine', 'TDSEVTSLAAS(0.024)S(0.976)PARS(1)PR'),
+
+                'Z_GT0_1': (S_GT0, 'Fructose', 'DHYDMYEPEANTMLQNS(1)APGS(1)PFHPAGSR'),
+                'Z_GT0_2': (S_GT0, 'Glycine', 'NS(0.023)S(0.974)KDDADRET(0.002)LEAEHTTLVTPHH')}
 
 nmPlt_ICDrv = NM_IC_DERIV_PLT       # name prefix of the IC derivation plot
 tFigSz_ICDrv = (6., 4.)             # (width, height): figure size [inches]

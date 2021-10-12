@@ -183,8 +183,8 @@ dISort = {S_IC: {S_GT0: {S_SRT_BY: dUsedK[S_IC], S_ORD: S_DSC},
           S_D_GT_P: {S_SRT_BY: dUsedK[S_D_GT_P], S_ORD: S_DSC}}
 
 dThr = {S_IC: {S_GT0: {S_MIN: None, S_MAX: None},
-                S_GT1: {S_MIN: None, S_MAX: None},
-                S_GT5: {S_MIN: None, S_MAX: None}},
+               S_GT1: {S_MIN: None, S_MAX: None},
+               S_GT5: {S_MIN: None, S_MAX: None}},
         S_D_GT_M: {S_MIN: None, S_MAX: None},
         S_D_GT_P: {S_MIN: None, S_MAX: None}}
 # dThr = {S_IC: {S_GT0: {S_MIN: 7.25, S_MAX: None},
@@ -286,7 +286,10 @@ dPairsPaP = {# ConcStrongPos
              # ConcZero
              (('Ala_TFDELS(1)DG'), T_S_GT1): ('Alanine', 'TFDELS(1)DGEVYEDS(1)D'),
              # ConcStrongNeg
-             (('Docosan_S(0.003)PS(0.997)YKEV'), T_S_GT1): ('Docosanoic_acid', 'S(0.003)PS(0.997)YKEVALAPPGSIAK')}
+             (('Docosan_S(0.003)PS(0.997)YKEV'), T_S_GT1): ('Docosanoic_acid', 'S(0.003)PS(0.997)YKEVALAPPGSIAK'),
+             # IC >= 7.25, but corr. / rank corr. low
+             (('Fructose_DHYDMYEPEANT'), T_S_GT0): ('Fructose', 'DHYDMYEPEANTMLQNS(1)APGS(1)PFHPAGSR'),
+             (('Glycine_NS(0.023)S(0.974)KDD'), T_S_GT0): ('Glycine', 'NS(0.023)S(0.974)KDDADRET(0.002)LEAEHTTLVTPHH')}
 
 # IC10_7p25_No_SBY_dGT10_0p2_No
 # dPairsPaP = {(('Leu_SSFQEDHE'), T_S_GT): ('Leucine', 'SSFQEDHS(1)NIGGPGFSR'),
