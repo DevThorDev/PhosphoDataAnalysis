@@ -41,11 +41,11 @@ dPltSCorr = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): True,    # plot strongest corr.
              (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): True}
 
 dPltCorrI = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): True,    # plot corr. in def. I
-             (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): True,
-             (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): True,
-             (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): True,
-             (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): True,
-             (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): True}
+             (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): False,
+             (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): False,
+             (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): False,
+             (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): False,
+             (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): False}
 
 # dSCorrBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (-0.94, 0.93),    # (lowB, upB)
 #              (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): (-0.96, 0.94),
@@ -53,13 +53,13 @@ dPltCorrI = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): True,    # plot corr. in def. I
 #              (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): (-0.95, 0.955),
 #              (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): (-0.93, 0.92),
 #              (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): (-0.9, 0.955)}
-dSCorrBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (-0.99, 0.7),    # (lowB, upB)
+dSCorrBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (-0.99, 0.7),    # S (lowB, upB)
              (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): (-0.99, 0.8),
              (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): (-0.99, 0.9),
              (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): (-0.99, 0.9),
              (GC.T_NM_GT4[0], GC.T_NM_GT4[0]): (-0.99, 0.9),
              (GC.T_NM_GT5[0], GC.T_NM_GT5[0]): (-0.99, 0.8)}
-dCorrIBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (0.06, 0.07),    # I (lowB, upB)
+dCorrIBnd = {(GC.T_NM_GT0[0], GC.T_NM_GT0[0]): (0.95, 0.96),    # I (lowB, upB)
              (GC.T_NM_GT1[0], GC.T_NM_GT1[0]): (None, None),
              (GC.T_NM_GT2[0], GC.T_NM_GT2[0]): (None, None),
              (GC.T_NM_GT3[0], GC.T_NM_GT3[0]): (None, None),
