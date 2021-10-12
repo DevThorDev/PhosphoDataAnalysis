@@ -201,7 +201,14 @@ dTupIn_ICDrv = {'A': (S_GT0, 'Alanine', 'ESLS(1)PGQQHVSQNTAVKPEGR'),
                 'Y_GT5_4': (S_GT5, 'Ornithine', 'TDSEVTSLAAS(0.024)S(0.976)PARS(1)PR'),
 
                 'Z_GT0_1': (S_GT0, 'Fructose', 'DHYDMYEPEANTMLQNS(1)APGS(1)PFHPAGSR'),
-                'Z_GT0_2': (S_GT0, 'Glycine', 'NS(0.023)S(0.974)KDDADRET(0.002)LEAEHTTLVTPHH')}
+                'Z_GT0_2': (S_GT0, 'Glycine', 'NS(0.023)S(0.974)KDDADRET(0.002)LEAEHTTLVTPHH'),
+                'Z_GT0_3': (S_GT0, 'Beta-alanine', 'SLEELS(1)GEAEVS(1)HDEK'),
+                'Z_GT0_4': (S_GT0, 'Docosanoic_acid', 'SLEELS(1)GEAEVS(1)HDEK'),
+                'Z_GT0_5': (S_GT0, 'Docosanoic_acid', 'T(1)AILERR'),
+                'Z_GT0_6': (S_GT0, 'Octadecanoic_acid', 'HLEENGS(1)DGEQGPGGSNGWITTINDVEMENQIVLPEDKK'),
+                'Z_GT0_7': (S_GT0, 'Beta-alanine', 'S(1)VLDT(1)PLS(0.853)S(0.147)AR'),
+                'Z_GT0_8': (S_GT0, 'Tetradecanoic_acid', 'TVAAVAGS(1)PGT(0.002)PT(0.963)T(0.035)PGSAR'),
+                'Z_GT0_9': (S_GT0, 'Hexadecanoic_acid', 'TVAAVAGS(1)PGT(0.002)PT(0.963)T(0.035)PGSAR')}
 
 nmPlt_ICDrv = NM_IC_DERIV_PLT       # name prefix of the IC derivation plot
 tFigSz_ICDrv = (6., 4.)             # (width, height): figure size [inches]

@@ -287,9 +287,18 @@ dPairsPaP = {# ConcStrongPos
              (('Ala_TFDELS(1)DG'), T_S_GT1): ('Alanine', 'TFDELS(1)DGEVYEDS(1)D'),
              # ConcStrongNeg
              (('Docosan_S(0.003)PS(0.997)YKEV'), T_S_GT1): ('Docosanoic_acid', 'S(0.003)PS(0.997)YKEVALAPPGSIAK'),
+             # Scenarios with varying characteristics of corr., rank corr., IC
              # IC >= 7.25, but corr. / rank corr. low
-             (('Fructose_DHYDMYEPEANT'), T_S_GT0): ('Fructose', 'DHYDMYEPEANTMLQNS(1)APGS(1)PFHPAGSR'),
-             (('Glycine_NS(0.023)S(0.974)KDD'), T_S_GT0): ('Glycine', 'NS(0.023)S(0.974)KDDADRET(0.002)LEAEHTTLVTPHH')}
+             (('Z_GT0_1_Fructose_DHYDMYEPEANT'), T_S_GT0): ('Fructose', 'DHYDMYEPEANTMLQNS(1)APGS(1)PFHPAGSR'),
+             (('Z_GT0_2_Glycine_NS(0.023)S(0.974)KDD'), T_S_GT0): ('Glycine', 'NS(0.023)S(0.974)KDDADRET(0.002)LEAEHTTLVTPHH'),
+             # Other scenarios with varying characteristics of corr., rank corr., IC
+             (('Z_GT0_3_Beta-ala_SLEELS(1)GEA'), T_S_GT0): ('Beta-alanine', 'SLEELS(1)GEAEVS(1)HDEK'),
+             (('Z_GT0_4_Docosan_SLEELS(1)GEA'), T_S_GT0): ('Docosanoic_acid', 'SLEELS(1)GEAEVS(1)HDEK'),
+             (('Z_GT0_5_Docosan_T(1)AILERR'), T_S_GT0): ('Docosanoic_acid', 'T(1)AILERR'),
+             (('Z_GT0_6_Octadecan_HLEENGS(1)DGE'), T_S_GT0): ('Octadecanoic_acid', 'HLEENGS(1)DGEQGPGGSNGWITTINDVEMENQIVLPEDKK'),
+             (('Z_GT0_7_Beta-ala_S(1)VLDT(1)PL'), T_S_GT0): ('Beta-alanine', 'S(1)VLDT(1)PLS(0.853)S(0.147)AR'),
+             (('Z_GT0_8_Tetradecan_TVAAVAGS(1)PG'), T_S_GT0): ('Tetradecanoic_acid', 'TVAAVAGS(1)PGT(0.002)PT(0.963)T(0.035)PGSAR'),
+             (('Z_GT0_9_Hexadecan_TVAAVAGS(1)PG'), T_S_GT0): ('Hexadecanoic_acid', 'TVAAVAGS(1)PGT(0.002)PT(0.963)T(0.035)PGSAR')}
 
 # IC10_7p25_No_SBY_dGT10_0p2_No
 # dPairsPaP = {(('Leu_SSFQEDHE'), T_S_GT): ('Leucine', 'SSFQEDHS(1)NIGGPGFSR'),
