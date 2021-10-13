@@ -288,6 +288,10 @@ dPairsPaP = {# ConcStrongPos
              # ConcStrongNeg
              (('Docosan_S(0.003)PS(0.997)YKEV'), T_S_GT1): ('Docosanoic_acid', 'S(0.003)PS(0.997)YKEVALAPPGSIAK'),
              # Scenarios with varying characteristics of corr., rank corr., IC
+             # corr. / rank corr. high, but IC < 7.25
+             (('Y_GT0_1_Nonanoic_T(0.011)FDELS(0.759)D'), T_S_GT0): ('Nonanoic_acid', 'T(0.011)FDELS(0.759)DT(0.23)EVYEDS(1)D'),
+             (('Y_GT1_1_Phenylala_S(0.825)RS(0.137)VDE'), T_S_GT1): ('Phenylalanine', 'S(0.825)RS(0.137)VDES(0.039)FANSFSPR'),
+             (('Y_GT5_4_Ornithine_TDSEVTSLAA'), T_S_GT5): ('Ornithine', 'TDSEVTSLAAS(0.024)S(0.976)PARS(1)PR'),
              # IC >= 7.25, but corr. / rank corr. low
              (('Z_GT0_1_Fructose_DHYDMYEPEANT'), T_S_GT0): ('Fructose', 'DHYDMYEPEANTMLQNS(1)APGS(1)PFHPAGSR'),
              (('Z_GT0_2_Glycine_NS(0.023)S(0.974)KDD'), T_S_GT0): ('Glycine', 'NS(0.023)S(0.974)KDDADRET(0.002)LEAEHTTLVTPHH'),
