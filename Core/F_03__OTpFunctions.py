@@ -345,7 +345,7 @@ def compCorr(dtC1, dtC2):
     rhoKn, pValKn = stats.kendalltau(dtC1.loc[idxInters], dtC2.loc[idxInters])
     return [rhoCr, rhoSp, rhoKn] + [pValPCr, pValSp, pValKn]
 
-def getDevR(dITp, dINP, lCmpR, lXSDR, arrD1, arrD2, lnArr, lnBnd, k = 0):
+def getDevR(dITp, dINP, lCmpR, lXSDR, arrD1, arrD2, lnBnd, k = 0):
     cMin, cMax = min(arrD1[k], arrD2[k]), max(arrD1[k], arrD2[k])
     # fill lCmpR
     x = dITp['dWtDv']['Min']*(min(abs(arrD1[k]), abs(arrD2[k])))
@@ -387,11 +387,10 @@ def compDv(dITp, arrD1, arrD2):
     lenArr, lenBnd = len(arrD1), len(dITp['lPosCIBnd'])
     # calculate the basic score list - comparing single features: lCmpR
     # calculate which features have > x SD deviation for both data: lXSDR
-    dITp['lNegCIBnd'] = [-x for x in dITp['lPosCIBnd']]
     dINP, lCmpR, lXSDR = {'iNeg': 0., 'iPos': 0.}, ['']*lenArr, ['']*lenArr
     for k in range(lenArr):
         if arrD1[k] != '' and arrD2[k] != '':
-            getDevR(dITp, dINP, lCmpR, lXSDR, arrD1, arrD2, lenArr, lenBnd, k)
+            getDevR(dITp, dINP, lCmpR, lXSDR, arrD1, arrD2, lenBnd, k)
     # calculate the sums of the neg. and pos. values of the basic score list
     lCmpRS = [sum(x for x in lCmpR if x != '' and x < 0),
               sum(x for x in lCmpR if x != '' and x > 0)]
