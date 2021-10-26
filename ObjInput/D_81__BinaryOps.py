@@ -282,7 +282,7 @@ dIO = {# --- general and names
        'lSCorrAll': lSCorrAll,
        'lSAvAll': lSAvAll,
        'lSTopAll': lSTopAll,
-       'lPosCIBnd': lPosCIBnd
+       'lPosCIBnd': lPosCIBnd,
        'lNegCIBnd': [-x for x in lPosCIBnd],
        'lCIWts': lCIWts}
 
