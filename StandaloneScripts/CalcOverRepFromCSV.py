@@ -3,6 +3,7 @@
 # --- CalcOverRepFromCSV.py ---------------------------------------------------
 # Calculate the over-representation profile of an entity (e.g. a metabolite
 # or a bin) in a table sorted according to a numeric column
+# [used for "IDist"; "Input__OvRep_PhoD_GTX_AllD__BinCode2_1_832_IDist0"]
 ###############################################################################
 import os, time
 
