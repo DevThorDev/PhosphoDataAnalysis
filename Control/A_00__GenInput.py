@@ -73,7 +73,9 @@ dQryNmFE = {11: ('', ''),   # 11: ('Name_Analyte == "Sucrose__D-_(8TMS)"', 'Sucr
             21: ('', ''),
             22: ('', '')}
 dNmPltClCent = {11: [],     # 11: ['Sucrose__D-_(8TMS)'],
+                12: [],
                 21: [],
+                22: [],
                 31: [],
                 41: []}
 
