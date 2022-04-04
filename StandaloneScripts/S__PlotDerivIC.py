@@ -86,14 +86,14 @@ S_CMB_TO_IC = 'CombineToIC'
 
 S_CMB_C = 'Combined'
 S_DEV_S = 'deviation'
-S_FEAT_S = 'feature'
-S_FEATS_S = S_FEAT_S + 's'
-S_DEVS_C = 'Deviations between' + S_SPACE + S_FEATS_S
+S_TREAT_S = 'treatment'
+S_TREATS_S = S_TREAT_S + 's'
+S_DEVS_C = 'Deviations between' + S_SPACE + S_TREATS_S
 S_CMP_S = 'component'
-S_CMB_DEV = S_CMB_C + S_SPACE + S_FEAT_S + S_SPACE + S_DEV_S
+S_CMB_DEV = S_CMB_C + S_SPACE + S_TREAT_S + S_SPACE + S_DEV_S
 S_IC_CMP = S_IC_MEX + S_SPACE + S_CMP_S
 
-S_YLBL_DEV_SD_PLT = 'Single measurements and feature means for features'
+S_YLBL_DEV_SD_PLT = 'Single measurements and treatment means for treatments'
 S_YLBL_IC_DERIV_PLT = S_DEVS_C + S_SPSLSP + S_IC_CMP
 S_YLBL1_CMB_TO_IC_PLT = S_IC_CMP
 
@@ -163,7 +163,7 @@ lenWLnSD_DevSD = .1                 # length of mean bar whiskers
 lwdWLnSD_DevSD = .5                 # line width of mean bar whiskers
 lstCnLnSD_DevSD = STY_LN_DSH        # line style of connecting line
 lwdCnLnSD_DevSD = 1.                # line width of connecting line
-dPosFt_DevSD = {0: .75, 1: .25}     # dictionary of positions of features 0|1
+dPosFt_DevSD = {0: .75, 1: .25}     # dictionary of positions of treatments 0|1
 axXLim_DevSD = (0., 1.)             # limits for the x-axis, or None
 axYLim_DevSD = None                 # limits for the y-axis, or None
 adaptYLim_DevSD = True              # adapt y-limits using values to plot?
@@ -737,7 +737,7 @@ class DevSDPlotter(Plotter):
     def __init__(self, InpD):
         super().__init__(InpD)
         self.idO = self.inpD.sPltr_DevSD
-        self.descO = 'Deviations (as multiples of feature SD) plotter'
+        self.descO = 'Deviations (as multiples of treatment SD) plotter'
         self.dPFIn = self.inpD.dPFIn_DevSD
         self.pDOut = self.inpD.pOutPDF
         self.dPlt = self.dPlt | self.inpD.plot_DevSD
@@ -789,8 +789,8 @@ class DevSDPlotter(Plotter):
     def plotDevSD(self):
         for sID, ((sGT, sMP, sFtChg), pPltF) in self.dPPltF.items():
             print('Plotting deviation in multiples of SD: "' + str(sID) +
-                  '" for "' + sGT + '", substance ' + sMP + ', feature change',
-                  sFtChg, '...')
+                  '" for "' + sGT + '", substance ' + sMP +
+                  ', treatment change', sFtChg, '...')
             # if not os.path.isfile(pPltF):
             cFig, cAx = self.createPlot(self.preProcData(sGT, sMP, sFtChg))
             self.decoratePlot(cAx, sGT=sGT, sMP=sMP, sFtCh=sFtChg)
